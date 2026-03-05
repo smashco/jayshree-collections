@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=Montserrat:wght@200;300;400;500;600;700&display=swap');
 
 @import "tailwindcss";
 
@@ -13,52 +13,71 @@
 :root {
   /* French Luxury Palette */
   --color-vert: #07312A;
-  /* Deep forest green */
   --color-bleu: #1B2E49;
-  /* Midnight blue */
   --color-or: #BFA06A;
-  /* Aged gold */
+  --color-or-rich: #CA8A04;
   --color-bordeaux: #490C1E;
-  /* Wine red */
   --color-ivoire: #F0E6C2;
-  /* Soft ivory */
 
   /* Structural Colors */
   --background: #031411;
-  /* Near-black forest green base */
   --foreground: var(--color-ivoire);
+
+  /* Chapter Colors for Scroll Storytelling */
+  --chapter-1: #031411;
+  --chapter-2: #07312A;
+  --chapter-3: #0D1F2D;
+  --chapter-4: #1A0A0A;
+  --chapter-5: #031411;
+}
+
+* {
+  cursor: none;
+}
+
+html {
+  scroll-behavior: auto;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
   overflow-x: hidden;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Hide scrollbar for seamless cinematic feel */
+/* ------------------ Scrollbar ------------------ */
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
 }
 
-/* Typography Classes */
+/* ------------------ Typography Classes ------------------ */
 .font-samarkan {
-  font-family: 'Samarkan', 'Playfair Display', serif;
+  font-family: 'Samarkan', 'Cormorant', serif;
   letter-spacing: 0.1em;
 }
 
+.font-cormorant {
+  font-family: 'Cormorant', serif;
+}
+
+.font-montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Legacy support */
 .font-playfair {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Cormorant', serif;
 }
 
 .font-inter {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
-/* Cinematic Grain / Noise Overlay */
+/* ------------------ Noise / Film Grain ------------------ */
 .bg-noise {
   position: fixed;
   top: 0;
@@ -66,24 +85,64 @@ body {
   width: 100vw;
   height: 100vh;
   pointer-events: none;
-  z-index: 50;
-  opacity: 0.04;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  z-index: 9999;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 8s steps(10) infinite;
 }
 
-/* Ultra Premium Shimmering Gold Text */
+@keyframes grain {
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  10% {
+    transform: translate(-2%, -2%);
+  }
+
+  20% {
+    transform: translate(2%, 2%);
+  }
+
+  30% {
+    transform: translate(-1%, 1%);
+  }
+
+  40% {
+    transform: translate(1%, -1%);
+  }
+
+  50% {
+    transform: translate(-2%, 2%);
+  }
+
+  60% {
+    transform: translate(2%, -2%);
+  }
+
+  70% {
+    transform: translate(-1%, -1%);
+  }
+
+  80% {
+    transform: translate(1%, 1%);
+  }
+
+  90% {
+    transform: translate(-2%, 0%);
+  }
+}
+
+/* ------------------ Shimmer Gold Text ------------------ */
 .text-shimmer-gold {
-  background: linear-gradient(90deg,
-      #8C7142 0%,
-      var(--color-or) 30%,
-      #E1CA9F 50%,
-      var(--color-or) 70%,
-      #8C7142 100%);
+  background: linear-gradient(90deg, #8C7142 0%, var(--color-or) 30%, #E8D5A3 50%, var(--color-or) 70%, #8C7142 100%);
   background-size: 200% auto;
   color: transparent;
   background-clip: text;
   -webkit-background-clip: text;
-  animation: shimmer 5s ease-in-out infinite alternate;
+  animation: shimmer 6s ease-in-out infinite alternate;
 }
 
 @keyframes shimmer {
@@ -92,23 +151,57 @@ body {
   }
 }
 
-/* Premium 3D Glass Card */
+/* ------------------ Liquid Glass Cards ------------------ */
 .glass-premium {
-  background: rgba(7, 49, 42, 0.3);
-  /* Vert blur */
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-  border: 1px solid rgba(191, 160, 106, 0.15);
-  /* Or border */
-  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(240, 230, 194, 0.05);
-  /* Ivoire highlight */
+  background: rgba(7, 49, 42, 0.25);
+  backdrop-filter: blur(32px) saturate(180%) brightness(1.1);
+  -webkit-backdrop-filter: blur(32px) saturate(180%) brightness(1.1);
+  border: 1px solid rgba(191, 160, 106, 0.18);
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(240, 230, 194, 0.06),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
 }
 
-/* Marquee setup */
+.glass-card {
+  background: rgba(7, 49, 42, 0.4);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(191, 160, 106, 0.12);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  background: rgba(7, 49, 42, 0.6);
+  border-color: rgba(191, 160, 106, 0.35);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), 0 0 60px rgba(191, 160, 106, 0.08);
+  transform: translateY(-8px);
+}
+
+/* Liquid glass morphing animation */
+.liquid-glass {
+  animation: liquidMorph 8s ease-in-out infinite alternate;
+}
+
+@keyframes liquidMorph {
+  0% {
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  }
+
+  50% {
+    border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+  }
+
+  100% {
+    border-radius: 50% 50% 30% 70% / 50% 70% 30% 50%;
+  }
+}
+
+/* ------------------ Marquee ------------------ */
 .marquee-track {
   display: flex;
   white-space: nowrap;
-  animation: marquee 30s linear infinite;
+  animation: marquee 35s linear infinite;
   min-width: max-content;
 }
 
@@ -122,39 +215,62 @@ body {
   }
 }
 
-/* Dividers */
+/* ------------------ Dividers ------------------ */
 .divider-luxury {
   height: 1px;
-  width: 100%;
-  background: linear-gradient(90deg, transparent, rgba(191, 160, 106, 0.5), transparent);
+  width: 80px;
+  background: linear-gradient(90deg, transparent, var(--color-or), transparent);
 }
 
-/* 3D Cards */
+.divider-full {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(191, 160, 106, 0.4), transparent);
+}
+
+/* ------------------ 3D Cards ------------------ */
 .card-3d {
   perspective: 1200px;
   transform-style: preserve-3d;
 }
 
 .card-3d-inner {
-  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.7s ease;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.8s ease;
 }
 
 .card-3d:hover .card-3d-inner {
-  transform: rotateY(-8deg) rotateX(5deg) scale3d(1.02, 1.02, 1.02);
-  box-shadow: -20px 20px 50px rgba(0, 0, 0, 0.7), 0 0 40px rgba(191, 160, 106, 0.15);
+  transform: rotateY(-6deg) rotateX(4deg) scale3d(1.02, 1.02, 1.02);
+  box-shadow: -20px 20px 60px rgba(0, 0, 0, 0.8), 0 0 50px rgba(191, 160, 106, 0.12);
 }
 
-/* Elegant Buttons */
+/* ------------------ Holographic Glare ------------------ */
+.card-glare {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(191, 160, 106, 0.15) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+}
+
+.card-3d:hover .card-glare {
+  opacity: 1;
+}
+
+/* ------------------ Gold Buttons ------------------ */
 .btn-gold {
   background: transparent;
-  border: 1px solid rgba(191, 160, 106, 0.4);
+  border: 1px solid rgba(191, 160, 106, 0.5);
   color: var(--color-or);
   padding: 1rem 2.5rem;
   border-radius: 9999px;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  font-size: 0.75rem;
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  letter-spacing: 0.2em;
+  font-size: 0.7rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
 }
@@ -183,4 +299,74 @@ body {
 
 .btn-gold:hover span {
   color: var(--background);
+}
+
+/* Solid CTA button */
+.btn-gold-solid {
+  background: var(--color-or-rich);
+  color: var(--background);
+  padding: 1rem 2.5rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.7rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  transition: all 0.4s ease;
+  box-shadow: 0 4px 20px rgba(202, 138, 4, 0.4);
+}
+
+.btn-gold-solid:hover {
+  background: #BFA06A;
+  box-shadow: 0 8px 40px rgba(202, 138, 4, 0.6);
+  transform: translateY(-2px);
+}
+
+/* ------------------ Counters / Numbers ------------------ */
+.counter-display {
+  font-family: 'Cormorant', serif;
+  font-weight: 300;
+  font-size: clamp(3rem, 8vw, 7rem);
+  color: var(--color-or);
+  line-height: 1;
+}
+
+/* ------------------ Chapter Transitions ------------------ */
+.chapter-section {
+  position: relative;
+  transition: background-color 1.5s ease;
+}
+
+/* ------------------ Horizontal scroll track ------------------ */
+.h-scroll-track {
+  display: flex;
+  flex-direction: row;
+  will-change: transform;
+}
+
+.h-scroll-panel {
+  flex: 0 0 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ------------------ Progress bar ------------------ */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-or), var(--color-or-rich));
+  z-index: 9998;
+  transform-origin: left;
+}
+
+/* ------------------ Video overlay gradient ------------------ */
+.video-overlay {
+  background: linear-gradient(to bottom,
+      rgba(3, 20, 17, 0.3) 0%,
+      transparent 30%,
+      transparent 60%,
+      rgba(3, 20, 17, 0.95) 100%);
 }

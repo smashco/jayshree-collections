@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-const config: Config = {
+export default {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -8,42 +8,31 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      colors: {
-        primary: {
-          DEFAULT: "#DB2777",
-          light: "#F472B6",
-          dark: "#9D174D",
-        },
-        gold: {
-          DEFAULT: "#D4AF37",
-          light: "#FCD34D",
-          dark: "#CA8A04",
-        },
-        maroon: {
-          DEFAULT: "#831843",
-          dark: "#4A0020",
-        },
-        cream: "#FEF9EE",
-        brand: "#FDF2F8",
-      },
       fontFamily: {
-        samarkan: ["Samarkan", "Playfair Display", "serif"],
-        playfair: ["Playfair Display", "serif"],
-        inter: ["Inter", "sans-serif"],
+        cormorant: ['Cormorant', 'Georgia', 'serif'],
+        montserrat: ['Montserrat', 'sans-serif'],
+        samarkan: ['Samarkan', 'Cormorant', 'serif'],
+        // Legacy aliases
+        playfair: ['Cormorant', 'serif'],
+        inter: ['Montserrat', 'sans-serif'],
+      },
+      colors: {
+        brand: '#031411',
+        vert: '#07312A',
+        bleu: '#1B2E49',
+        or: '#BFA06A',
+        'or-rich': '#CA8A04',
+        bordeaux: '#490C1E',
+        ivoire: '#F0E6C2',
       },
       animation: {
-        shimmer: "shimmer 3s linear infinite",
-        float: "float 4s ease-in-out infinite",
-        marquee: "marquee 25s linear infinite",
-      },
-      backgroundImage: {
-        "gold-gradient": "linear-gradient(135deg, #D4AF37 0%, #CA8A04 50%, #D4AF37 100%)",
-        "rose-gradient": "linear-gradient(135deg, #DB2777 0%, #9D174D 100%)",
-        "heritage-gradient": "linear-gradient(180deg, #FDF2F8 0%, #FCE7F3 50%, #FDF2F8 100%)",
+        'marquee': 'marquee 35s linear infinite',
+        'shimmer': 'shimmer 6s ease-in-out infinite alternate',
+        'grain': 'grain 8s steps(10) infinite',
+        'liquid': 'liquidMorph 8s ease-in-out infinite alternate',
+        'float': 'float 6s ease-in-out infinite',
       },
     },
   },
   plugins: [],
-};
-
-export default config;
+} satisfies Config;
