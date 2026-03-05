@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Samarkan';
+  src: url('/fonts/SAMAN___.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* French Luxury Palette */
+  --color-vert: #07312A;
+  /* Deep forest green */
+  --color-bleu: #1B2E49;
+  /* Midnight blue */
+  --color-or: #BFA06A;
+  /* Aged gold */
+  --color-bordeaux: #490C1E;
+  /* Wine red */
+  --color-ivoire: #F0E6C2;
+  /* Soft ivory */
+
+  /* Structural Colors */
+  --background: #031411;
+  /* Near-black forest green base */
+  --foreground: var(--color-ivoire);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide scrollbar for seamless cinematic feel */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+/* Typography Classes */
+.font-samarkan {
+  font-family: 'Samarkan', 'Playfair Display', serif;
+  letter-spacing: 0.1em;
+}
+
+.font-playfair {
+  font-family: 'Playfair Display', serif;
+}
+
+.font-inter {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Cinematic Grain / Noise Overlay */
+.bg-noise {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Ultra Premium Shimmering Gold Text */
+.text-shimmer-gold {
+  background: linear-gradient(90deg,
+      #8C7142 0%,
+      var(--color-or) 30%,
+      #E1CA9F 50%,
+      var(--color-or) 70%,
+      #8C7142 100%);
+  background-size: 200% auto;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: shimmer 5s ease-in-out infinite alternate;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Premium 3D Glass Card */
+.glass-premium {
+  background: rgba(7, 49, 42, 0.3);
+  /* Vert blur */
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(191, 160, 106, 0.15);
+  /* Or border */
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(240, 230, 194, 0.05);
+  /* Ivoire highlight */
+}
+
+/* Marquee setup */
+.marquee-track {
+  display: flex;
+  white-space: nowrap;
+  animation: marquee 30s linear infinite;
+  min-width: max-content;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Dividers */
+.divider-luxury {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(191, 160, 106, 0.5), transparent);
+}
+
+/* 3D Cards */
+.card-3d {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+.card-3d-inner {
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.7s ease;
+}
+
+.card-3d:hover .card-3d-inner {
+  transform: rotateY(-8deg) rotateX(5deg) scale3d(1.02, 1.02, 1.02);
+  box-shadow: -20px 20px 50px rgba(0, 0, 0, 0.7), 0 0 40px rgba(191, 160, 106, 0.15);
+}
+
+/* Elegant Buttons */
+.btn-gold {
+  background: transparent;
+  border: 1px solid rgba(191, 160, 106, 0.4);
+  color: var(--color-or);
+  padding: 1rem 2.5rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.75rem;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gold::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-or);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 0;
+}
+
+.btn-gold:hover::before {
+  top: 0;
+}
+
+.btn-gold span {
+  position: relative;
+  z-index: 1;
+  transition: color 0.4s ease;
+}
+
+.btn-gold:hover span {
+  color: var(--background);
+}
