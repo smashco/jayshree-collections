@@ -20,7 +20,7 @@
   --color-ivoire: #F0E6C2;
 
   /* Structural Colors */
-  --background: #031411;
+  --background: #000000;
   --foreground: var(--color-ivoire);
 
   /* Chapter Colors for Scroll Storytelling */
@@ -40,7 +40,7 @@ html {
 }
 
 body {
-  background-color: var(--background);
+  background-color: #000000;
   color: var(--foreground);
   overflow-x: hidden;
   font-family: 'Montserrat', sans-serif;
@@ -153,14 +153,14 @@ body {
 
 /* ------------------ Liquid Glass Cards ------------------ */
 .glass-premium {
-  background: rgba(7, 49, 42, 0.25);
-  backdrop-filter: blur(32px) saturate(180%) brightness(1.1);
-  -webkit-backdrop-filter: blur(32px) saturate(180%) brightness(1.1);
-  border: 1px solid rgba(191, 160, 106, 0.18);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid rgba(191, 160, 106, 0.2);
   box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.8),
-    inset 0 1px 0 rgba(240, 230, 194, 0.06),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+    0 40px 80px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(191, 160, 106, 0.08),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
 }
 
 .glass-card {
@@ -365,8 +365,8 @@ body {
 /* ------------------ Video overlay gradient ------------------ */
 .video-overlay {
   background: linear-gradient(to bottom,
-      rgba(3, 20, 17, 0.3) 0%,
-      transparent 30%,
-      transparent 60%,
-      rgba(3, 20, 17, 0.95) 100%);
+      rgba(0, 0, 0, 0.35) 0%,
+      transparent 25%,
+      transparent 55%,
+      rgba(0, 0, 0, 0.97) 100%);
 }

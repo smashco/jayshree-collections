@@ -1,129 +1,135 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useRef } from 'react';
 
-const collections = [
+const chapters = [
     {
-        id: 1,
-        title: 'Necklaces',
-        subtitle: 'Temple & Bridal',
-        description: 'Intricate temple-inspired necklaces, harams & layered sets',
-        color: '#07312A',
+        roman: 'I',
+        title: 'The Empress',
+        subtitle: 'Necklaces',
+        description: 'Intricate temple-inspired necklaces, harams & layered sets crafted from 22k gold.',
+        count: '48 pieces',
         video: '/videos/hero-jewelry.mp4',
         image: '/images/necklace.png',
-        count: '48 pieces',
+        size: 'large', // spans 2 rows
     },
     {
-        id: 2,
-        title: 'Bangles',
-        subtitle: 'Kolhapuri & Bridal',
-        description: 'Traditional Kolhapuri sets, kundan bangles & bridal stacks',
-        color: '#1A0A12',
-        video: '/videos/bangles-reveal.mp4',
-        image: '/images/bangles.png',
-        count: '62 pieces',
-    },
-    {
-        id: 3,
-        title: 'Earrings',
-        subtitle: 'Jhumka & Chandelier',
-        description: 'Handcrafted jhumkas, chandeliers & oxidised silver drops',
-        color: '#0D1A28',
-        video: '/videos/earrings-reveal.mp4',
-        image: '/images/earrings.png',
+        roman: 'II',
+        title: 'The Chandeliers',
+        subtitle: 'Earrings',
+        description: 'Handcrafted jhumkas, chandeliers & oxidised drops.',
         count: '94 pieces',
+        video: '/videos/v3.mp4',
+        image: '/images/earrings.png',
+        size: 'small',
     },
     {
-        id: 4,
-        title: 'Maang Tikka',
-        subtitle: 'Bridal & Festival',
-        description: 'Elaborate bridal tikkas, passa, matha patti & hair jewels',
-        color: '#1A1008',
-        video: '/videos/hero-jewelry.mp4',
-        image: '/images/maangtikka.png',
+        roman: 'III',
+        title: 'The Circles',
+        subtitle: 'Bangles',
+        description: 'Kolhapuri sets, kundan bangles & bridal stacks.',
+        count: '62 pieces',
+        video: '/videos/v4.mp4',
+        image: '/images/bangles.png',
+        size: 'small',
+    },
+    {
+        roman: 'IV',
+        title: 'The Crown',
+        subtitle: 'Maang Tikka',
+        description: 'Bridal tikkas, passa & matha patti.',
         count: '36 pieces',
+        video: '/videos/v2.mp4',
+        image: '/images/maangtikka.png',
+        size: 'large',
     },
 ];
 
-function CollectionCard({ item, index }: { item: typeof collections[0], index: number }) {
+function ChapterCard({ chapter, index }: { chapter: typeof chapters[0], index: number }) {
+    const isLarge = chapter.size === 'large';
     const ref = useRef<HTMLDivElement>(null);
 
     return (
         <motion.div
             ref={ref}
-            className="relative h-[80vh] max-h-[700px] overflow-hidden group cursor-pointer"
-            initial={{ opacity: 0, y: 60 }}
+            className={`relative overflow-hidden group cursor-pointer ${isLarge ? 'row-span-2' : 'row-span-1'}`}
+            style={{ minHeight: isLarge ? '640px' : '300px' }}
+            initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
-            whileHover={{ scale: 1.01 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 1.4, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
         >
-            {/* Background Image */}
-            <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-[1.5s] ease-out group-hover:scale-110"
-                style={{ backgroundImage: `url('${item.image}')` }}
-            />
+            {/* 1px gold frame — the key 10x detail */}
+            <div className="absolute inset-0 border border-[#BFA06A]/20 z-30 pointer-events-none
+                            group-hover:border-[#BFA06A]/50 transition-all duration-700" />
 
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#031411]/95" />
-            <div
-                className="absolute inset-0 opacity-60 transition-opacity duration-700 group-hover:opacity-40"
-                style={{ background: `linear-gradient(135deg, ${item.color}cc 0%, transparent 60%)` }}
-            />
+            {/* Chapter Roman numeral — vertical, left edge */}
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 pointer-events-none">
+                <span className="font-cormorant text-[#BFA06A]/15 font-light transition-colors duration-500 group-hover:text-[#BFA06A]/30"
+                    style={{
+                        fontSize: isLarge ? '7rem' : '4rem',
+                        writingMode: 'vertical-rl',
+                        transform: 'rotate(180deg)',
+                        lineHeight: 1,
+                    }}>
+                    {chapter.roman}
+                </span>
+            </div>
 
-            {/* Glare effect */}
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
-                style={{
-                    background: 'radial-gradient(ellipse at 30% 20%, rgba(191, 160, 106, 0.12) 0%, transparent 60%)',
-                    mixBlendMode: 'color-dodge'
-                }}
-            />
-
-            {/* Content */}
-            <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-10">
-                {/* Piece count */}
-                <motion.p
-                    className="font-montserrat text-[#BFA06A]/60 text-[0.6rem] tracking-[0.4em] uppercase mb-4"
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3 + index * 0.1, duration: 0.8 }}
+            {/* Video background with image fallback */}
+            <div className="absolute inset-0 bg-black">
+                <video
+                    autoPlay loop muted playsInline
+                    className="w-full h-full object-cover opacity-80 transition-transform duration-[2s] ease-out group-hover:scale-105"
                 >
-                    {item.count}
-                </motion.p>
+                    <source src={chapter.video} type="video/mp4" />
+                </video>
+                {/* Dark gradient over video */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10" />
+                {/* Gold tint on hover */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                    style={{ background: 'linear-gradient(135deg, rgba(191,160,106,0.08) 0%, transparent 60%)' }} />
+            </div>
 
-                {/* Gold accent line */}
-                <motion.div
-                    className="w-0 group-hover:w-16 h-px bg-[#BFA06A] mb-4 transition-all duration-700 ease-out"
-                />
+            {/* Content — bottom */}
+            <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 md:p-8">
+                {/* Piece count monospaced */}
+                <p className="font-montserrat text-[#BFA06A]/40 text-[0.55rem] tracking-[0.4em] uppercase mb-3 font-light">
+                    {chapter.count}
+                </p>
 
-                {/* Title */}
-                <h3 className="font-cormorant text-[#F0E6C2] font-light leading-none mb-2"
-                    style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)' }}
+                {/* Gold accent line — animates on hover */}
+                <div className="w-0 group-hover:w-12 h-px bg-[#BFA06A] mb-4 transition-all duration-700 ease-out" />
+
+                {/* Chapter title */}
+                <h3
+                    className="font-cormorant text-[#F0E6C2] font-light leading-none mb-1"
+                    style={{ fontSize: isLarge ? 'clamp(2rem, 4vw, 3.5rem)' : 'clamp(1.4rem, 3vw, 2rem)' }}
                 >
-                    {item.title}
+                    {chapter.title}
                 </h3>
 
-                <p className="font-montserrat text-[#BFA06A] text-xs tracking-widest uppercase mb-3 font-light">
-                    {item.subtitle}
+                {/* Subtitle */}
+                <p className="font-montserrat text-[#BFA06A]/70 text-[0.6rem] tracking-[0.35em] uppercase mb-3 font-light">
+                    {chapter.subtitle}
                 </p>
 
-                <p className="font-montserrat text-[#F0E6C2]/50 text-xs leading-relaxed font-light max-w-xs mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    {item.description}
-                </p>
+                {/* Description — only on hover for large */}
+                {isLarge && (
+                    <p className="font-montserrat text-[#F0E6C2]/40 text-xs leading-relaxed font-light max-w-xs mb-5
+                                  opacity-0 group-hover:opacity-100 transition-opacity duration-600 translate-y-2 group-hover:translate-y-0">
+                        {chapter.description}
+                    </p>
+                )}
 
                 {/* Explore link */}
-                <div className="flex items-center gap-3 opacity-70 group-hover:opacity-100 transition-opacity duration-500">
-                    <span className="font-montserrat text-[#BFA06A] text-[0.65rem] tracking-[0.3em] uppercase font-medium">
+                <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                    <span className="font-montserrat text-[#BFA06A] text-[0.55rem] tracking-[0.4em] uppercase font-medium">
                         Explore
                     </span>
-                    <motion.div
-                        className="w-6 h-px bg-[#BFA06A] inline-block"
-                        animate={{ scaleX: [1, 1.5, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                    />
-                    <span className="text-[#BFA06A] text-sm">→</span>
+                    <div className="w-8 h-px bg-[#BFA06A]" />
+                    <span className="text-[#BFA06A] text-xs">→</span>
                 </div>
             </div>
         </motion.div>
@@ -132,83 +138,79 @@ function CollectionCard({ item, index }: { item: typeof collections[0], index: n
 
 export default function FeaturedCollections() {
     return (
-        <section className="bg-[#031411] py-24 md:py-32 relative z-20">
+        <section className="bg-black py-28 md:py-36 relative z-20">
 
-            {/* Gold Marquee Bar at top */}
-            <div className="overflow-hidden border-t border-b border-[#BFA06A]/15 py-4 mb-20">
-                <div className="marquee-track">
-                    {Array.from({ length: 8 }).map((_, i) => (
-                        <span key={i} className="font-montserrat text-[#BFA06A]/40 text-xs tracking-[0.5em] uppercase font-light mx-8 shrink-0">
-                            Jayshree •&nbsp; Heritage •&nbsp; Crafted •&nbsp; Collection •&nbsp;
-                        </span>
-                    ))}
-                </div>
-            </div>
-
-            <div className="max-w-7xl mx-auto px-6 md:px-12">
+            <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
 
                 {/* Section Header */}
-                <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-16">
+                <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-16 gap-8">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        <p className="font-montserrat text-[#BFA06A] text-xs tracking-[0.4em] uppercase font-light mb-4">
-                            Curated for You
+                        <p className="font-montserrat text-[#BFA06A]/50 text-[0.55rem] tracking-[0.7em] uppercase font-light mb-5">
+                            Jayshree Maison · Curated Collections
                         </p>
-                        <h2 className="font-cormorant text-[#F0E6C2] font-light leading-none"
-                            style={{ fontSize: 'clamp(3rem, 7vw, 6rem)' }}
+                        <h2
+                            className="font-cormorant text-[#F0E6C2] font-light leading-none"
+                            style={{ fontSize: 'clamp(3rem, 7vw, 6.5rem)' }}
                         >
-                            Our <em className="text-[#BFA06A]">Collections</em>
+                            The <em className="text-[#BFA06A]">Chapters</em>
                         </h2>
                     </motion.div>
 
-                    <motion.div
+                    <motion.p
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
                         viewport={{ once: true }}
                         transition={{ duration: 1, delay: 0.3 }}
-                        className="mt-6 md:mt-0"
+                        className="font-montserrat text-[#F0E6C2]/30 text-xs leading-relaxed font-light max-w-[240px]"
                     >
-                        <p className="font-montserrat text-[#F0E6C2]/40 text-xs leading-relaxed font-light max-w-xs">
-                            Over 240+ handcrafted pieces inspired by Maharashtra's golden heritage, available across 4 signature collections.
-                        </p>
-                    </motion.div>
+                        Over 240 handcrafted pieces across 4 signature collections. Each piece, a chapter in Maharashtra's golden story.
+                    </motion.p>
                 </div>
 
-                {/* Asymmetric Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-
-                    {/* Large card — Necklaces */}
-                    <div className="md:col-span-7">
-                        <CollectionCard item={collections[0]} index={0} />
+                {/* Editorial Grid — asymmetric, no rounded corners */}
+                <div className="grid grid-cols-1 md:grid-cols-12 md:grid-rows-2 gap-3">
+                    {/* Large — Necklaces */}
+                    <div className="md:col-span-7 md:row-span-2">
+                        <ChapterCard chapter={chapters[0]} index={0} />
                     </div>
-
-                    {/* Small card — Bangles */}
-                    <div className="md:col-span-5">
-                        <CollectionCard item={collections[1]} index={1} />
+                    {/* Small — Earrings */}
+                    <div className="md:col-span-5 md:row-span-1">
+                        <ChapterCard chapter={chapters[1]} index={1} />
                     </div>
-
-                    {/* Small card — Earrings */}
-                    <div className="md:col-span-5">
-                        <CollectionCard item={collections[2]} index={2} />
-                    </div>
-
-                    {/* Large card — Maang Tikka */}
-                    <div className="md:col-span-7">
-                        <CollectionCard item={collections[3]} index={3} />
+                    {/* Small — Bangles */}
+                    <div className="md:col-span-5 md:row-span-1">
+                        <ChapterCard chapter={chapters[2]} index={2} />
                     </div>
                 </div>
 
-                {/* Bottom CTA */}
+                {/* Chapter IV — Maang Tikka — full width below */}
+                <div className="mt-3">
+                    <ChapterCard chapter={chapters[3]} index={3} />
+                </div>
+
+                {/* Bottom marquee */}
+                <div className="overflow-hidden border-t border-[#BFA06A]/10 mt-16 pt-6">
+                    <div className="marquee-track">
+                        {Array.from({ length: 10 }).map((_, i) => (
+                            <span key={i} className="font-montserrat text-[#BFA06A]/20 text-[0.5rem] tracking-[0.6em] uppercase font-light mx-6 shrink-0">
+                                Jayshree Maison &nbsp;•&nbsp; Crafted in Maharashtra &nbsp;•&nbsp; Est. 1976 &nbsp;•&nbsp;
+                            </span>
+                        ))}
+                    </div>
+                </div>
+
+                {/* CTA */}
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 0.4 }}
-                    className="text-center mt-16"
+                    transition={{ duration: 1, delay: 0.3 }}
+                    className="text-center mt-14"
                 >
                     <button className="btn-gold cursor-pointer">
                         <span>View All 240+ Pieces</span>
