@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion';
 import { useRef } from 'react';
+import { assetUrl } from '@/lib/assets';
 
 function ScrollProgressBar() {
     const { scrollYProgress } = useScroll();
@@ -179,8 +180,8 @@ export default function Hero() {
                                 autoPlay loop muted playsInline
                                 className="absolute inset-0 w-full h-full object-cover"
                             >
-                                <source src="/videos/v2.mp4" type="video/mp4" />
-                                <source src="/videos/hero-jewelry.mp4" type="video/mp4" />
+                                <source src={assetUrl('/videos/v2.mp4')} type="video/mp4" />
+                                <source src={assetUrl('/videos/hero-jewelry.mp4')} type="video/mp4" />
                             </video>
 
                             {/* Gradient overlay */}

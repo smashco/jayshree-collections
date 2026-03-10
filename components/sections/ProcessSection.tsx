@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { assetUrl } from '@/lib/assets';
 
 const steps = [
     {
@@ -35,7 +36,7 @@ export default function ProcessSection() {
                     autoPlay loop muted playsInline
                     className="w-full h-full object-cover opacity-10"
                 >
-                    <source src="/videos/v6.mp4" type="video/mp4" />
+                    <source src={assetUrl('/videos/v6.mp4')} type="video/mp4" />
                 </video>
                 <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
             </div>
@@ -112,7 +113,7 @@ export default function ProcessSection() {
                         autoPlay loop muted playsInline
                         className="w-full h-full object-cover"
                     >
-                        <source src="/videos/v6.mp4" type="video/mp4" />
+                        <source src={assetUrl('/videos/v6.mp4')} type="video/mp4" />
                     </video>
                     <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/80" />
                     <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/70" />

@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import { assetUrl } from '@/lib/assets';
 
 const milestones = [
     { year: '1976', label: 'Founded in Pune by Jayshree Bhoir' },
@@ -61,7 +62,7 @@ export default function BrandStory() {
                             autoPlay loop muted playsInline
                             className="w-full h-full object-cover"
                         >
-                            <source src="/videos/v5.mp4" type="video/mp4" />
+                            <source src={assetUrl('/videos/v5.mp4')} type="video/mp4" />
                         </video>
                         {/* Right-side fade to black — seamless merge with text panel */}
                         <div className="absolute inset-0"

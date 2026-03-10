@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import Link from 'next/link';
+import { assetUrl } from '@/lib/assets';
 
 const chapters = [
     {
@@ -11,9 +12,9 @@ const chapters = [
         subtitle: 'Necklaces',
         description: 'Intricate temple-inspired necklaces, harams & layered sets crafted from 22k gold.',
         count: '48 pieces',
-        video: '/videos/hero-jewelry.mp4',
+        video: assetUrl('/videos/hero-jewelry.mp4'),
         image: '/images/necklace.png',
-        size: 'large', // spans 2 rows
+        size: 'large',
     },
     {
         roman: 'II',
@@ -21,7 +22,7 @@ const chapters = [
         subtitle: 'Earrings',
         description: 'Handcrafted jhumkas, chandeliers & oxidised drops.',
         count: '94 pieces',
-        video: '/videos/v3.mp4',
+        video: assetUrl('/videos/v3.mp4'),
         image: '/images/earrings.png',
         size: 'small',
     },
@@ -31,7 +32,7 @@ const chapters = [
         subtitle: 'Bangles',
         description: 'Kolhapuri sets, kundan bangles & bridal stacks.',
         count: '62 pieces',
-        video: '/videos/v4.mp4',
+        video: assetUrl('/videos/v4.mp4'),
         image: '/images/bangles.png',
         size: 'small',
     },
@@ -41,7 +42,7 @@ const chapters = [
         subtitle: 'Maang Tikka',
         description: 'Bridal tikkas, passa & matha patti.',
         count: '36 pieces',
-        video: '/videos/v2.mp4',
+        video: assetUrl('/videos/v2.mp4'),
         image: '/images/maangtikka.png',
         size: 'large',
     },
