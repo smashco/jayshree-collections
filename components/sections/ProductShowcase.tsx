@@ -68,19 +68,20 @@ export default function ProductShowcase() {
                     </motion.div>
                 </div>
 
-                {/* Product Grid */}
+                {/* Product Slider */}
                 <motion.div
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12 md:gap-y-16"
+                    className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-12 w-full"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     layout
                 >
                     {filteredProducts.map((product, index) => (
                         <motion.div
                             key={product.id}
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
+                            initial={{ opacity: 0, x: 40 }}
+                            whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true, margin: '-50px' }}
                             transition={{ duration: 0.8, delay: index * 0.1 }}
-                            className="group flex flex-col cursor-pointer"
+                            className="group flex flex-col cursor-pointer min-w-[85vw] sm:min-w-[45vw] lg:min-w-[30vw] snap-center shrink-0"
                         >
                             {/* Image Container with Hover Effect */}
                             <div className="relative aspect-[4/5] overflow-hidden bg-[#111] mb-6 border border-[#BFA06A]/10 group-hover:border-[#BFA06A]/30 transition-colors duration-500">

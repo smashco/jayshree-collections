@@ -173,25 +173,16 @@ export default function FeaturedCollections() {
                     </motion.p>
                 </div>
 
-                {/* Editorial Grid — asymmetric, no rounded corners */}
-                <div className="grid grid-cols-1 md:grid-cols-12 md:grid-rows-2 gap-3">
-                    {/* Large — Necklaces */}
-                    <div className="md:col-span-7 md:row-span-2">
-                        <ChapterCard chapter={chapters[0]} index={0} />
-                    </div>
-                    {/* Small — Earrings */}
-                    <div className="md:col-span-5 md:row-span-1">
-                        <ChapterCard chapter={chapters[1]} index={1} />
-                    </div>
-                    {/* Small — Bangles */}
-                    <div className="md:col-span-5 md:row-span-1">
-                        <ChapterCard chapter={chapters[2]} index={2} />
-                    </div>
-                </div>
-
-                {/* Chapter IV — Maang Tikka — full width below */}
-                <div className="mt-3">
-                    <ChapterCard chapter={chapters[3]} index={3} />
+                {/* Chapter Slider */}
+                <div
+                    className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-8 w-full"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
+                    {chapters.map((chapter, index) => (
+                        <div key={chapter.roman} className="min-w-[85vw] md:min-w-[45vw] lg:min-w-[30vw] snap-center shrink-0">
+                            <ChapterCard chapter={{ ...chapter, size: 'large' }} index={index} />
+                        </div>
+                    ))}
                 </div>
 
                 {/* Bottom marquee */}
