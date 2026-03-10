@@ -1,7 +1,23 @@
 import type { Metadata } from "next";
 import LenisProvider from "@/components/providers/LenisProvider";
-import CustomCursor from "@/components/ui/CustomCursor";
+import { CartProvider } from "@/context/CartContext";
+import { Cormorant, Montserrat } from 'next/font/google';
 import "./globals.css";
+
+const cormorant = Cormorant({
+    subsets: ['latin'],
+    variable: '--font-cormorant',
+    weight: ['300', '400', '500', '600', '700'],
+    style: ['normal', 'italic'],
+    display: 'swap',
+});
+
+const montserrat = Montserrat({
+    subsets: ['latin'],
+    variable: '--font-montserrat',
+    weight: ['200', '300', '400', '500', '600', '700'],
+    display: 'swap',
+});
 
 export const metadata: Metadata = {
     title: "Jayshree Collections — 2026 Luxury Edition",
@@ -20,21 +36,15 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en" suppressHydrationWarning>
-            <head>
-                <link rel="preconnect" href="https://fonts.googleapis.com" />
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                <link
-                    href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600;700&display=swap"
-                    rel="stylesheet"
-                />
-            </head>
+        <html lang="en" suppressHydrationWarning className={`${cormorant.variable} ${montserrat.variable}`}>
+            <head />
             <body className="bg-brand antialiased overflow-x-hidden">
                 <div className="bg-noise" />
-                <LenisProvider>
-                    <CustomCursor />
-                    {children}
-                </LenisProvider>
+                <CartProvider>
+                    <LenisProvider>
+                        {children}
+                    </LenisProvider>
+                </CartProvider>
             </body>
         </html>
     );

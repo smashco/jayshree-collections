@@ -41,10 +41,10 @@ export default function BrandStory() {
                     <span className="font-cormorant text-[#BFA06A]/20 font-light"
                         style={{ fontSize: '5rem', lineHeight: 1 }}>V</span>
                     <div>
-                        <p className="font-montserrat text-[#BFA06A]/50 text-[0.55rem] tracking-[0.6em] uppercase font-light">
+                        <p className="font-montserrat text-[#BFA06A]/90 text-[0.55rem] tracking-[0.6em] uppercase font-light">
                             Chapter V · The Story
                         </p>
-                        <p className="font-cormorant text-[#F0E6C2]/60 text-xl font-light italic">
+                        <p className="font-cormorant text-[#F0E6C2]/90 text-xl font-light italic">
                             A Legacy of Craftsmanship
                         </p>
                     </div>
@@ -55,7 +55,7 @@ export default function BrandStory() {
             <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[90vh] mt-0">
 
                 {/* Left — Full cinematic video */}
-                <div className="relative overflow-hidden min-h-[50vh] lg:min-h-full">
+                <div className="relative overflow-hidden min-h-[45vh] lg:min-h-full">
                     <motion.div style={{ scale: imageScale }} className="absolute inset-0">
                         <video
                             autoPlay loop muted playsInline
@@ -76,16 +76,16 @@ export default function BrandStory() {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 1.2, delay: 0.4 }}
-                        className="absolute bottom-10 left-8 glass-premium p-5"
-                        style={{ maxWidth: '200px' }}
+                        className="absolute bottom-6 left-4 md:bottom-10 md:left-8 glass-premium p-3 md:p-5"
+                        style={{ maxWidth: '160px' }}
                     >
                         <p className="font-cormorant text-[#BFA06A] font-light" style={{ fontSize: '3.5rem', lineHeight: 1 }}>50</p>
-                        <p className="font-montserrat text-[#F0E6C2]/60 text-[0.55rem] tracking-widest uppercase mt-1 font-light">Years of Heritage</p>
+                        <p className="font-montserrat text-[#F0E6C2]/90 text-[0.55rem] tracking-widest uppercase mt-1 font-light">Years of Heritage</p>
                     </motion.div>
                 </div>
 
                 {/* Right — Sticky text panel */}
-                <div className="flex flex-col justify-center px-8 md:px-14 lg:px-16 py-20">
+                <div className="flex flex-col justify-center px-5 md:px-14 lg:px-16 py-12 md:py-20">
                     <motion.div style={{ y: textY }}>
 
                         <motion.h2
@@ -105,7 +105,7 @@ export default function BrandStory() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 1, delay: 0.2 }}
-                            className="font-montserrat text-[#F0E6C2]/50 text-xs leading-relaxed font-light mb-14 max-w-sm"
+                            className="font-montserrat text-[#F0E6C2]/80 text-xs leading-relaxed font-light mb-14 max-w-sm"
                         >
                             For half a century, Jayshree Collections has been the guardian of Maharashtrian jewelry artistry. Each piece is a conversation between ancient tradition and living, breathing craft — hammered, cast, and finished by generations of skilled artisans.
                         </motion.p>
@@ -132,7 +132,7 @@ export default function BrandStory() {
                                     <div className="absolute -left-5 top-2 w-2 h-2 rounded-full bg-[#BFA06A] -translate-x-[3px]" />
                                     <div>
                                         <span className="font-cormorant text-[#BFA06A] text-xl font-light">{m.year}</span>
-                                        <p className="font-montserrat text-[#F0E6C2]/45 text-[0.65rem] font-light mt-0.5 leading-relaxed">{m.label}</p>
+                                        <p className="font-montserrat text-[#F0E6C2]/75 text-[0.65rem] font-light mt-0.5 leading-relaxed">{m.label}</p>
                                     </div>
                                 </motion.div>
                             ))}
@@ -166,8 +166,8 @@ export default function BrandStory() {
                                 className="text-center border-r border-[#BFA06A]/10 last:border-0"
                             >
                                 <p className="counter-display">{s.number}</p>
-                                <p className="font-montserrat text-[#BFA06A]/60 text-[0.55rem] tracking-[0.35em] uppercase font-light mt-1">{s.unit}</p>
-                                <p className="font-montserrat text-[#F0E6C2]/25 text-[0.6rem] mt-1.5 font-light">{s.label}</p>
+                                <p className="font-montserrat text-[#BFA06A]/90 text-[0.55rem] tracking-[0.35em] uppercase font-light mt-1">{s.unit}</p>
+                                <p className="font-montserrat text-[#F0E6C2]/60 text-[0.6rem] mt-1.5 font-light">{s.label}</p>
                             </motion.div>
                         ))}
                     </div>

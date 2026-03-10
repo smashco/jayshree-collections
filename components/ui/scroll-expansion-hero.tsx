@@ -42,11 +42,7 @@ const ScrollExpandMedia = ({
 
     const sectionRef = useRef<HTMLDivElement | null>(null);
 
-    useEffect(() => {
-        setScrollProgress(0);
-        setShowContent(false);
-        setMediaFullyExpanded(false);
-    }, [mediaType]);
+
 
     useEffect(() => {
         const handleWheel = (e: WheelEvent) => {

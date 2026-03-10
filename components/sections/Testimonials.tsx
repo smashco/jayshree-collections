@@ -50,7 +50,7 @@ export default function Testimonials() {
     const next = () => setCurrent((c) => (c === testimonials.length - 1 ? 0 : c + 1));
 
     return (
-        <section className="py-32 bg-[#031411] relative overflow-hidden z-20">
+        <section className="py-16 md:py-32 bg-[#031411] relative overflow-hidden z-20">
             {/* Decorative */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-32 bg-gradient-to-b from-transparent via-[#BFA06A]/50 to-transparent" />
 
@@ -65,7 +65,7 @@ export default function Testimonials() {
                     <p className="text-[#BFA06A] font-inter text-xs tracking-[0.4em] uppercase font-semibold mb-6">
                         Customer Stories
                     </p>
-                    <h2 className="font-playfair text-5xl md:text-7xl text-[#F0E6C2] font-normal mb-8">
+                    <h2 className="font-playfair text-4xl md:text-5xl lg:text-7xl text-[#F0E6C2] font-normal mb-8">
                         Her Voice, Her <span className="text-[#BFA06A] italic">Legacy</span>
                     </h2>
                     <div className="divider-luxury mx-auto" />
@@ -80,13 +80,13 @@ export default function Testimonials() {
                             animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
                             exit={{ opacity: 0, x: -40, filter: 'blur(10px)' }}
                             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                            className="bg-[#07312A]/40 backdrop-blur-xl border border-[#BFA06A]/20 p-10 md:p-16 text-center max-w-3xl mx-auto relative shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
+                            className="bg-[#07312A]/40 backdrop-blur-xl border border-[#BFA06A]/20 p-6 md:p-10 lg:p-16 text-center max-w-3xl mx-auto relative shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
                         >
                             {/* Quote icon */}
                             <Quote className="w-12 h-12 text-[#BFA06A]/30 mx-auto mb-8" aria-hidden />
 
                             <p className="font-playfair text-[#F0E6C2] text-2xl md:text-3xl italic leading-relaxed mb-10 font-light">
-                                "{testimonials[current].review}"
+                                &quot;{testimonials[current].review}&quot;
                             </p>
 
                             {/* Stars */}
@@ -100,7 +100,7 @@ export default function Testimonials() {
                             <div className="flex justify-center items-center gap-6">
                                 <div className="text-right">
                                     <p className="font-playfair text-xl text-[#F0E6C2]">{testimonials[current].name}</p>
-                                    <p className="font-inter text-[#F0E6C2]/50 text-xs tracking-widest uppercase mt-1">
+                                    <p className="font-inter text-[#F0E6C2]/80 text-xs tracking-widest uppercase mt-1">
                                         {testimonials[current].location}
                                     </p>
                                 </div>
@@ -114,21 +114,41 @@ export default function Testimonials() {
                         </motion.div>
                     </AnimatePresence>
 
-                    {/* Nav Buttons */}
-                    <button
-                        onClick={prev}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-16 w-12 h-12 rounded-full border border-[#BFA06A]/30 flex items-center justify-center hover:bg-[#BFA06A] hover:text-[#031411] text-[#BFA06A] transition-colors duration-500 cursor-pointer bg-[#031411]"
-                        aria-label="Previous"
-                    >
-                        <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button
-                        onClick={next}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-16 w-12 h-12 rounded-full border border-[#BFA06A]/30 flex items-center justify-center hover:bg-[#BFA06A] hover:text-[#031411] text-[#BFA06A] transition-colors duration-500 cursor-pointer bg-[#031411]"
-                        aria-label="Next"
-                    >
-                        <ChevronRight className="w-5 h-5" />
-                    </button>
+                    {/* Nav Buttons — below card on mobile, floating on desktop */}
+                    <div className="flex md:block">
+                        <button
+                            onClick={prev}
+                            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 w-12 h-12 rounded-full border border-[#BFA06A]/30 items-center justify-center hover:bg-[#BFA06A] hover:text-[#031411] text-[#BFA06A] transition-colors duration-500 cursor-pointer bg-[#031411]"
+                            aria-label="Previous"
+                        >
+                            <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <button
+                            onClick={next}
+                            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-16 w-12 h-12 rounded-full border border-[#BFA06A]/30 items-center justify-center hover:bg-[#BFA06A] hover:text-[#031411] text-[#BFA06A] transition-colors duration-500 cursor-pointer bg-[#031411]"
+                            aria-label="Next"
+                        >
+                            <ChevronRight className="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    {/* Mobile nav row */}
+                    <div className="flex md:hidden justify-center gap-6 mt-8">
+                        <button
+                            onClick={prev}
+                            className="w-12 h-12 rounded-full border border-[#BFA06A]/30 flex items-center justify-center hover:bg-[#BFA06A] hover:text-[#031411] text-[#BFA06A] transition-colors duration-500 cursor-pointer bg-[#031411]"
+                            aria-label="Previous"
+                        >
+                            <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <button
+                            onClick={next}
+                            className="w-12 h-12 rounded-full border border-[#BFA06A]/30 flex items-center justify-center hover:bg-[#BFA06A] hover:text-[#031411] text-[#BFA06A] transition-colors duration-500 cursor-pointer bg-[#031411]"
+                            aria-label="Next"
+                        >
+                            <ChevronRight className="w-5 h-5" />
+                        </button>
+                    </div>
                 </div>
 
                 {/* Dots */}

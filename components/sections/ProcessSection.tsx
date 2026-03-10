@@ -27,7 +27,7 @@ const steps = [
 
 export default function ProcessSection() {
     return (
-        <section className="relative bg-black py-32 overflow-hidden z-20">
+        <section className="relative bg-black py-20 md:py-32 overflow-hidden z-20">
 
             {/* Background: v6.mp4 (artisan hands) at very low opacity */}
             <div className="absolute inset-0">
@@ -54,7 +54,7 @@ export default function ProcessSection() {
                         viewport={{ once: true }}
                         transition={{ duration: 1.2 }}
                     >
-                        <p className="font-montserrat text-[#BFA06A]/40 text-[0.55rem] tracking-[0.7em] uppercase font-light mb-5">
+                        <p className="font-montserrat text-[#BFA06A]/90 text-[0.55rem] tracking-[0.7em] uppercase font-light mb-5">
                             Chapter VI · The Making
                         </p>
                         <h2
@@ -76,7 +76,7 @@ export default function ProcessSection() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 1.2, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
-                            className="group relative border-l border-[#BFA06A]/10 first:border-0 px-8 py-10 hover:bg-[#BFA06A]/[0.02] transition-colors duration-700"
+                            className="group relative md:border-l border-[#BFA06A]/10 first:border-0 px-5 md:px-8 py-8 md:py-10 hover:bg-[#BFA06A]/[0.02] transition-colors duration-700 border-t md:border-t-0 first:border-t-0"
                         >
                             {/* Large muted step number */}
                             <p className="font-cormorant text-[#BFA06A]/12 font-light leading-none mb-8 transition-colors duration-500 group-hover:text-[#BFA06A]/20"
@@ -92,7 +92,7 @@ export default function ProcessSection() {
                                 {step.title}
                             </h3>
 
-                            <p className="font-montserrat text-[#F0E6C2]/35 text-[0.7rem] leading-relaxed font-light">
+                            <p className="font-montserrat text-[#F0E6C2]/80 text-[0.7rem] leading-relaxed font-light">
                                 {step.description}
                             </p>
                         </motion.div>
@@ -119,15 +119,15 @@ export default function ProcessSection() {
 
                     {/* Overlay text */}
                     <div className="absolute inset-0 flex flex-col justify-center items-center text-center">
-                        <p className="font-montserrat text-[#BFA06A]/50 text-[0.55rem] tracking-[0.6em] uppercase font-light mb-4">
+                        <p className="font-montserrat text-[#BFA06A]/90 text-[0.55rem] tracking-[0.6em] uppercase font-light mb-4">
                             50 Years
                         </p>
                         <h3 className="font-cormorant text-[#F0E6C2] font-light italic"
                             style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
-                            "Every piece is a prayer<br />
-                            <em className="text-[#BFA06A]">in gold."</em>
+                            &quot;Every piece is a prayer<br />
+                            <em className="text-[#BFA06A]">in gold.&quot;</em>
                         </h3>
-                        <p className="font-montserrat text-[#F0E6C2]/30 text-[0.6rem] tracking-widest uppercase mt-4 font-light">
+                        <p className="font-montserrat text-[#F0E6C2]/70 text-[0.6rem] tracking-widest uppercase mt-4 font-light">
                             — Jayshree Bhoir, Founder
                         </p>
                     </div>

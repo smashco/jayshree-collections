@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion';
 import { useRef } from 'react';
 
 function ScrollProgressBar() {
@@ -14,13 +14,26 @@ function ScrollProgressBar() {
     );
 }
 
+// Subcomponent to use hooks correctly
+function ChapterItem({ ch, index, progress }: { ch: string; index: number; progress: MotionValue<number> }) {
+    const scaleX = useTransform(progress, [index * 0.2, index * 0.2 + 0.05], [0, 1]);
+    return (
+        <motion.div className="flex items-center gap-2">
+            <motion.div
+                className="w-3 h-px bg-[#BFA06A]"
+                style={{ scaleX }}
+            />
+            <span className="font-cormorant text-[#BFA06A]/30 text-[0.6rem] font-light">{ch}</span>
+        </motion.div>
+    );
+}
+
 // Roman numeral chapter indicators on right edge
-function ChapterIndicator({ progress }: { progress: any }) {
+function ChapterIndicator({ progress }: { progress: MotionValue<number> }) {
     const chapters = ['I', 'II', 'III', 'IV', 'V'];
-    const activeIndex = useTransform(progress, [0, 0.2, 0.4, 0.6, 0.8, 1], [0, 1, 2, 3, 4, 4]);
 
     return (
-        <div className="fixed right-8 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-4 items-center pointer-events-none">
+        <div className="fixed right-8 top-1/2 -translate-y-1/2 z-50 flex-col gap-4 items-center pointer-events-none hidden md:flex">
             {/* Est line */}
             <div className="absolute -left-16 top-0 -translate-y-full">
                 <p className="font-montserrat text-[#BFA06A]/40 text-[0.5rem] tracking-[0.4em] uppercase"
@@ -29,13 +42,7 @@ function ChapterIndicator({ progress }: { progress: any }) {
                 </p>
             </div>
             {chapters.map((ch, i) => (
-                <motion.div key={ch} className="flex items-center gap-2">
-                    <motion.div
-                        className="w-3 h-px bg-[#BFA06A]"
-                        style={{ scaleX: useTransform(progress, [i * 0.2, i * 0.2 + 0.05], [0, 1]) }}
-                    />
-                    <span className="font-cormorant text-[#BFA06A]/30 text-[0.6rem] font-light">{ch}</span>
-                </motion.div>
+                <ChapterItem key={ch} ch={ch} index={i} progress={progress} />
             ))}
         </div>
     );
@@ -107,7 +114,7 @@ export default function Hero() {
                         {/* Kicker */}
                         <motion.p
                             style={{ opacity: brandOpacity, y: brandY }}
-                            className="font-montserrat text-[#BFA06A]/60 text-[0.6rem] tracking-[0.7em] uppercase font-light mb-10"
+                            className="font-montserrat text-[#BFA06A] text-[0.6rem] tracking-[0.7em] uppercase font-light mb-10"
                         >
                             Maison · Jayshree Collections
                         </motion.p>
@@ -117,11 +124,11 @@ export default function Hero() {
                             style={{ scale: titleScale, opacity: titleOpacity, y: titleY }}
                             className="text-center"
                         >
-                            <p className="font-cormorant text-[#F0E6C2]/50 font-light italic tracking-widest text-2xl md:text-4xl mb-3">
+                            <p className="font-cormorant text-[#F0E6C2]/90 font-light italic tracking-widest text-2xl md:text-4xl mb-3">
                                 The Art of
                             </p>
                             <h1 className="font-cormorant text-[#BFA06A] font-light italic leading-none tracking-[0.05em]"
-                                style={{ fontSize: 'clamp(5rem, 20vw, 18rem)', lineHeight: 0.9 }}
+                                style={{ fontSize: 'clamp(3.5rem, 20vw, 18rem)', lineHeight: 0.9 }}
                             >
                                 Heritage
                             </h1>
@@ -136,7 +143,7 @@ export default function Hero() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ duration: 2, delay: 1.2 }}
-                                className="font-montserrat text-[#BFA06A]/50 text-[0.6rem] tracking-[0.5em] uppercase font-light"
+                                className="font-montserrat text-[#BFA06A]/90 text-[0.6rem] tracking-[0.5em] uppercase font-light"
                             >
                                 Chapter One: The Collection ↓
                             </motion.p>
@@ -162,7 +169,7 @@ export default function Hero() {
                     >
                         <motion.div
                             style={{ borderRadius: cardRadius }}
-                            className="relative w-full max-w-[92vw] h-[78vh] overflow-hidden shadow-[0_80px_160px_rgba(0,0,0,1)]"
+                            className="relative w-full max-w-[92vw] h-[65vh] md:h-[78vh] overflow-hidden shadow-[0_80px_160px_rgba(0,0,0,1)]"
                         >
                             {/* 1px gold frame */}
                             <div className="absolute inset-0 border border-[#BFA06A]/25 z-30 pointer-events-none" style={{ borderRadius: 'inherit' }} />
@@ -182,28 +189,28 @@ export default function Hero() {
                             {/* Beat 4: Video text overlay */}
                             <motion.div
                                 style={{ opacity: overlayOpacity, y: overlayY }}
-                                className="absolute inset-0 flex flex-col justify-end p-10 md:p-16 lg:p-20"
+                                className="absolute inset-0 flex flex-col justify-end p-5 md:p-10 lg:p-16"
                             >
-                                <div className="flex items-end justify-between gap-8">
+                                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-8">
                                     <div className="max-w-xl">
                                         {/* Chapter label */}
-                                        <div className="flex items-center gap-4 mb-6">
+                                        <div className="flex items-center gap-4 mb-4 md:mb-6">
                                             <div className="w-8 h-px bg-[#BFA06A]/60" />
-                                            <span className="font-montserrat text-[#BFA06A]/70 text-[0.55rem] tracking-[0.5em] uppercase font-light">
+                                            <span className="font-montserrat text-[#BFA06A] text-[0.55rem] tracking-[0.5em] uppercase font-light">
                                                 Chapter I
                                             </span>
                                         </div>
                                         <h2 className="font-cormorant text-[#F0E6C2] font-light leading-tight"
-                                            style={{ fontSize: 'clamp(2rem, 4.5vw, 4.5rem)' }}>
+                                            style={{ fontSize: 'clamp(1.5rem, 4.5vw, 4.5rem)' }}>
                                             Crafted for Royalty,<br />
                                             <em className="text-[#BFA06A]">Designed for You.</em>
                                         </h2>
-                                        <p className="font-montserrat text-[#F0E6C2]/50 text-xs leading-relaxed mt-4 font-light max-w-md">
+                                        <p className="font-montserrat text-[#F0E6C2]/90 text-xs leading-relaxed mt-3 md:mt-4 font-light max-w-md">
                                             Where 50 years of Maharashtrian goldsmithing heritage meets the bold vision of 2026.
                                         </p>
                                     </div>
 
-                                    <div className="hidden md:flex flex-col gap-3 shrink-0">
+                                    <div className="flex flex-row md:flex-col gap-2 md:gap-3 shrink-0 mt-4 md:mt-0">
                                         <button className="btn-gold-solid cursor-pointer text-[0.65rem] tracking-[0.25em]">
                                             Discover Collection
                                         </button>

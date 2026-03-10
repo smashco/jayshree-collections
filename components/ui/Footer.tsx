@@ -24,7 +24,7 @@ const Footer = () => (
                         Every piece tells the story of our heritage.
                     </p>
                     <p className="font-playfair italic text-gold text-lg">
-                        "दागिना म्हणजे संस्कृती"
+                        &quot;दागिना म्हणजे संस्कृती&quot;
                     </p>
                     <p className="text-yellow-200/40 text-xs font-inter mt-1">Jewellery is culture.</p>
                 </div>
@@ -71,7 +71,7 @@ const Footer = () => (
                         </div>
                         <div className="flex items-center gap-3">
                             <Mail className="w-4 h-4 text-gold shrink-0" />
-                            <a href="mailto:hello@jayshreecollections.com" className="font-inter text-yellow-100/60 text-sm hover:text-gold transition-colors">hello@jayshreecollections.com</a>
+                            <a href="mailto:hello@jayshreecollections.com" className="font-inter text-yellow-100/60 text-sm hover:text-gold transition-colors break-all">hello@jayshreecollections.com</a>
                         </div>
                     </div>
 

@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
+import Link from 'next/link';
 
 const chapters = [
     {
@@ -54,7 +55,7 @@ function ChapterCard({ chapter, index }: { chapter: typeof chapters[0], index: n
         <motion.div
             ref={ref}
             className={`relative overflow-hidden group cursor-pointer ${isLarge ? 'row-span-2' : 'row-span-1'}`}
-            style={{ minHeight: isLarge ? '640px' : '300px' }}
+            style={{ minHeight: isLarge ? 'clamp(320px, 55vw, 640px)' : 'clamp(180px, 35vw, 300px)' }}
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
@@ -95,7 +96,7 @@ function ChapterCard({ chapter, index }: { chapter: typeof chapters[0], index: n
             {/* Content — bottom */}
             <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 md:p-8">
                 {/* Piece count monospaced */}
-                <p className="font-montserrat text-[#BFA06A]/40 text-[0.55rem] tracking-[0.4em] uppercase mb-3 font-light">
+                <p className="font-montserrat text-[#BFA06A]/80 text-[0.55rem] tracking-[0.4em] uppercase mb-3 font-light">
                     {chapter.count}
                 </p>
 
@@ -104,33 +105,33 @@ function ChapterCard({ chapter, index }: { chapter: typeof chapters[0], index: n
 
                 {/* Chapter title */}
                 <h3
-                    className="font-cormorant text-[#F0E6C2] font-light leading-none mb-1"
+                    className="font-cormorant text-white font-light leading-none mb-1"
                     style={{ fontSize: isLarge ? 'clamp(2rem, 4vw, 3.5rem)' : 'clamp(1.4rem, 3vw, 2rem)' }}
                 >
                     {chapter.title}
                 </h3>
 
                 {/* Subtitle */}
-                <p className="font-montserrat text-[#BFA06A]/70 text-[0.6rem] tracking-[0.35em] uppercase mb-3 font-light">
+                <p className="font-montserrat text-[#BFA06A] text-[0.6rem] tracking-[0.35em] uppercase mb-3 font-light">
                     {chapter.subtitle}
                 </p>
 
                 {/* Description — only on hover for large */}
                 {isLarge && (
-                    <p className="font-montserrat text-[#F0E6C2]/40 text-xs leading-relaxed font-light max-w-xs mb-5
+                    <p className="font-montserrat text-[#F0E6C2]/80 text-xs leading-relaxed font-light max-w-xs mb-5
                                   opacity-0 group-hover:opacity-100 transition-opacity duration-600 translate-y-2 group-hover:translate-y-0">
                         {chapter.description}
                     </p>
                 )}
 
                 {/* Explore link */}
-                <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                <Link href="/shop" className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-500 cursor-pointer">
                     <span className="font-montserrat text-[#BFA06A] text-[0.55rem] tracking-[0.4em] uppercase font-medium">
                         Explore
                     </span>
                     <div className="w-8 h-px bg-[#BFA06A]" />
                     <span className="text-[#BFA06A] text-xs">→</span>
-                </div>
+                </Link>
             </div>
         </motion.div>
     );
@@ -138,7 +139,7 @@ function ChapterCard({ chapter, index }: { chapter: typeof chapters[0], index: n
 
 export default function FeaturedCollections() {
     return (
-        <section className="bg-black py-28 md:py-36 relative z-20">
+        <section className="bg-black py-16 md:py-28 lg:py-36 relative z-20">
 
             <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
 
@@ -150,7 +151,7 @@ export default function FeaturedCollections() {
                         viewport={{ once: true }}
                         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        <p className="font-montserrat text-[#BFA06A]/50 text-[0.55rem] tracking-[0.7em] uppercase font-light mb-5">
+                        <p className="font-montserrat text-[#BFA06A]/90 text-[0.55rem] tracking-[0.7em] uppercase font-light mb-5">
                             Jayshree Maison · Curated Collections
                         </p>
                         <h2
@@ -166,9 +167,9 @@ export default function FeaturedCollections() {
                         whileInView={{ opacity: 1 }}
                         viewport={{ once: true }}
                         transition={{ duration: 1, delay: 0.3 }}
-                        className="font-montserrat text-[#F0E6C2]/30 text-xs leading-relaxed font-light max-w-[240px]"
+                        className="font-montserrat text-[#F0E6C2]/80 text-xs leading-relaxed font-light md:max-w-[240px]"
                     >
-                        Over 240 handcrafted pieces across 4 signature collections. Each piece, a chapter in Maharashtra's golden story.
+                        Over 240 handcrafted pieces across 4 signature collections. Each piece, a chapter in Maharashtra&apos;s golden story.
                     </motion.p>
                 </div>
 
@@ -212,9 +213,9 @@ export default function FeaturedCollections() {
                     transition={{ duration: 1, delay: 0.3 }}
                     className="text-center mt-14"
                 >
-                    <button className="btn-gold cursor-pointer">
+                    <Link href="/shop" className="btn-gold cursor-pointer inline-flex items-center justify-center">
                         <span>View All 240+ Pieces</span>
-                    </button>
+                    </Link>
                 </motion.div>
             </div>
         </section>

@@ -1,0 +1,139 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { catalog } from '@/lib/catalog';
+import { useCart } from '@/context/CartContext';
+
+const categories = ['All', 'Necklaces', 'Earrings', 'Bangles', 'Rings'];
+
+export default function ProductShowcase() {
+    const [activeCategory, setActiveCategory] = useState('All');
+    const { addToCart } = useCart();
+
+    const filteredProducts = activeCategory === 'All'
+        ? catalog
+        : catalog.filter(p => p.category === activeCategory);
+
+    return (
+        <section className="bg-black py-20 md:py-32 relative z-20" id="shop">
+            <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
+
+                {/* Section Header */}
+                <div className="flex flex-col items-center text-center mb-16">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                        <p className="font-montserrat text-[#BFA06A]/90 text-[0.6rem] tracking-[0.6em] uppercase font-light mb-4">
+                            Shop The Collection
+                        </p>
+                        <h2
+                            className="font-cormorant text-[#F0E6C2] font-light leading-none mb-8"
+                            style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)' }}
+                        >
+                            Curated <em className="text-[#BFA06A]">Excellence</em>
+                        </h2>
+                    </motion.div>
+
+                    {/* Category Filters */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1, delay: 0.3 }}
+                        className="flex flex-wrap justify-center gap-6 md:gap-10 border-b border-[#BFA06A]/15 pb-4 w-full max-w-2xl"
+                    >
+                        {categories.map((cat) => (
+                            <button
+                                key={cat}
+                                onClick={() => setActiveCategory(cat)}
+                                className={`font-montserrat text-[0.65rem] tracking-[0.3em] uppercase transition-all duration-500 relative pb-4 
+                                    ${activeCategory === cat ? 'text-[#BFA06A]' : 'text-[#F0E6C2]/50 hover:text-[#F0E6C2]/80'}`}
+                            >
+                                {cat}
+                                {activeCategory === cat && (
+                                    <motion.div
+                                        layoutId="activeTab"
+                                        className="absolute bottom-[-1px] left-0 right-0 h-px bg-[#BFA06A]"
+                                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                    />
+                                )}
+                            </button>
+                        ))}
+                    </motion.div>
+                </div>
+
+                {/* Product Grid */}
+                <motion.div
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12 md:gap-y-16"
+                    layout
+                >
+                    {filteredProducts.map((product, index) => (
+                        <motion.div
+                            key={product.id}
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: '-50px' }}
+                            transition={{ duration: 0.8, delay: index * 0.1 }}
+                            className="group flex flex-col cursor-pointer"
+                        >
+                            {/* Image Container with Hover Effect */}
+                            <div className="relative aspect-[4/5] overflow-hidden bg-[#111] mb-6 border border-[#BFA06A]/10 group-hover:border-[#BFA06A]/30 transition-colors duration-500">
+                                <Link href={`/product/${product.id}`} className="block w-full h-full cursor-pointer z-10 relative">
+                                    <Image
+                                        src={product.image}
+                                        alt={product.name}
+                                        fill
+                                        className="object-cover object-center transition-transform duration-[1.5s] ease-out group-hover:scale-105 opacity-90 group-hover:opacity-100"
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    />
+                                    {/* Overlay Gradient */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                </Link>
+
+                                {/* Action Button (Add to Bag / Explore) */}
+                                <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out z-20 flex justify-center">
+                                    <button
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            addToCart(product);
+                                        }}
+                                        className="bg-[#BFA06A] text-black font-montserrat text-[0.6rem] tracking-[0.2em] uppercase py-3 px-8 w-full font-medium hover:bg-[#D4B580] transition-colors cursor-pointer"
+                                    >
+                                        Add to Bag
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Product Info */}
+                            <Link href={`/product/${product.id}`} className="flex flex-col items-center text-center px-4 cursor-pointer">
+                                <p className="font-montserrat text-[#BFA06A]/70 text-[0.55rem] tracking-[0.3em] uppercase mb-2">
+                                    {product.material}
+                                </p>
+                                <h3 className="font-cormorant text-[#F0E6C2] text-xl md:text-2xl font-light mb-3 group-hover:text-[#BFA06A] transition-colors">
+                                    {product.name}
+                                </h3>
+                                <p className="font-montserrat text-[#BFA06A] text-sm tracking-widest font-light">
+                                    {product.formattedPrice}
+                                </p>
+                            </Link>
+                        </motion.div>
+                    ))}
+                </motion.div>
+
+                {/* View All Details */}
+                <div className="text-center mt-20">
+                    <Link href="/shop" className="btn-gold cursor-pointer inline-flex items-center gap-3 group">
+                        <span>Discover Full Range</span>
+                        <span className="group-hover:translate-x-1 transition-transform">→</span>
+                    </Link>
+                </div>
+            </div>
+        </section>
+    );
+}
