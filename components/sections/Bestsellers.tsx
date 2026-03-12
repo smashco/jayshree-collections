@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { ShoppingBag, Heart, Star } from 'lucide-react';
+import { assetUrl } from '@/lib/assets';
 
 const products = [
     {
@@ -14,9 +15,9 @@ const products = [
         originalPrice: 1999,
         rating: 4.9,
         reviews: 248,
-        image: '/images/necklace.png',
+        image: assetUrl('/images/necklace.png'),
         tag: 'Bestseller',
-        category: 'Necklaces',
+        category: 'Harams & Sets',
     },
     {
         id: 2,
@@ -26,9 +27,9 @@ const products = [
         originalPrice: 999,
         rating: 4.8,
         reviews: 189,
-        image: '/images/earrings.png',
+        image: assetUrl('/images/earrings.png'),
         tag: 'New',
-        category: 'Earrings',
+        category: 'Jhumkas',
     },
     {
         id: 3,
@@ -38,9 +39,9 @@ const products = [
         originalPrice: 1399,
         rating: 4.7,
         reviews: 134,
-        image: '/images/bangles.png',
+        image: assetUrl('/images/bangles.png'),
         tag: 'Hot',
-        category: 'Bangles',
+        category: 'Kadas & Bangles',
     },
     {
         id: 4,
@@ -50,9 +51,9 @@ const products = [
         originalPrice: 2499,
         rating: 5.0,
         reviews: 97,
-        image: '/images/maangtikka.png',
+        image: assetUrl('/images/maangtikka.png'),
         tag: 'Exclusive',
-        category: 'Bridal',
+        category: 'Maang Tikkas',
     },
     {
         id: 5,
@@ -62,9 +63,9 @@ const products = [
         originalPrice: 2999,
         rating: 4.9,
         reviews: 73,
-        image: '/images/necklace.png',
+        image: assetUrl('/images/necklace.png'),
         tag: 'Limited',
-        category: 'Necklaces',
+        category: 'Harams & Sets',
     },
     {
         id: 6,
@@ -74,9 +75,9 @@ const products = [
         originalPrice: 699,
         rating: 4.8,
         reviews: 312,
-        image: '/images/earrings.png',
+        image: assetUrl('/images/earrings.png'),
         tag: 'Bestseller',
-        category: 'Earrings',
+        category: 'Jhumkas',
     },
 ];
 

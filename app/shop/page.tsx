@@ -9,7 +9,7 @@ import { useCart } from '@/context/CartContext';
 import Navbar from '@/components/ui/Navbar';
 import Footer from '@/components/ui/Footer';
 
-const categories = ['All', 'Necklaces', 'Earrings', 'Bangles', 'Rings'];
+const categories = ['All', 'Harams & Sets', 'Jhumkas', 'Kadas & Bangles', 'Maang Tikkas'];
 
 export default function ShopPage() {
     const [activeCategory, setActiveCategory] = useState('All');

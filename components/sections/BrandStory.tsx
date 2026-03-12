@@ -5,15 +5,15 @@ import { useRef } from 'react';
 import { assetUrl } from '@/lib/assets';
 
 const milestones = [
-    { year: '1976', label: 'Founded in Pune by Jayshree Bhoir' },
-    { year: '2001', label: 'First bridal collection launched across Maharashtra' },
-    { year: '2026', label: '50 years · 10,000+ pieces · One living legacy' },
+    { year: '2016', label: 'Founded in Maharashtra by Jayshree Bhoir' },
+    { year: '2021', label: 'Expansion across Thane and Mumbai' },
+    { year: '2026', label: 'Lakhs of happy customers across the state' },
 ];
 
 const stats = [
-    { number: '50', unit: 'Years', label: 'of Unbroken Heritage' },
+    { number: '10', unit: 'Years', label: 'of Heritage' },
     { number: '10K+', unit: 'Pieces', label: 'Crafted by Hand' },
-    { number: '8', unit: 'Awards', label: 'of Excellence' },
+    { number: '1L+', unit: 'Customers', label: 'Satisfied' },
 ];
 
 export default function BrandStory() {
@@ -43,10 +43,10 @@ export default function BrandStory() {
                         style={{ fontSize: '5rem', lineHeight: 1 }}>V</span>
                     <div>
                         <p className="font-montserrat text-[#BFA06A]/90 text-[0.55rem] tracking-[0.6em] uppercase font-light">
-                            Chapter V · The Story
+                            Part V · The Story
                         </p>
                         <p className="font-cormorant text-[#F0E6C2]/90 text-xl font-light italic">
-                            A Legacy of Craftsmanship
+                            A Story of Art
                         </p>
                     </div>
                 </motion.div>
@@ -80,7 +80,7 @@ export default function BrandStory() {
                         className="absolute bottom-6 left-4 md:bottom-10 md:left-8 glass-premium p-3 md:p-5"
                         style={{ maxWidth: '160px' }}
                     >
-                        <p className="font-cormorant text-[#BFA06A] font-light" style={{ fontSize: '3.5rem', lineHeight: 1 }}>50</p>
+                        <p className="font-cormorant text-[#BFA06A] font-light" style={{ fontSize: '3.5rem', lineHeight: 1 }}>10</p>
                         <p className="font-montserrat text-[#F0E6C2]/90 text-[0.55rem] tracking-widest uppercase mt-1 font-light">Years of Heritage</p>
                     </motion.div>
                 </div>
@@ -97,8 +97,8 @@ export default function BrandStory() {
                             className="font-cormorant text-[#F0E6C2] font-light leading-tight mb-8"
                             style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)' }}
                         >
-                            A Legacy of<br />
-                            <em className="text-[#BFA06A]">Craftsmanship</em>
+                            A Story of<br />
+                            <em className="text-[#BFA06A]">Jewelry Art</em>
                         </motion.h2>
 
                         <motion.p
@@ -108,7 +108,7 @@ export default function BrandStory() {
                             transition={{ duration: 1, delay: 0.2 }}
                             className="font-montserrat text-[#F0E6C2]/80 text-xs leading-relaxed font-light mb-14 max-w-sm"
                         >
-                            For half a century, Jayshree Collections has been the guardian of Maharashtrian jewelry artistry. Each piece is a conversation between ancient tradition and living, breathing craft — hammered, cast, and finished by generations of skilled artisans.
+                            For 10 years, Jayshree Collections has kept Maharashtrian jewelry making alive. Every piece mixes old traditions with new designs — made by hand by our best jewelry makers.
                         </motion.p>
 
                         {/* Gold timeline */}

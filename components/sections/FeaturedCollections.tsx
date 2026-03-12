@@ -9,41 +9,41 @@ const chapters = [
     {
         roman: 'I',
         title: 'The Empress',
-        subtitle: 'Necklaces',
+        subtitle: 'Harams & Sets',
         description: 'Intricate temple-inspired necklaces, harams & layered sets crafted from 22k gold.',
         count: '48 pieces',
         video: assetUrl('/videos/hero-jewelry.mp4'),
-        image: '/images/necklace.png',
+        image: assetUrl('/images/necklace.png'),
         size: 'large',
     },
     {
         roman: 'II',
         title: 'The Chandeliers',
-        subtitle: 'Earrings',
+        subtitle: 'Jhumkas',
         description: 'Handcrafted jhumkas, chandeliers & oxidised drops.',
         count: '94 pieces',
         video: assetUrl('/videos/v3.mp4'),
-        image: '/images/earrings.png',
+        image: assetUrl('/images/earrings.png'),
         size: 'small',
     },
     {
         roman: 'III',
         title: 'The Circles',
-        subtitle: 'Bangles',
-        description: 'Kolhapuri sets, kundan bangles & bridal stacks.',
+        subtitle: 'Kadas & Bangles',
+        description: 'Kolhapuri sets, kundan kadas & bridal stacks.',
         count: '62 pieces',
         video: assetUrl('/videos/v4.mp4'),
-        image: '/images/bangles.png',
+        image: assetUrl('/images/bangles.png'),
         size: 'small',
     },
     {
         roman: 'IV',
         title: 'The Crown',
-        subtitle: 'Maang Tikka',
+        subtitle: 'Maang Tikkas',
         description: 'Bridal tikkas, passa & matha patti.',
         count: '36 pieces',
         video: assetUrl('/videos/v2.mp4'),
-        image: '/images/maangtikka.png',
+        image: assetUrl('/images/maangtikka.png'),
         size: 'large',
     },
 ];
@@ -68,7 +68,7 @@ function ChapterCard({ chapter, index }: { chapter: typeof chapters[0], index: n
 
             {/* Chapter Roman numeral — vertical, left edge */}
             <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 pointer-events-none">
-                <span className="font-cormorant text-[#BFA06A]/15 font-light transition-colors duration-500 group-hover:text-[#BFA06A]/30"
+                <span className="font-cormorant text-[#BFA06A]/30 font-light transition-colors duration-500 group-hover:text-[#BFA06A]/60 drop-shadow-md"
                     style={{
                         fontSize: isLarge ? '7rem' : '4rem',
                         writingMode: 'vertical-rl',
@@ -88,7 +88,7 @@ function ChapterCard({ chapter, index }: { chapter: typeof chapters[0], index: n
                     <source src={chapter.video} type="video/mp4" />
                 </video>
                 {/* Dark gradient over video */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/20" />
                 {/* Gold tint on hover */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
                     style={{ background: 'linear-gradient(135deg, rgba(191,160,106,0.08) 0%, transparent 60%)' }} />
@@ -97,7 +97,7 @@ function ChapterCard({ chapter, index }: { chapter: typeof chapters[0], index: n
             {/* Content — bottom */}
             <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 md:p-8">
                 {/* Piece count monospaced */}
-                <p className="font-montserrat text-[#BFA06A]/80 text-[0.55rem] tracking-[0.4em] uppercase mb-3 font-light">
+                <p className="font-montserrat text-[#BFA06A] text-[0.65rem] tracking-[0.4em] uppercase mb-3 font-medium drop-shadow-md">
                     {chapter.count}
                 </p>
 
@@ -106,20 +106,20 @@ function ChapterCard({ chapter, index }: { chapter: typeof chapters[0], index: n
 
                 {/* Chapter title */}
                 <h3
-                    className="font-cormorant text-white font-light leading-none mb-1"
+                    className="font-cormorant text-white font-medium leading-none mb-1 drop-shadow-lg"
                     style={{ fontSize: isLarge ? 'clamp(2rem, 4vw, 3.5rem)' : 'clamp(1.4rem, 3vw, 2rem)' }}
                 >
                     {chapter.title}
                 </h3>
 
                 {/* Subtitle */}
-                <p className="font-montserrat text-[#BFA06A] text-[0.6rem] tracking-[0.35em] uppercase mb-3 font-light">
+                <p className="font-montserrat text-[#F0E6C2] text-[0.7rem] tracking-[0.35em] uppercase mb-3 font-medium drop-shadow-md">
                     {chapter.subtitle}
                 </p>
 
                 {/* Description — only on hover for large */}
                 {isLarge && (
-                    <p className="font-montserrat text-[#F0E6C2]/80 text-xs leading-relaxed font-light max-w-xs mb-5
+                    <p className="font-montserrat text-white text-sm leading-relaxed font-normal max-w-xs mb-5 drop-shadow-md
                                   opacity-0 group-hover:opacity-100 transition-opacity duration-600 translate-y-2 group-hover:translate-y-0">
                         {chapter.description}
                     </p>

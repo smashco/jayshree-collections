@@ -117,7 +117,7 @@ export default function Hero() {
                             style={{ opacity: brandOpacity, y: brandY }}
                             className="font-montserrat text-[#BFA06A] text-[0.6rem] tracking-[0.7em] uppercase font-light mb-10"
                         >
-                            Maison · Jayshree Collections
+                            Jayshree Collections
                         </motion.p>
 
                         {/* Main title block */}
@@ -146,7 +146,7 @@ export default function Hero() {
                                 transition={{ duration: 2, delay: 1.2 }}
                                 className="font-montserrat text-[#BFA06A]/90 text-[0.6rem] tracking-[0.5em] uppercase font-light"
                             >
-                                Chapter One: The Collection ↓
+                                Part One: Our Jewelry ↓
                             </motion.p>
                         </motion.div>
 
@@ -203,20 +203,20 @@ export default function Hero() {
                                         </div>
                                         <h2 className="font-cormorant text-[#F0E6C2] font-light leading-tight"
                                             style={{ fontSize: 'clamp(1.5rem, 4.5vw, 4.5rem)' }}>
-                                            Crafted for Royalty,<br />
-                                            <em className="text-[#BFA06A]">Designed for You.</em>
+                                            Made for Royalty,<br />
+                                            <em className="text-[#BFA06A]">Made for You.</em>
                                         </h2>
                                         <p className="font-montserrat text-[#F0E6C2]/90 text-xs leading-relaxed mt-3 md:mt-4 font-light max-w-md">
-                                            Where 50 years of Maharashtrian goldsmithing heritage meets the bold vision of 2026.
+                                            Where 50 years of jewelry making tradition meets modern design.
                                         </p>
                                     </div>
 
                                     <div className="flex flex-row md:flex-col gap-2 md:gap-3 shrink-0 mt-4 md:mt-0">
                                         <button className="btn-gold-solid cursor-pointer text-[0.65rem] tracking-[0.25em]">
-                                            Discover Collection
+                                            See Collection
                                         </button>
                                         <button className="btn-gold cursor-pointer">
-                                            <span className="text-[0.65rem] tracking-[0.25em]">Our Heritage</span>
+                                            <span className="text-[0.65rem] tracking-[0.25em]">Our Story</span>
                                         </button>
                                     </div>
                                 </div>
