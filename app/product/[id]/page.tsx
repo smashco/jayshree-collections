@@ -8,8 +8,9 @@ export function generateStaticParams() {
     }));
 }
 
-export default function ProductPage({ params }: { params: { id: string } }) {
-    const product = catalog.find(p => p.id === params.id);
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+    const resolvedParams = await params;
+    const product = catalog.find(p => p.id === resolvedParams.id);
     if (!product) notFound();
-    return <ProductPageClient id={params.id} />;
+    return <ProductPageClient id={resolvedParams.id} />;
 }

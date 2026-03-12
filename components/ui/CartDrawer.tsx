@@ -80,22 +80,24 @@ export default function CartDrawer() {
                                     {items.map((item) => (
                                         <div key={item.id} className="flex gap-6 group">
                                             {/* Image */}
-                                            <div className="relative w-24 h-32 bg-[#111] shrink-0 border border-[#BFA06A]/10">
+                                            <Link href={`/product/${item.id}`} onClick={() => setIsCartOpen(false)} className="relative w-24 h-32 bg-[#111] shrink-0 border border-[#BFA06A]/10 group-hover:border-[#BFA06A]/30 transition-colors cursor-pointer">
                                                 <Image
                                                     src={item.image}
                                                     alt={item.name}
                                                     fill
                                                     className="object-cover"
                                                 />
-                                            </div>
+                                            </Link>
 
                                             {/* Details */}
                                             <div className="flex-1 flex flex-col justify-between py-1">
                                                 <div>
                                                     <div className="flex justify-between items-start gap-4">
-                                                        <h3 className="font-cormorant text-xl md:text-2xl text-[#F0E6C2] font-medium leading-tight pr-4 drop-shadow-sm">
-                                                            {item.name}
-                                                        </h3>
+                                                        <Link href={`/product/${item.id}`} onClick={() => setIsCartOpen(false)}>
+                                                            <h3 className="font-cormorant text-xl md:text-2xl text-[#F0E6C2] font-medium leading-tight pr-4 drop-shadow-sm group-hover:text-[#BFA06A] transition-colors cursor-pointer">
+                                                                {item.name}
+                                                            </h3>
+                                                        </Link>
                                                         <button
                                                             onClick={() => removeFromCart(item.id)}
                                                             className="text-[#F0E6C2]/50 hover:text-red-400 transition-colors uppercase text-[10px] md:text-xs tracking-widest shrink-0 mt-1 cursor-pointer font-medium"

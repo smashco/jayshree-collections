@@ -5,14 +5,15 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { ShoppingBag, Heart, Star } from 'lucide-react';
 import { assetUrl } from '@/lib/assets';
+import Link from 'next/link';
 
 const products = [
     {
-        id: 1,
+        id: 'lakshmi-temple-choker',
         name: 'Lakshmi Temple Choker',
         nameMarathi: 'लक्ष्मी मंदिर हार',
-        price: 1299,
-        originalPrice: 1999,
+        price: 129900,
+        originalPrice: 199900,
         rating: 4.9,
         reviews: 248,
         image: assetUrl('/images/necklace.png'),
@@ -20,11 +21,11 @@ const products = [
         category: 'Harams & Sets',
     },
     {
-        id: 2,
+        id: 'pearl-jhumka-set',
         name: 'Pearl Jhumka Set',
         nameMarathi: 'मोती झुमके',
-        price: 649,
-        originalPrice: 999,
+        price: 64900,
+        originalPrice: 99900,
         rating: 4.8,
         reviews: 189,
         image: assetUrl('/images/earrings.png'),
@@ -32,11 +33,11 @@ const products = [
         category: 'Jhumkas',
     },
     {
-        id: 3,
+        id: 'enamel-bangle-stack',
         name: 'Enamel Bangle Stack',
         nameMarathi: 'मुलामा बांगड्या',
-        price: 899,
-        originalPrice: 1399,
+        price: 89900,
+        originalPrice: 139900,
         rating: 4.7,
         reviews: 134,
         image: assetUrl('/images/bangles.png'),
@@ -44,11 +45,11 @@ const products = [
         category: 'Kadas & Bangles',
     },
     {
-        id: 4,
+        id: 'kundan-maang-tikka',
         name: 'Kundan Maang Tikka',
         nameMarathi: 'कुंदन मांग टिका',
-        price: 1599,
-        originalPrice: 2499,
+        price: 159900,
+        originalPrice: 249900,
         rating: 5.0,
         reviews: 97,
         image: assetUrl('/images/maangtikka.png'),
@@ -56,11 +57,11 @@ const products = [
         category: 'Maang Tikkas',
     },
     {
-        id: 5,
+        id: 'paithani-haaram',
         name: 'Paithani Haaram',
         nameMarathi: 'पैठणी हार',
-        price: 2199,
-        originalPrice: 2999,
+        price: 219900,
+        originalPrice: 299900,
         rating: 4.9,
         reviews: 73,
         image: assetUrl('/images/necklace.png'),
@@ -68,11 +69,11 @@ const products = [
         category: 'Harams & Sets',
     },
     {
-        id: 6,
+        id: 'gold-jhumki-earrings',
         name: 'Gold Jhumki Earrings',
         nameMarathi: 'सोने झुमकी',
-        price: 449,
-        originalPrice: 699,
+        price: 44900,
+        originalPrice: 69900,
         rating: 4.8,
         reviews: 312,
         image: assetUrl('/images/earrings.png'),
@@ -103,7 +104,7 @@ const ProductCard = ({ product, index }: { product: typeof products[0]; index: n
         >
             <div className="relative rounded-2xl overflow-hidden bg-white/80 border border-primary/10 hover:border-primary/30 transition-all duration-400 hover:shadow-xl hover:shadow-primary/15 hover:-translate-y-1">
                 {/* Image */}
-                <div className="relative h-60 overflow-hidden bg-cream">
+                <Link href={`/product/${product.id}`} className="relative h-60 overflow-hidden bg-cream block">
                     <Image
                         src={product.image}
                         alt={product.name}
@@ -129,23 +130,25 @@ const ProductCard = ({ product, index }: { product: typeof products[0]; index: n
                     )}
                     {/* Wishlist */}
                     <button
-                        className="absolute bottom-3 right-3 w-9 h-9 glass rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-primary hover:border-primary cursor-pointer"
-                        onClick={(e) => { e.stopPropagation(); setWishlisted(!wishlisted); }}
+                        className="absolute bottom-3 right-3 w-9 h-9 glass rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-primary hover:border-primary cursor-pointer z-10"
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setWishlisted(!wishlisted); }}
                         aria-label="Add to wishlist"
                     >
                         <Heart
                             className={`w-4 h-4 transition-colors ${wishlisted ? 'text-primary fill-primary' : 'text-maroon'}`}
                         />
                     </button>
-                </div>
+                </Link>
 
                 <div className="p-4 md:p-5">
                     <p className="text-gold-dark font-inter text-[11px] md:text-xs tracking-widest uppercase font-semibold mb-1">
                         {product.nameMarathi}
                     </p>
-                    <h3 className="font-playfair text-maroon-dark font-bold text-lg md:text-xl mb-2 leading-tight">
-                        {product.name}
-                    </h3>
+                    <Link href={`/product/${product.id}`} className="block">
+                        <h3 className="font-playfair text-maroon-dark font-bold text-lg md:text-xl mb-2 leading-tight hover:text-primary transition-colors cursor-pointer">
+                            {product.name}
+                        </h3>
+                    </Link>
 
                     {/* Rating */}
                     <div className="flex items-center gap-1.5 mb-3">
@@ -166,10 +169,12 @@ const ProductCard = ({ product, index }: { product: typeof products[0]; index: n
                             <span className="font-playfair font-bold text-maroon-dark text-2xl">₹{product.price.toLocaleString('en-IN')}</span>
                             <span className="font-inter text-maroon/50 font-medium line-through text-base ml-2">₹{product.originalPrice.toLocaleString('en-IN')}</span>
                         </div>
-                        <button className="flex items-center gap-1.5 bg-primary hover:bg-primary-dark text-white text-sm font-inter font-bold tracking-wide px-4 py-2.5 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-primary/30 cursor-pointer">
-                            <ShoppingBag className="w-4 h-4" />
-                            Add
-                        </button>
+                        <Link href={`/product/${product.id}`}>
+                            <button className="flex items-center gap-1.5 bg-primary hover:bg-primary-dark text-white text-sm font-inter font-bold tracking-wide px-4 py-2.5 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-primary/30 cursor-pointer">
+                                <ShoppingBag className="w-4 h-4" />
+                                View
+                            </button>
+                        </Link>
                     </div>
                 </div>
             </div>
