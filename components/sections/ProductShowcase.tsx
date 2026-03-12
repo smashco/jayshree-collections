@@ -29,14 +29,14 @@ export default function ProductShowcase() {
                         viewport={{ once: true }}
                         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        <p className="font-montserrat text-[#BFA06A]/90 text-[0.6rem] tracking-[0.6em] uppercase font-light mb-4">
+                        <p className="font-montserrat text-[#BFA06A] text-[0.65rem] md:text-[0.75rem] tracking-[0.4em] uppercase font-medium mb-4 drop-shadow-sm">
                             Shop The Collection
                         </p>
                         <h2
-                            className="font-cormorant text-[#F0E6C2] font-light leading-none mb-8"
-                            style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)' }}
+                            className="font-cormorant text-white font-medium leading-none mb-8 drop-shadow-lg"
+                            style={{ fontSize: 'clamp(2.8rem, 5vw, 5rem)' }}
                         >
-                            Curated <em className="text-[#BFA06A]">Excellence</em>
+                            Curated <em className="text-[#BFA06A] drop-shadow-md">Excellence</em>
                         </h2>
                     </motion.div>
 
@@ -52,8 +52,8 @@ export default function ProductShowcase() {
                             <button
                                 key={cat}
                                 onClick={() => setActiveCategory(cat)}
-                                className={`font-montserrat text-[0.65rem] tracking-[0.3em] uppercase transition-all duration-500 relative pb-4 
-                                    ${activeCategory === cat ? 'text-[#BFA06A]' : 'text-[#F0E6C2]/50 hover:text-[#F0E6C2]/80'}`}
+                                className={`font-montserrat text-[0.7rem] md:text-[0.75rem] tracking-[0.3em] uppercase transition-all duration-500 relative pb-4 font-medium
+                                    ${activeCategory === cat ? 'text-[#BFA06A]' : 'text-[#F0E6C2]/70 hover:text-white'}`}
                             >
                                 {cat}
                                 {activeCategory === cat && (
@@ -94,7 +94,7 @@ export default function ProductShowcase() {
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                     />
                                     {/* Overlay Gradient */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                 </Link>
 
                                 {/* Action Button (Add to Bag / Explore) */}
@@ -104,7 +104,7 @@ export default function ProductShowcase() {
                                             e.preventDefault();
                                             addToCart(product);
                                         }}
-                                        className="bg-[#BFA06A] text-black font-montserrat text-[0.6rem] tracking-[0.2em] uppercase py-3 px-8 w-full font-medium hover:bg-[#D4B580] transition-colors cursor-pointer"
+                                        className="bg-[#BFA06A] text-black font-montserrat text-[0.65rem] md:text-xs tracking-[0.2em] uppercase py-3 px-8 w-full font-semibold hover:bg-[#D4B580] transition-colors cursor-pointer"
                                     >
                                         Add to Bag
                                     </button>
@@ -113,13 +113,13 @@ export default function ProductShowcase() {
 
                             {/* Product Info */}
                             <Link href={`/product/${product.id}`} className="flex flex-col items-center text-center px-4 cursor-pointer">
-                                <p className="font-montserrat text-[#BFA06A]/70 text-[0.55rem] tracking-[0.3em] uppercase mb-2">
+                                <p className="font-montserrat text-[#BFA06A]/90 text-[0.6rem] md:text-[0.65rem] tracking-[0.3em] uppercase mb-2 font-medium">
                                     {product.material}
                                 </p>
-                                <h3 className="font-cormorant text-[#F0E6C2] text-xl md:text-2xl font-light mb-3 group-hover:text-[#BFA06A] transition-colors">
+                                <h3 className="font-cormorant text-white text-2xl md:text-3xl font-medium mb-3 group-hover:text-[#BFA06A] transition-colors drop-shadow-sm">
                                     {product.name}
                                 </h3>
-                                <p className="font-montserrat text-[#BFA06A] text-sm tracking-widest font-light">
+                                <p className="font-montserrat text-[#BFA06A] text-sm md:text-base tracking-widest font-medium">
                                     {product.formattedPrice}
                                 </p>
                             </Link>

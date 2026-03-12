@@ -139,12 +139,11 @@ const ProductCard = ({ product, index }: { product: typeof products[0]; index: n
                     </button>
                 </div>
 
-                {/* Info */}
-                <div className="p-4">
-                    <p className="text-gold-dark font-inter text-[10px] tracking-widest uppercase font-medium mb-1">
+                <div className="p-4 md:p-5">
+                    <p className="text-gold-dark font-inter text-[11px] md:text-xs tracking-widest uppercase font-semibold mb-1">
                         {product.nameMarathi}
                     </p>
-                    <h3 className="font-playfair text-maroon-dark font-bold text-base mb-2 leading-tight">
+                    <h3 className="font-playfair text-maroon-dark font-bold text-lg md:text-xl mb-2 leading-tight">
                         {product.name}
                     </h3>
 
@@ -158,17 +157,17 @@ const ProductCard = ({ product, index }: { product: typeof products[0]; index: n
                                 />
                             ))}
                         </div>
-                        <span className="font-inter text-[11px] text-maroon/60">({product.reviews})</span>
+                        <span className="font-inter text-xs font-medium text-maroon/70">({product.reviews})</span>
                     </div>
 
                     {/* Price + CTA */}
                     <div className="flex items-center justify-between gap-2">
                         <div>
-                            <span className="font-playfair font-bold text-maroon-dark text-xl">₹{product.price.toLocaleString('en-IN')}</span>
-                            <span className="font-inter text-maroon/40 line-through text-sm ml-2">₹{product.originalPrice.toLocaleString('en-IN')}</span>
+                            <span className="font-playfair font-bold text-maroon-dark text-2xl">₹{product.price.toLocaleString('en-IN')}</span>
+                            <span className="font-inter text-maroon/50 font-medium line-through text-base ml-2">₹{product.originalPrice.toLocaleString('en-IN')}</span>
                         </div>
-                        <button className="flex items-center gap-1.5 bg-primary hover:bg-primary-dark text-white text-xs font-inter font-semibold tracking-wide px-3 py-2 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-primary/30 cursor-pointer">
-                            <ShoppingBag className="w-3.5 h-3.5" />
+                        <button className="flex items-center gap-1.5 bg-primary hover:bg-primary-dark text-white text-sm font-inter font-bold tracking-wide px-4 py-2.5 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-primary/30 cursor-pointer">
+                            <ShoppingBag className="w-4 h-4" />
                             Add
                         </button>
                     </div>

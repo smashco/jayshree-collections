@@ -44,7 +44,7 @@ export default function Navbar() {
                             <Link
                                 key={link.name}
                                 href={link.href}
-                                className="font-montserrat text-[#F0E6C2]/80 font-light text-[0.6rem] tracking-[0.35em] uppercase hover:text-[#BFA06A] transition-all duration-500 relative group cursor-pointer"
+                                className="font-montserrat text-white/90 font-medium text-[0.7rem] md:text-sm tracking-[0.3em] uppercase hover:text-[#BFA06A] transition-all duration-500 relative group cursor-pointer drop-shadow-sm"
                             >
                                 {link.name}
                                 <span className="absolute -bottom-2 left-0 w-0 h-px bg-[#BFA06A] group-hover:w-full transition-all duration-500" />
@@ -55,12 +55,12 @@ export default function Navbar() {
                     {/* Center: Brand */}
                     <Link href="/" className="flex flex-col items-center group">
                         <span
-                            className="font-cormorant text-[#F0E6C2] font-light tracking-[0.25em] hover:text-[#BFA06A] transition-all duration-700"
-                            style={{ fontSize: 'clamp(1.2rem, 3vw, 1.8rem)', letterSpacing: '0.3em' }}
+                            className="font-cormorant text-white font-medium tracking-[0.25em] hover:text-[#BFA06A] transition-all duration-700 drop-shadow-md"
+                            style={{ fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', letterSpacing: '0.3em' }}
                         >
                             JAYSHREE
                         </span>
-                        <span className="font-montserrat text-[#BFA06A]/80 text-[0.45rem] tracking-[0.6em] uppercase font-light mt-0.5">
+                        <span className="font-montserrat text-[#BFA06A]/90 text-[0.55rem] md:text-[0.65rem] tracking-[0.6em] uppercase font-medium mt-1 drop-shadow-sm">
                             Maison · Est. 1976
                         </span>
                     </Link>
@@ -72,7 +72,7 @@ export default function Navbar() {
                                 <Link
                                     key={link.name}
                                     href={link.href}
-                                    className="font-montserrat text-[#F0E6C2]/80 font-light text-[0.6rem] tracking-[0.35em] uppercase hover:text-[#BFA06A] transition-all duration-500 relative group cursor-pointer"
+                                    className="font-montserrat text-white/90 font-medium text-[0.7rem] md:text-sm tracking-[0.3em] uppercase hover:text-[#BFA06A] transition-all duration-500 relative group cursor-pointer drop-shadow-sm"
                                 >
                                     {link.name}
                                     <span className="absolute -bottom-2 left-0 w-0 h-px bg-[#BFA06A] group-hover:w-full transition-all duration-500" />
@@ -81,27 +81,27 @@ export default function Navbar() {
                         </div>
 
                         <div className="flex items-center gap-5">
-                            <button className="text-[#F0E6C2]/50 hover:text-[#BFA06A] transition-colors duration-400 cursor-pointer" aria-label="Search">
-                                <Search className="w-4 h-4 stroke-[1.5]" />
+                            <button className="text-white/80 hover:text-[#BFA06A] transition-colors duration-400 cursor-pointer drop-shadow-sm" aria-label="Search">
+                                <Search className="w-5 h-5 md:w-6 md:h-6 stroke-[1.5]" />
                             </button>
                             <button
                                 onClick={() => setIsCartOpen(true)}
-                                className="relative text-[#F0E6C2]/50 hover:text-[#BFA06A] transition-colors duration-400 cursor-pointer group"
+                                className="relative text-white/80 hover:text-[#BFA06A] transition-colors duration-400 cursor-pointer group drop-shadow-sm"
                                 aria-label="Cart"
                             >
-                                <ShoppingBag className="w-4 h-4 stroke-[1.5]" />
+                                <ShoppingBag className="w-5 h-5 md:w-6 md:h-6 stroke-[1.5]" />
                                 {totalItems > 0 && (
-                                    <span className="absolute -top-1.5 -right-2 w-3.5 h-3.5 bg-[#BFA06A] text-black text-[7px] rounded-full flex items-center justify-center font-bold">
+                                    <span className="absolute -top-1.5 -right-2 w-4 h-4 md:w-5 md:h-5 bg-[#BFA06A] text-black text-[9px] md:text-xs rounded-full flex items-center justify-center font-bold">
                                         {totalItems}
                                     </span>
                                 )}
                             </button>
                             <button
-                                className="md:hidden text-[#F0E6C2]/50 hover:text-[#BFA06A] transition-colors cursor-pointer"
+                                className="md:hidden text-white/80 hover:text-[#BFA06A] transition-colors cursor-pointer drop-shadow-sm"
                                 onClick={() => setMenuOpen(!menuOpen)}
                                 aria-label="Menu"
                             >
-                                {menuOpen ? <X className="w-5 h-5 stroke-[1.5]" /> : <Menu className="w-5 h-5 stroke-[1.5]" />}
+                                {menuOpen ? <X className="w-6 h-6 stroke-[1.5]" /> : <Menu className="w-6 h-6 stroke-[1.5]" />}
                             </button>
                         </div>
                     </div>

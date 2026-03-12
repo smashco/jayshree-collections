@@ -144,7 +144,7 @@ export default function Hero() {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ duration: 2, delay: 1.2 }}
-                                className="font-montserrat text-[#BFA06A]/90 text-[0.6rem] tracking-[0.5em] uppercase font-light"
+                                className="font-montserrat text-[#BFA06A] text-[0.7rem] md:text-xs tracking-[0.3em] uppercase font-medium drop-shadow-md"
                             >
                                 Part One: Our Jewelry ↓
                             </motion.p>
@@ -185,7 +185,7 @@ export default function Hero() {
                             </video>
 
                             {/* Gradient overlay */}
-                            <div className="video-overlay absolute inset-0" />
+                            <div className="video-overlay absolute inset-0 bg-black/40" />
 
                             {/* Beat 4: Video text overlay */}
                             <motion.div
@@ -196,27 +196,27 @@ export default function Hero() {
                                     <div className="max-w-xl">
                                         {/* Chapter label */}
                                         <div className="flex items-center gap-4 mb-4 md:mb-6">
-                                            <div className="w-8 h-px bg-[#BFA06A]/60" />
-                                            <span className="font-montserrat text-[#BFA06A] text-[0.55rem] tracking-[0.5em] uppercase font-light">
+                                            <div className="w-10 h-[2px] bg-[#BFA06A]" />
+                                            <span className="font-montserrat text-[#BFA06A] text-[0.7rem] md:text-sm tracking-[0.3em] uppercase font-semibold drop-shadow-md">
                                                 Chapter I
                                             </span>
                                         </div>
-                                        <h2 className="font-cormorant text-[#F0E6C2] font-light leading-tight"
-                                            style={{ fontSize: 'clamp(1.5rem, 4.5vw, 4.5rem)' }}>
+                                        <h2 className="font-cormorant text-white font-medium leading-tight drop-shadow-xl"
+                                            style={{ fontSize: 'clamp(2rem, 5.5vw, 5.5rem)' }}>
                                             Made for Royalty,<br />
-                                            <em className="text-[#BFA06A]">Made for You.</em>
+                                            <em className="text-[#BFA06A] drop-shadow-lg">Made for You.</em>
                                         </h2>
-                                        <p className="font-montserrat text-[#F0E6C2]/90 text-xs leading-relaxed mt-3 md:mt-4 font-light max-w-md">
-                                            Where 50 years of jewelry making tradition meets modern design.
+                                        <p className="font-montserrat text-white text-sm md:text-base leading-relaxed mt-3 md:mt-5 font-medium max-w-lg drop-shadow-lg">
+                                            Where 10 years of jewelry making tradition meets modern design.
                                         </p>
                                     </div>
 
                                     <div className="flex flex-row md:flex-col gap-2 md:gap-3 shrink-0 mt-4 md:mt-0">
-                                        <button className="btn-gold-solid cursor-pointer text-[0.65rem] tracking-[0.25em]">
+                                        <button className="btn-gold-solid cursor-pointer text-xs tracking-[0.1em] font-medium px-8 py-3">
                                             See Collection
                                         </button>
-                                        <button className="btn-gold cursor-pointer">
-                                            <span className="text-[0.65rem] tracking-[0.25em]">Our Story</span>
+                                        <button className="btn-gold cursor-pointer px-8 py-3 bg-black/60 backdrop-blur-md">
+                                            <span className="text-xs tracking-[0.1em] font-medium text-white">Our Story</span>
                                         </button>
                                     </div>
                                 </div>

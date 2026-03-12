@@ -42,7 +42,7 @@ export default function BrandStory() {
                     <span className="font-cormorant text-[#BFA06A]/20 font-light"
                         style={{ fontSize: '5rem', lineHeight: 1 }}>V</span>
                     <div>
-                        <p className="font-montserrat text-[#BFA06A]/90 text-[0.55rem] tracking-[0.6em] uppercase font-light">
+                        <p className="font-montserrat text-[#BFA06A] text-[0.65rem] md:text-[0.7rem] tracking-[0.4em] uppercase font-medium drop-shadow-sm">
                             Part V · The Story
                         </p>
                         <p className="font-cormorant text-[#F0E6C2]/90 text-xl font-light italic">
@@ -80,8 +80,8 @@ export default function BrandStory() {
                         className="absolute bottom-6 left-4 md:bottom-10 md:left-8 glass-premium p-3 md:p-5"
                         style={{ maxWidth: '160px' }}
                     >
-                        <p className="font-cormorant text-[#BFA06A] font-light" style={{ fontSize: '3.5rem', lineHeight: 1 }}>10</p>
-                        <p className="font-montserrat text-[#F0E6C2]/90 text-[0.55rem] tracking-widest uppercase mt-1 font-light">Years of Heritage</p>
+                        <p className="font-cormorant text-[#BFA06A] font-medium" style={{ fontSize: '4rem', lineHeight: 1 }}>10</p>
+                        <p className="font-montserrat text-[#F0E6C2] text-xs md:text-sm tracking-widest uppercase mt-2 font-medium drop-shadow-md">Years of Heritage</p>
                     </motion.div>
                 </div>
 
@@ -106,7 +106,7 @@ export default function BrandStory() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 1, delay: 0.2 }}
-                            className="font-montserrat text-[#F0E6C2]/80 text-xs leading-relaxed font-light mb-14 max-w-sm"
+                            className="font-montserrat text-white text-sm md:text-base leading-relaxed font-medium mb-14 max-w-md drop-shadow-md"
                         >
                             For 10 years, Jayshree Collections has kept Maharashtrian jewelry making alive. Every piece mixes old traditions with new designs — made by hand by our best jewelry makers.
                         </motion.p>
@@ -132,8 +132,8 @@ export default function BrandStory() {
                                 >
                                     <div className="absolute -left-5 top-2 w-2 h-2 rounded-full bg-[#BFA06A] -translate-x-[3px]" />
                                     <div>
-                                        <span className="font-cormorant text-[#BFA06A] text-xl font-light">{m.year}</span>
-                                        <p className="font-montserrat text-[#F0E6C2]/75 text-[0.65rem] font-light mt-0.5 leading-relaxed">{m.label}</p>
+                                        <span className="font-cormorant text-[#BFA06A] text-2xl md:text-3xl font-medium drop-shadow-sm">{m.year}</span>
+                                        <p className="font-montserrat text-white text-xs md:text-sm font-medium mt-1 leading-relaxed drop-shadow-sm">{m.label}</p>
                                     </div>
                                 </motion.div>
                             ))}
@@ -167,8 +167,8 @@ export default function BrandStory() {
                                 className="text-center border-r border-[#BFA06A]/10 last:border-0"
                             >
                                 <p className="counter-display">{s.number}</p>
-                                <p className="font-montserrat text-[#BFA06A]/90 text-[0.55rem] tracking-[0.35em] uppercase font-light mt-1">{s.unit}</p>
-                                <p className="font-montserrat text-[#F0E6C2]/60 text-[0.6rem] mt-1.5 font-light">{s.label}</p>
+                                <p className="font-montserrat text-[#BFA06A] text-[0.65rem] md:text-[0.75rem] tracking-[0.3em] uppercase font-medium mt-2 drop-shadow-sm">{s.unit}</p>
+                                <p className="font-montserrat text-white text-[0.7rem] md:text-sm mt-2 font-medium drop-shadow-sm">{s.label}</p>
                             </motion.div>
                         ))}
                     </div>

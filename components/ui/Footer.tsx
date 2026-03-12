@@ -18,15 +18,15 @@ const Footer = () => (
                 {/* Brand */}
                 <div className="lg:col-span-1">
                     <h2 className="font-samarkan text-4xl shimmer-text mb-2">Jayshree</h2>
-                    <p className="text-yellow-200/60 text-[10px] tracking-[0.4em] uppercase mb-4">Collections</p>
-                    <p className="font-inter text-yellow-100/60 text-sm leading-relaxed mb-6">
+                    <p className="text-yellow-200/80 text-[11px] md:text-xs tracking-[0.4em] uppercase mb-4 font-medium">Collections</p>
+                    <p className="font-inter text-yellow-100/90 text-sm md:text-base leading-relaxed mb-6 font-medium">
                         Imitation jewellery crafted with the spirit of Maharashtra.
                         Every piece tells the story of our heritage.
                     </p>
-                    <p className="font-playfair italic text-gold text-lg">
+                    <p className="font-playfair italic text-gold text-xl drop-shadow-sm">
                         &quot;दागिना म्हणजे संस्कृती&quot;
                     </p>
-                    <p className="text-yellow-200/40 text-xs font-inter mt-1">Jewellery is culture.</p>
+                    <p className="text-yellow-200/60 text-sm font-inter mt-1 font-medium">Jewellery is culture.</p>
                 </div>
 
                 {/* Quick Links */}
@@ -36,7 +36,7 @@ const Footer = () => (
                         <a
                             key={link}
                             href="#"
-                            className="block font-inter text-sm text-yellow-100/60 hover:text-gold transition-colors duration-200 mb-3 cursor-pointer hover:translate-x-1 transition-transform"
+                            className="block font-inter text-sm md:text-base text-yellow-100/80 hover:text-gold transition-all duration-200 mb-3 cursor-pointer hover:translate-x-1 font-medium"
                         >
                             {link}
                         </a>
@@ -50,7 +50,7 @@ const Footer = () => (
                         <a
                             key={link}
                             href="#"
-                            className="block font-inter text-sm text-yellow-100/60 hover:text-gold transition-colors duration-200 mb-3 cursor-pointer"
+                            className="block font-inter text-sm md:text-base text-yellow-100/80 hover:text-gold transition-colors duration-200 mb-3 cursor-pointer font-medium"
                         >
                             {link}
                         </a>
@@ -62,16 +62,16 @@ const Footer = () => (
                     <h3 className="font-playfair text-lg font-bold text-yellow-50 mb-5">Get in Touch</h3>
                     <div className="space-y-4">
                         <div className="flex items-start gap-3">
-                            <MapPin className="w-4 h-4 text-gold mt-0.5 shrink-0" />
-                            <p className="font-inter text-yellow-100/60 text-sm">Nagpur, Maharashtra, India</p>
+                            <MapPin className="w-5 h-5 text-gold mt-0.5 shrink-0" />
+                            <p className="font-inter text-yellow-100/80 text-sm md:text-base font-medium">Nagpur, Maharashtra, India</p>
                         </div>
                         <div className="flex items-center gap-3">
-                            <Phone className="w-4 h-4 text-gold shrink-0" />
-                            <a href="tel:+919876543210" className="font-inter text-yellow-100/60 text-sm hover:text-gold transition-colors">+91 98765 43210</a>
+                            <Phone className="w-5 h-5 text-gold shrink-0" />
+                            <a href="tel:+919876543210" className="font-inter text-yellow-100/80 text-sm md:text-base font-medium hover:text-gold transition-colors">+91 98765 43210</a>
                         </div>
                         <div className="flex items-center gap-3">
-                            <Mail className="w-4 h-4 text-gold shrink-0" />
-                            <a href="mailto:hello@jayshreecollections.com" className="font-inter text-yellow-100/60 text-sm hover:text-gold transition-colors break-all">hello@jayshreecollections.com</a>
+                            <Mail className="w-5 h-5 text-gold shrink-0" />
+                            <a href="mailto:hello@jayshreecollections.com" className="font-inter text-yellow-100/80 text-sm md:text-base font-medium hover:text-gold transition-colors break-all">hello@jayshreecollections.com</a>
                         </div>
                     </div>
 
@@ -97,11 +97,11 @@ const Footer = () => (
 
             {/* Bottom */}
             <div className="mt-12 pt-6 border-t border-yellow-100/10 flex flex-col md:flex-row items-center justify-between gap-4">
-                <p className="font-inter text-yellow-100/40 text-xs">
-                    © 2025 Jayshree Collections. All rights reserved.
+                <p className="font-inter text-yellow-100/60 text-xs md:text-sm font-medium">
+                    © 2026 Jayshree Collections. All rights reserved.
                 </p>
-                <p className="font-inter text-yellow-100/40 text-xs flex items-center gap-1">
-                    Made with <Heart className="w-3 h-3 text-primary fill-primary" /> in Maharashtra, India
+                <p className="font-inter text-yellow-100/60 text-xs md:text-sm font-medium flex items-center gap-1.5">
+                    Made with <Heart className="w-4 h-4 text-primary fill-primary" /> in Maharashtra, India
                 </p>
             </div>
         </div>

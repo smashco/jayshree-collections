@@ -62,7 +62,7 @@ export default function Testimonials() {
                     viewport={{ once: true }}
                     transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
                 >
-                    <p className="text-[#BFA06A] font-inter text-xs tracking-[0.4em] uppercase font-semibold mb-6">
+                    <p className="text-[#BFA06A] font-inter text-[0.8rem] md:text-sm tracking-[0.4em] uppercase font-bold mb-6 drop-shadow-sm">
                         Customer Stories
                     </p>
                     <h2 className="font-playfair text-4xl md:text-5xl lg:text-7xl text-[#F0E6C2] font-normal mb-8">
@@ -85,7 +85,7 @@ export default function Testimonials() {
                             {/* Quote icon */}
                             <Quote className="w-12 h-12 text-[#BFA06A]/30 mx-auto mb-8" aria-hidden />
 
-                            <p className="font-playfair text-[#F0E6C2] text-2xl md:text-3xl italic leading-relaxed mb-10 font-light">
+                            <p className="font-playfair text-[#F0E6C2] text-3xl md:text-4xl italic leading-relaxed mb-10 font-normal drop-shadow-md">
                                 &quot;{testimonials[current].review}&quot;
                             </p>
 
@@ -99,14 +99,14 @@ export default function Testimonials() {
                             {/* Author */}
                             <div className="flex justify-center items-center gap-6">
                                 <div className="text-right">
-                                    <p className="font-playfair text-xl text-[#F0E6C2]">{testimonials[current].name}</p>
-                                    <p className="font-inter text-[#F0E6C2]/80 text-xs tracking-widest uppercase mt-1">
+                                    <p className="font-playfair text-2xl md:text-3xl text-[#F0E6C2] font-medium drop-shadow-sm">{testimonials[current].name}</p>
+                                    <p className="font-inter text-[#F0E6C2]/90 text-sm md:text-base tracking-widest uppercase mt-2 font-medium">
                                         {testimonials[current].location}
                                     </p>
                                 </div>
                                 <div className="w-px h-10 bg-[#BFA06A]/30" />
                                 <div className="text-left">
-                                    <p className="font-inter text-[#BFA06A] text-xs font-semibold tracking-widest uppercase">
+                                    <p className="font-inter text-[#BFA06A] text-sm md:text-base font-bold tracking-widest uppercase drop-shadow-sm">
                                         {testimonials[current].occasion}
                                     </p>
                                 </div>

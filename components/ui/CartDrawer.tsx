@@ -52,12 +52,12 @@ export default function CartDrawer() {
                     >
                         {/* Header */}
                         <div className="px-6 md:px-10 py-8 border-b border-[#BFA06A]/10 flex items-center justify-between shrink-0">
-                            <h2 className="font-cormorant text-2xl text-[#F0E6C2] font-light">
+                            <h2 className="font-cormorant text-2xl md:text-3xl text-[#F0E6C2] font-medium drop-shadow-sm">
                                 Sequence ({totalItems})
                             </h2>
                             <button
                                 onClick={() => setIsCartOpen(false)}
-                                className="text-[#F0E6C2]/50 hover:text-[#BFA06A] transition-colors p-2 -mr-2 cursor-pointer"
+                                className="text-[#F0E6C2]/70 hover:text-[#BFA06A] transition-colors p-2 -mr-2 cursor-pointer"
                             >
                                 <X className="w-5 h-5 stroke-[1.5]" />
                             </button>
@@ -66,11 +66,11 @@ export default function CartDrawer() {
                         {/* Cart Items */}
                         <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10 hide-scrollbar">
                             {items.length === 0 ? (
-                                <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
-                                    <p className="font-montserrat text-xs tracking-widest uppercase mb-4 text-[#F0E6C2]">Your bag is empty</p>
+                                <div className="h-full flex flex-col items-center justify-center text-center opacity-70">
+                                    <p className="font-montserrat text-sm md:text-base tracking-widest uppercase mb-4 text-[#F0E6C2] font-medium">Your bag is empty</p>
                                     <button
                                         onClick={() => setIsCartOpen(false)}
-                                        className="text-[#BFA06A] uppercase tracking-[0.2em] text-[10px] pb-1 border-b border-[#BFA06A]/30 hover:border-[#BFA06A] transition-colors"
+                                        className="text-[#BFA06A] uppercase tracking-[0.2em] text-xs pb-1 border-b border-[#BFA06A]/30 hover:border-[#BFA06A] transition-colors font-medium cursor-pointer"
                                     >
                                         Continue Shopping
                                     </button>
@@ -93,17 +93,17 @@ export default function CartDrawer() {
                                             <div className="flex-1 flex flex-col justify-between py-1">
                                                 <div>
                                                     <div className="flex justify-between items-start gap-4">
-                                                        <h3 className="font-cormorant text-lg text-[#F0E6C2] leading-tight pr-4">
+                                                        <h3 className="font-cormorant text-xl md:text-2xl text-[#F0E6C2] font-medium leading-tight pr-4 drop-shadow-sm">
                                                             {item.name}
                                                         </h3>
                                                         <button
                                                             onClick={() => removeFromCart(item.id)}
-                                                            className="text-[#F0E6C2]/30 hover:text-red-400 transition-colors uppercase text-[9px] tracking-widest shrink-0 mt-1 cursor-pointer"
+                                                            className="text-[#F0E6C2]/50 hover:text-red-400 transition-colors uppercase text-[10px] md:text-xs tracking-widest shrink-0 mt-1 cursor-pointer font-medium"
                                                         >
                                                             Remove
                                                         </button>
                                                     </div>
-                                                    <p className="font-montserrat text-[10px] tracking-widest uppercase text-[#BFA06A]/60 mt-2">
+                                                    <p className="font-montserrat text-[11px] md:text-xs tracking-widest uppercase text-[#BFA06A]/80 mt-2 font-medium">
                                                         {item.material}
                                                     </p>
                                                 </div>
@@ -129,7 +129,7 @@ export default function CartDrawer() {
                                                     </div>
 
                                                     {/* Price */}
-                                                    <p className="font-montserrat text-sm text-[#BFA06A] tracking-widest">
+                                                    <p className="font-montserrat text-sm md:text-base text-[#BFA06A] tracking-widest font-medium">
                                                         {formatPrice(item.price * item.quantity)}
                                                     </p>
                                                 </div>
@@ -144,15 +144,15 @@ export default function CartDrawer() {
                         {items.length > 0 && (
                             <div className="border-t border-[#BFA06A]/10 p-6 md:p-10 shrink-0 bg-[#0A0A0A]">
                                 <div className="flex justify-between items-end mb-8">
-                                    <span className="font-montserrat text-xs tracking-[0.2em] uppercase text-[#F0E6C2]/70">
+                                    <span className="font-montserrat text-xs md:text-sm tracking-[0.2em] uppercase text-[#F0E6C2]/90 font-medium">
                                         Subtotal
                                     </span>
-                                    <span className="font-cormorant text-3xl text-[#BFA06A] leading-none">
+                                    <span className="font-cormorant text-4xl text-[#BFA06A] leading-none drop-shadow-sm">
                                         {formatPrice(subtotal)}
                                     </span>
                                 </div>
 
-                                <p className="font-montserrat text-[10px] tracking-widest uppercase text-[#F0E6C2]/40 mb-6 text-center">
+                                <p className="font-montserrat text-[11px] md:text-xs tracking-widest uppercase text-[#F0E6C2]/60 mb-6 text-center font-medium">
                                     Taxes and shipping calculated at checkout
                                 </p>
 
@@ -160,7 +160,7 @@ export default function CartDrawer() {
                                     href="/checkout"
                                     onClick={() => setIsCartOpen(false)}
                                 >
-                                    <button className="w-full bg-[#BFA06A] text-black font-montserrat text-xs tracking-[0.3em] uppercase py-5 font-medium hover:bg-[#D4B580] transition-colors cursor-pointer">
+                                    <button className="w-full bg-[#BFA06A] text-black font-montserrat text-sm tracking-[0.3em] uppercase py-5 font-semibold hover:bg-[#D4B580] transition-colors cursor-pointer">
                                         Proceed to Checkout
                                     </button>
                                 </Link>
