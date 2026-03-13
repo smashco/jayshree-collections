@@ -22,21 +22,35 @@ export default function ProductShowcase() {
             <div className="max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20">
 
                 {/* Section Header */}
-                <div className="flex flex-col items-center text-center mb-16">
+                <div className="flex flex-col items-center text-center mb-16 w-full max-w-[100vw] overflow-hidden">
+                    {/* Animated Line Above Header */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1 }}
+                        className="w-full overflow-hidden border-y border-[#BFA06A]/20 mb-8 py-3 bg-[#BFA06A]/5"
+                    >
+                        <div className="marquee-track flex whitespace-nowrap">
+                            {Array.from({ length: 10 }).map((_, i) => (
+                                <span key={i} className="font-montserrat text-[#BFA06A] text-[0.65rem] md:text-[0.75rem] tracking-[0.3em] uppercase font-semibold mx-6 shrink-0">
+                                    Maharashtra &nbsp;•&nbsp; Est. 1976 &nbsp;•&nbsp; Jayshree Maison &nbsp;•&nbsp; Crafted in Maharashtra &nbsp;•&nbsp; Est. 1976 &nbsp;•&nbsp;
+                                </span>
+                            ))}
+                        </div>
+                    </motion.div>
+
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        <p className="font-montserrat text-[#BFA06A] text-[0.65rem] md:text-[0.75rem] tracking-[0.4em] uppercase font-medium mb-4 drop-shadow-sm">
-                            Shop The Collection
-                        </p>
                         <h2
-                            className="font-cormorant text-white font-medium leading-none mb-8 drop-shadow-lg"
-                            style={{ fontSize: 'clamp(2.8rem, 5vw, 5rem)' }}
+                            className="font-cormorant text-white font-medium leading-none mb-8 drop-shadow-xl"
+                            style={{ fontSize: 'clamp(3rem, 6vw, 5.5rem)' }}
                         >
-                            Curated <em className="text-[#BFA06A] drop-shadow-md">Excellence</em>
+                            Curated <em className="text-[#BFA06A]">Excellence</em>
                         </h2>
                     </motion.div>
 
@@ -81,7 +95,7 @@ export default function ProductShowcase() {
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true, margin: '-50px' }}
                             transition={{ duration: 0.8, delay: index * 0.1 }}
-                            className="group flex flex-col cursor-pointer min-w-[85vw] sm:min-w-[45vw] lg:min-w-[30vw] snap-center shrink-0"
+                            className="group flex flex-col cursor-pointer min-w-[70vw] sm:min-w-[35vw] lg:min-w-[22vw] snap-center shrink-0"
                         >
                             {/* Image Container with Hover Effect */}
                             <div className="relative aspect-[4/5] overflow-hidden bg-[#111] mb-6 border border-[#BFA06A]/10 group-hover:border-[#BFA06A]/30 transition-colors duration-500">
