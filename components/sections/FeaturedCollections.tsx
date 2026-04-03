@@ -3,7 +3,9 @@
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { assetUrl } from '@/lib/assets';
+import type { ProductListItem } from '@/lib/products';
 
 const chapters = [
     {
@@ -138,7 +140,38 @@ function ChapterCard({ chapter, index }: { chapter: typeof chapters[0], index: n
     );
 }
 
-export default function FeaturedCollections() {
+function FeaturedProductCard({ product, index }: { product: ProductListItem; index: number }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 1.2, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+        >
+            <Link href={`/product/${product.slug}`} className="group block">
+                <div className="relative overflow-hidden bg-[#0a0a0a] border border-[#BFA06A]/10 group-hover:border-[#BFA06A]/40 transition-all duration-700">
+                    <div className="aspect-[3/4] relative overflow-hidden">
+                        <Image
+                            src={product.image}
+                            alt={product.name}
+                            fill
+                            className="object-cover transition-transform duration-[2s] ease-out group-hover:scale-105"
+                            sizes="(max-width: 768px) 80vw, 25vw"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    </div>
+                    <div className="p-5">
+                        <p className="font-montserrat text-[#BFA06A] text-[0.55rem] tracking-[0.4em] uppercase mb-1">{product.category}</p>
+                        <h3 className="font-cormorant text-[#F0E6C2] text-xl font-light leading-snug mb-2">{product.name}</h3>
+                        <p className="font-montserrat text-[#BFA06A] text-sm">{product.formattedPrice}</p>
+                    </div>
+                </div>
+            </Link>
+        </motion.div>
+    );
+}
+
+export default function FeaturedCollections({ featuredProducts = [] }: { featuredProducts?: ProductListItem[] }) {
     return (
         <section className="bg-black py-16 md:py-28 lg:py-36 relative z-20">
 
@@ -196,6 +229,34 @@ export default function FeaturedCollections() {
                         ))}
                     </div>
                 </div>
+
+                {/* Featured Products */}
+                {featuredProducts.length > 0 && (
+                    <div className="mt-24">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                            className="mb-12"
+                        >
+                            <p className="font-montserrat text-[#BFA06A]/90 text-[0.55rem] tracking-[0.7em] uppercase font-light mb-4">
+                                Jayshree Maison · Handpicked
+                            </p>
+                            <h2
+                                className="font-cormorant text-[#F0E6C2] font-light leading-none"
+                                style={{ fontSize: 'clamp(2.5rem, 5vw, 5rem)' }}
+                            >
+                                Featured <em className="text-[#BFA06A]">Pieces</em>
+                            </h2>
+                        </motion.div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                            {featuredProducts.map((product, i) => (
+                                <FeaturedProductCard key={product.id} product={product} index={i} />
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {/* CTA */}
                 <motion.div

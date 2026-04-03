@@ -33,6 +33,9 @@
     "three": "^0.183.2",
     "zod": "^4.3.6"
   },
+  "prisma": {
+    "seed": "npx ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "engines": {
     "node": ">=18.0.0"
   },
@@ -45,6 +48,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }
