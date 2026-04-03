@@ -1,21 +1,52 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { catalog } from '@/lib/catalog';
-import { useCart } from '@/context/CartContext';
+import { useCart, CartProduct } from '@/context/CartContext';
+
+interface ProductItem {
+    slug: string;
+    name: string;
+    category: string;
+    price: number;
+    formattedPrice: string;
+    image: string;
+    material: string;
+}
 
 const categories = ['All', 'Necklaces', 'Earrings', 'Bangles', 'Rings'];
 
 export default function ProductShowcase() {
     const [activeCategory, setActiveCategory] = useState('All');
+    const [products, setProducts] = useState<ProductItem[]>([]);
     const { addToCart } = useCart();
 
+    useEffect(() => {
+        fetch('/api/products')
+            .then(res => res.json())
+            .then(data => setProducts(data))
+            .catch(console.error);
+    }, []);
+
     const filteredProducts = activeCategory === 'All'
-        ? catalog
-        : catalog.filter(p => p.category === activeCategory);
+        ? products
+        : products.filter(p => p.category === activeCategory);
+
+    const handleAddToCart = (product: ProductItem) => {
+        const cartProduct: CartProduct = {
+            slug: product.slug,
+            name: product.name,
+            price: product.price,
+            formattedPrice: product.formattedPrice,
+            image: product.image,
+            material: product.material,
+            variantId: '',
+            variantName: 'Default',
+        };
+        addToCart(cartProduct);
+    };
 
     return (
         <section className="bg-black py-20 md:py-32 relative z-20" id="shop">
@@ -90,7 +121,7 @@ export default function ProductShowcase() {
                 >
                     {filteredProducts.map((product, index) => (
                         <motion.div
-                            key={product.id}
+                            key={product.slug}
                             initial={{ opacity: 0, x: 40 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true, margin: '-50px' }}
@@ -99,7 +130,7 @@ export default function ProductShowcase() {
                         >
                             {/* Image Container with Hover Effect */}
                             <div className="relative aspect-[4/5] overflow-hidden bg-[#111] mb-6 border border-[#BFA06A]/10 group-hover:border-[#BFA06A]/30 transition-colors duration-500">
-                                <Link href={`/product/${product.id}`} className="block w-full h-full cursor-pointer z-10 relative">
+                                <Link href={`/product/${product.slug}`} className="block w-full h-full cursor-pointer z-10 relative">
                                     <Image
                                         src={product.image}
                                         alt={product.name}
@@ -116,7 +147,7 @@ export default function ProductShowcase() {
                                     <button
                                         onClick={(e) => {
                                             e.preventDefault();
-                                            addToCart(product);
+                                            handleAddToCart(product);
                                         }}
                                         className="bg-[#BFA06A] text-black font-montserrat text-[0.65rem] md:text-xs tracking-[0.2em] uppercase py-3 px-8 w-full font-semibold hover:bg-[#D4B580] transition-colors cursor-pointer"
                                     >
@@ -126,7 +157,7 @@ export default function ProductShowcase() {
                             </div>
 
                             {/* Product Info */}
-                            <Link href={`/product/${product.id}`} className="flex flex-col items-center text-center px-4 cursor-pointer">
+                            <Link href={`/product/${product.slug}`} className="flex flex-col items-center text-center px-4 cursor-pointer">
                                 <p className="font-montserrat text-[#BFA06A]/90 text-[0.6rem] md:text-[0.65rem] tracking-[0.3em] uppercase mb-2 font-medium">
                                     {product.material}
                                 </p>

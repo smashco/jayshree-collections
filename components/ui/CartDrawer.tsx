@@ -78,9 +78,9 @@ export default function CartDrawer() {
                             ) : (
                                 <div className="flex flex-col gap-8">
                                     {items.map((item) => (
-                                        <div key={item.id} className="flex gap-6 group">
+                                        <div key={item.slug} className="flex gap-6 group">
                                             {/* Image */}
-                                            <Link href={`/product/${item.id}`} onClick={() => setIsCartOpen(false)} className="relative w-24 h-32 bg-[#111] shrink-0 border border-[#BFA06A]/10 group-hover:border-[#BFA06A]/30 transition-colors cursor-pointer">
+                                            <Link href={`/product/${item.slug}`} onClick={() => setIsCartOpen(false)} className="relative w-24 h-32 bg-[#111] shrink-0 border border-[#BFA06A]/10 group-hover:border-[#BFA06A]/30 transition-colors cursor-pointer">
                                                 <Image
                                                     src={item.image}
                                                     alt={item.name}
@@ -93,13 +93,13 @@ export default function CartDrawer() {
                                             <div className="flex-1 flex flex-col justify-between py-1">
                                                 <div>
                                                     <div className="flex justify-between items-start gap-4">
-                                                        <Link href={`/product/${item.id}`} onClick={() => setIsCartOpen(false)}>
+                                                        <Link href={`/product/${item.slug}`} onClick={() => setIsCartOpen(false)}>
                                                             <h3 className="font-cormorant text-xl md:text-2xl text-[#F0E6C2] font-medium leading-tight pr-4 drop-shadow-sm group-hover:text-[#BFA06A] transition-colors cursor-pointer">
                                                                 {item.name}
                                                             </h3>
                                                         </Link>
                                                         <button
-                                                            onClick={() => removeFromCart(item.id)}
+                                                            onClick={() => removeFromCart(item.slug)}
                                                             className="text-[#F0E6C2]/50 hover:text-red-400 transition-colors uppercase text-[10px] md:text-xs tracking-widest shrink-0 mt-1 cursor-pointer font-medium"
                                                         >
                                                             Remove
@@ -114,7 +114,7 @@ export default function CartDrawer() {
                                                     {/* Quantity Controls */}
                                                     <div className="flex items-center gap-4 border border-[#BFA06A]/20 px-3 py-1.5">
                                                         <button
-                                                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                            onClick={() => updateQuantity(item.slug, item.quantity - 1)}
                                                             className="text-[#F0E6C2]/50 hover:text-[#BFA06A] transition-colors cursor-pointer"
                                                         >
                                                             <Minus className="w-3 h-3" />
@@ -123,7 +123,7 @@ export default function CartDrawer() {
                                                             {item.quantity}
                                                         </span>
                                                         <button
-                                                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                            onClick={() => updateQuantity(item.slug, item.quantity + 1)}
                                                             className="text-[#F0E6C2]/50 hover:text-[#BFA06A] transition-colors cursor-pointer"
                                                         >
                                                             <Plus className="w-3 h-3" />

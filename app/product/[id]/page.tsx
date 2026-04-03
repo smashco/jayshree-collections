@@ -1,16 +1,13 @@
-import { catalog } from '@/lib/catalog';
+import { getProductBySlug, getRelatedProducts } from '@/lib/products';
 import ProductPageClient from './ProductPageClient';
 import { notFound } from 'next/navigation';
 
-export function generateStaticParams() {
-    return catalog.map((product) => ({
-        id: product.id,
-    }));
-}
-
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = await params;
-    const product = catalog.find(p => p.id === resolvedParams.id);
+    const product = await getProductBySlug(resolvedParams.id);
     if (!product) notFound();
-    return <ProductPageClient id={resolvedParams.id} />;
+
+    const related = await getRelatedProducts(product.categorySlug, product.slug);
+
+    return <ProductPageClient product={product} relatedProducts={related} />;
 }

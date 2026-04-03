@@ -3,20 +3,37 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import Image from 'next/image';
-import { getProductById, getRelatedProducts } from '@/lib/catalog';
-import { useCart } from '@/context/CartContext';
+import { useCart, CartProduct } from '@/context/CartContext';
+import { ProductDetail, ProductListItem } from '@/lib/products';
 import Navbar from '@/components/ui/Navbar';
 import Footer from '@/components/ui/Footer';
 import Link from 'next/link';
 
-export default function ProductPageClient({ id }: { id: string }) {
-    const product = getProductById(id);
+interface ProductPageClientProps {
+    product: ProductDetail;
+    relatedProducts: ProductListItem[];
+}
+
+export default function ProductPageClient({ product, relatedProducts }: ProductPageClientProps) {
     const { addToCart } = useCart();
     const [quantity, setQuantity] = useState(1);
+    const [selectedVariant, setSelectedVariant] = useState(product.variants[0] || null);
 
-    if (!product) return null;
+    const displayPrice = selectedVariant?.formattedPrice || product.formattedPrice;
 
-    const relatedProducts = getRelatedProducts(product.category, product.id);
+    const handleAddToCart = () => {
+        const cartProduct: CartProduct = {
+            slug: product.slug,
+            name: product.name,
+            price: selectedVariant?.price || product.price,
+            formattedPrice: displayPrice,
+            image: product.image,
+            material: product.material,
+            variantId: selectedVariant?.id || '',
+            variantName: selectedVariant?.name || 'Default',
+        };
+        addToCart(cartProduct, quantity);
+    };
 
     return (
         <main className="min-h-screen bg-black flex flex-col">
@@ -63,8 +80,30 @@ export default function ProductPageClient({ id }: { id: string }) {
                             <h1 className="font-cormorant text-white font-medium leading-none mb-6 drop-shadow-md" style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)' }}>
                                 {product.name}
                             </h1>
-                            <p className="font-montserrat text-[#BFA06A] text-2xl md:text-3xl tracking-widest font-medium mb-10 drop-shadow-sm">{product.formattedPrice}</p>
+                            <p className="font-montserrat text-[#BFA06A] text-2xl md:text-3xl tracking-widest font-medium mb-10 drop-shadow-sm">{displayPrice}</p>
                             <p className="font-montserrat text-[#F0E6C2]/90 text-sm md:text-base leading-relaxed font-medium mb-12 max-w-xl">{product.description}</p>
+
+                            {/* Variant Selector */}
+                            {product.variants.length > 1 && (
+                                <div className="mb-8">
+                                    <p className="font-montserrat text-[#F0E6C2]/70 text-xs tracking-[0.2em] uppercase mb-3 font-medium">Variant</p>
+                                    <div className="flex flex-wrap gap-3">
+                                        {product.variants.map((v) => (
+                                            <button
+                                                key={v.id}
+                                                onClick={() => setSelectedVariant(v)}
+                                                className={`font-montserrat text-xs tracking-widest uppercase px-4 py-2 border transition-colors cursor-pointer
+                                                    ${selectedVariant?.id === v.id
+                                                        ? 'border-[#BFA06A] text-[#BFA06A] bg-[#BFA06A]/10'
+                                                        : 'border-[#BFA06A]/20 text-[#F0E6C2]/70 hover:border-[#BFA06A]/50'
+                                                    }`}
+                                            >
+                                                {v.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="border-y border-[#BFA06A]/15 py-8 mb-10">
                                 <div className="flex flex-col sm:flex-row gap-6">
@@ -73,11 +112,18 @@ export default function ProductPageClient({ id }: { id: string }) {
                                         <span className="font-montserrat text-white font-medium text-lg">{quantity}</span>
                                         <button onClick={() => setQuantity(quantity + 1)} className="text-[#F0E6C2]/70 hover:text-[#BFA06A] transition-colors text-lg md:text-xl">+</button>
                                     </div>
-                                    <button onClick={() => addToCart(product, quantity)} className="btn-gold flex-1 justify-center text-xs md:text-sm tracking-[0.25em] font-bold">
+                                    <button onClick={handleAddToCart} className="btn-gold flex-1 justify-center text-xs md:text-sm tracking-[0.25em] font-bold">
                                         <span>Add to Bag</span>
                                     </button>
                                 </div>
                             </div>
+
+                            {/* Stock indicator */}
+                            {selectedVariant && (
+                                <p className={`font-montserrat text-xs tracking-widest uppercase mb-6 font-medium ${selectedVariant.stock > 5 ? 'text-green-400/70' : selectedVariant.stock > 0 ? 'text-amber-400/70' : 'text-red-400/70'}`}>
+                                    {selectedVariant.stock > 5 ? 'In Stock' : selectedVariant.stock > 0 ? `Only ${selectedVariant.stock} left` : 'Out of Stock'}
+                                </p>
+                            )}
 
                             <div className="flex flex-col gap-6 font-montserrat text-xs md:text-sm text-[#F0E6C2]/90 font-medium">
                                 {['Shipping & Returns', 'Craftsmanship Guarantee', 'Bespoke Options'].map((item) => (
@@ -98,8 +144,8 @@ export default function ProductPageClient({ id }: { id: string }) {
                             </h2>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                                 {relatedProducts.map((p, i) => (
-                                    <motion.div key={p.id} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: i * 0.1 }}>
-                                        <Link href={`/product/${p.id}`} className="group block">
+                                    <motion.div key={p.slug} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: i * 0.1 }}>
+                                        <Link href={`/product/${p.slug}`} className="group block">
                                             <div className="relative aspect-[4/5] bg-[#111] mb-6 border border-[#BFA06A]/10 overflow-hidden">
                                                 <Image src={p.image} alt={p.name} fill className="object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105 opacity-90 group-hover:opacity-100" />
                                             </div>

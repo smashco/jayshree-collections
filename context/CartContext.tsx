@@ -1,17 +1,27 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Product } from '@/lib/catalog';
 
-export interface CartItem extends Product {
+export interface CartProduct {
+    slug: string;
+    name: string;
+    price: number;
+    formattedPrice: string;
+    image: string;
+    material: string;
+    variantId: string;
+    variantName: string;
+}
+
+export interface CartItem extends CartProduct {
     quantity: number;
 }
 
 interface CartContextType {
     items: CartItem[];
-    addToCart: (product: Product, quantity?: number) => void;
-    removeFromCart: (productId: string) => void;
-    updateQuantity: (productId: string, quantity: number) => void;
+    addToCart: (product: CartProduct, quantity?: number) => void;
+    removeFromCart: (variantId: string) => void;
+    updateQuantity: (variantId: string, quantity: number) => void;
     clearCart: () => void;
     totalItems: number;
     subtotal: number;
@@ -21,60 +31,85 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+const CART_KEY = 'jayshree_cart_v2';
+
 export function CartProvider({ children }: { children: ReactNode }) {
     const [items, setItems] = useState<CartItem[]>([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
 
-    // Load from local storage on mount
+    // Load from local storage on mount + migrate old cart
     useEffect(() => {
-        // Load the cart from local storage
-        const savedCart = localStorage.getItem('jayshree_cart');
+        // Try new cart format first
+        let savedCart = localStorage.getItem(CART_KEY);
         if (savedCart) {
             try {
-                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setItems(JSON.parse(savedCart));
             } catch {
                 console.error('Failed to parse cart');
             }
+        } else {
+            // Migrate from old format
+            const oldCart = localStorage.getItem('jayshree_cart');
+            if (oldCart) {
+                try {
+                    const oldItems = JSON.parse(oldCart);
+                    // Old items had `id` instead of `slug`, no variantId
+                    const migrated: CartItem[] = oldItems.map((item: Record<string, unknown>) => ({
+                        slug: item.id || item.slug,
+                        name: item.name,
+                        price: item.price,
+                        formattedPrice: item.formattedPrice,
+                        image: item.image,
+                        material: item.material,
+                        variantId: '', // no variant info in old format
+                        variantName: 'Default',
+                        quantity: item.quantity || 1,
+                    }));
+                    setItems(migrated);
+                    localStorage.removeItem('jayshree_cart');
+                } catch {
+                    console.error('Failed to migrate old cart');
+                }
+            }
         }
-        // Set mounted flag after initial render frame
         setTimeout(() => setIsMounted(true), 0);
     }, []);
 
     // Save to local storage when items change
     useEffect(() => {
         if (isMounted) {
-            localStorage.setItem('jayshree_cart', JSON.stringify(items));
+            localStorage.setItem(CART_KEY, JSON.stringify(items));
         }
     }, [items, isMounted]);
 
-    const addToCart = (product: Product, quantity: number = 1) => {
+    const addToCart = (product: CartProduct, quantity: number = 1) => {
         setItems(prev => {
-            const existingItem = prev.find(item => item.id === product.id);
+            const key = product.variantId || product.slug;
+            const existingItem = prev.find(item => (item.variantId || item.slug) === key);
             if (existingItem) {
                 return prev.map(item =>
-                    item.id === product.id
+                    (item.variantId || item.slug) === key
                         ? { ...item, quantity: item.quantity + quantity }
                         : item
                 );
             }
             return [...prev, { ...product, quantity }];
         });
-        setIsCartOpen(true); // Open drawer when adding
+        setIsCartOpen(true);
     };
 
-    const removeFromCart = (productId: string) => {
-        setItems(prev => prev.filter(item => item.id !== productId));
+    const removeFromCart = (variantId: string) => {
+        setItems(prev => prev.filter(item => (item.variantId || item.slug) !== variantId));
     };
 
-    const updateQuantity = (productId: string, quantity: number) => {
+    const updateQuantity = (variantId: string, quantity: number) => {
         if (quantity < 1) {
-            removeFromCart(productId);
+            removeFromCart(variantId);
             return;
         }
         setItems(prev => prev.map(item =>
-            item.id === productId ? { ...item, quantity } : item
+            (item.variantId || item.slug) === variantId ? { ...item, quantity } : item
         ));
     };
 
