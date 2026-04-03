@@ -1,0 +1,10 @@
+# GitHub Pages deployment disabled — site is deployed via Railway
+# This file overrides the auto-generated Pages workflow
+on:
+  workflow_dispatch:
+
+jobs:
+  disabled:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "GitHub Pages disabled. Deploying via Railway."
