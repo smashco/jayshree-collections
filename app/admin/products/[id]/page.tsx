@@ -65,6 +65,10 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   };
 
   const [uploading, setUploading] = useState(false);
+  const [showAddVariant, setShowAddVariant] = useState(false);
+  const [newVariant, setNewVariant] = useState({
+    sku: '', name: '', price: '', size: '', weight: '', purity: '', stock: '0', lowStockThreshold: '2',
+  });
 
   const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
@@ -136,18 +140,25 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   };
 
   const handleAddVariant = async () => {
-    const sku = prompt('Enter SKU:');
-    const name = prompt('Enter variant name:');
-    const price = prompt('Enter price (INR):');
-    if (!sku || !name || !price) return;
-
+    if (!newVariant.sku || !newVariant.name || !newVariant.price) return;
     await fetch(`/api/admin/products/${id}/variants`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sku, name, price: Math.round(parseFloat(price) * 100), stock: 0 }),
+      body: JSON.stringify({
+        sku: newVariant.sku,
+        name: newVariant.name,
+        price: Math.round(parseFloat(newVariant.price) * 100),
+        size: newVariant.size || null,
+        weight: newVariant.weight || null,
+        purity: newVariant.purity || null,
+        stock: parseInt(newVariant.stock) || 0,
+        lowStockThreshold: parseInt(newVariant.lowStockThreshold) || 2,
+      }),
     });
     const updated = await fetch(`/api/admin/products/${id}`).then(r => r.json());
     setProduct(updated);
+    setNewVariant({ sku: '', name: '', price: '', size: '', weight: '', purity: '', stock: '0', lowStockThreshold: '2' });
+    setShowAddVariant(false);
   };
 
   if (!product) {
@@ -260,18 +271,20 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           {/* Variants */}
           <div className="bg-[#0A0A0A] border border-[#BFA06A]/10 p-6 rounded">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-montserrat text-[#F0E6C2] text-xs tracking-[0.2em] uppercase font-medium">Variants</h3>
-              <button onClick={handleAddVariant} className="text-[#BFA06A] hover:text-[#D4B580] cursor-pointer">
-                <Plus className="w-4 h-4" />
+              <h3 className="font-montserrat text-[#F0E6C2] text-xs tracking-[0.2em] uppercase font-medium">Variants ({product.variants.length})</h3>
+              <button onClick={() => setShowAddVariant(v => !v)} className="flex items-center gap-1 text-[#BFA06A] hover:text-[#D4B580] cursor-pointer font-montserrat text-xs tracking-widest uppercase">
+                <Plus className="w-3.5 h-3.5" /> Add
               </button>
             </div>
-            <div className="space-y-3">
+
+            {/* Existing variants */}
+            <div className="space-y-3 mb-4">
               {product.variants.map((v) => (
                 <div key={v.id} className="border border-[#BFA06A]/10 px-4 py-3">
                   <div className="flex items-center justify-between mb-2">
                     <div>
                       <p className="font-montserrat text-[#F0E6C2] text-sm">{v.name}</p>
-                      <p className="font-montserrat text-[#F0E6C2]/40 text-xs">SKU: {v.sku}</p>
+                      <p className="font-montserrat text-[#F0E6C2]/40 text-xs">SKU: {v.sku}{v.size ? ` · ${v.size}` : ''}{v.weight ? ` · ${v.weight}` : ''}{v.purity ? ` · ${v.purity}` : ''}</p>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="font-montserrat text-[#BFA06A] text-sm">
@@ -298,6 +311,100 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
                 </div>
               ))}
             </div>
+
+            {/* Add variant form */}
+            {showAddVariant && (
+              <div className="border border-[#BFA06A]/30 p-5 space-y-4 bg-[#111]">
+                <p className="font-montserrat text-[#BFA06A] text-xs tracking-[0.2em] uppercase font-medium mb-2">New Variant</p>
+
+                {/* SKU */}
+                <div>
+                  <label className={labelClass}>SKU <span className="text-red-400">*</span></label>
+                  <input value={newVariant.sku} onChange={e => setNewVariant({...newVariant, sku: e.target.value})}
+                    placeholder="e.g. JC-HARAM-22K-L"
+                    className={inputClass} />
+                  <p className="font-montserrat text-[#F0E6C2]/30 text-[0.6rem] mt-1">Unique product code for tracking. Use a consistent format like BRAND-PRODUCT-METAL-SIZE.</p>
+                </div>
+
+                {/* Variant Name */}
+                <div>
+                  <label className={labelClass}>Variant Name <span className="text-red-400">*</span></label>
+                  <input value={newVariant.name} onChange={e => setNewVariant({...newVariant, name: e.target.value})}
+                    placeholder="e.g. 22K Gold / Large"
+                    className={inputClass} />
+                  <p className="font-montserrat text-[#F0E6C2]/30 text-[0.6rem] mt-1">Shown to customer on product page. Describe what makes this variant different (metal, size, weight).</p>
+                </div>
+
+                {/* Price */}
+                <div>
+                  <label className={labelClass}>Price (₹) <span className="text-red-400">*</span></label>
+                  <input type="number" value={newVariant.price} onChange={e => setNewVariant({...newVariant, price: e.target.value})}
+                    placeholder="e.g. 45000"
+                    className={inputClass} />
+                  <p className="font-montserrat text-[#F0E6C2]/30 text-[0.6rem] mt-1">Selling price in Indian Rupees. Enter full amount — ₹45000, not 450.</p>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  {/* Size */}
+                  <div>
+                    <label className={labelClass}>Size</label>
+                    <input value={newVariant.size} onChange={e => setNewVariant({...newVariant, size: e.target.value})}
+                      placeholder="e.g. S / M / L"
+                      className={inputClass} />
+                    <p className="font-montserrat text-[#F0E6C2]/30 text-[0.6rem] mt-1">For bangles: diameter. For rings: finger size. For chains: length in inches.</p>
+                  </div>
+
+                  {/* Weight */}
+                  <div>
+                    <label className={labelClass}>Weight</label>
+                    <input value={newVariant.weight} onChange={e => setNewVariant({...newVariant, weight: e.target.value})}
+                      placeholder="e.g. 12.5g"
+                      className={inputClass} />
+                    <p className="font-montserrat text-[#F0E6C2]/30 text-[0.6rem] mt-1">Gold/silver weight in grams. Important for pricing transparency.</p>
+                  </div>
+
+                  {/* Purity */}
+                  <div>
+                    <label className={labelClass}>Purity</label>
+                    <input value={newVariant.purity} onChange={e => setNewVariant({...newVariant, purity: e.target.value})}
+                      placeholder="e.g. 22K / 18K"
+                      className={inputClass} />
+                    <p className="font-montserrat text-[#F0E6C2]/30 text-[0.6rem] mt-1">Gold purity: 24K (pure), 22K (91.6%), 18K (75%). Or 925 for silver.</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Stock */}
+                  <div>
+                    <label className={labelClass}>Opening Stock <span className="text-red-400">*</span></label>
+                    <input type="number" min={0} value={newVariant.stock} onChange={e => setNewVariant({...newVariant, stock: e.target.value})}
+                      placeholder="e.g. 5"
+                      className={inputClass} />
+                    <p className="font-montserrat text-[#F0E6C2]/30 text-[0.6rem] mt-1">How many pieces are available right now in your inventory.</p>
+                  </div>
+
+                  {/* Low Stock Threshold */}
+                  <div>
+                    <label className={labelClass}>Low Stock Alert At</label>
+                    <input type="number" min={0} value={newVariant.lowStockThreshold} onChange={e => setNewVariant({...newVariant, lowStockThreshold: e.target.value})}
+                      placeholder="e.g. 2"
+                      className={inputClass} />
+                    <p className="font-montserrat text-[#F0E6C2]/30 text-[0.6rem] mt-1">You'll see a warning when stock drops to or below this number. Default is 2.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button onClick={handleAddVariant}
+                    className="bg-[#BFA06A] text-black font-montserrat text-xs px-5 py-2.5 font-semibold hover:bg-[#D4B580] cursor-pointer tracking-widest uppercase">
+                    Save Variant
+                  </button>
+                  <button onClick={() => setShowAddVariant(false)}
+                    className="border border-[#BFA06A]/20 text-[#F0E6C2]/50 font-montserrat text-xs px-5 py-2.5 hover:border-[#BFA06A]/50 cursor-pointer tracking-widest uppercase">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
