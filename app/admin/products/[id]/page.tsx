@@ -16,7 +16,7 @@ interface ProductData {
   isFeatured: boolean;
   isActive: boolean;
   category: { id: string; name: string };
-  images: { id: string; url: string; alt: string | null; isPrimary: boolean }[];
+  images: { id: string; url: string; alt: string | null; isPrimary: boolean; mediaType: string }[];
   variants: {
     id: string; sku: string; name: string; size: string | null;
     weight: string | null; purity: string | null; price: number;
@@ -64,30 +64,54 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     alert('Product saved!');
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !product) return;
+  const [uploading, setUploading] = useState(false);
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('productSlug', product.slug);
+  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length || !product) return;
+    setUploading(true);
 
-    const res = await fetch('/api/upload', { method: 'POST', body: formData });
-    if (!res.ok) { alert('Upload failed'); return; }
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('productSlug', product.slug);
 
-    const { url } = await res.json();
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      if (!res.ok) continue;
 
-    // Save image record to database
+      const { url, mediaType } = await res.json();
+
+      await fetch(`/api/admin/products/${id}/images`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url,
+          alt: product.name,
+          mediaType,
+          isPrimary: mediaType === 'image' && product.images.filter(i => i.mediaType === 'image').length === 0,
+        }),
+      });
+    }
+
+    const updated = await fetch(`/api/admin/products/${id}`).then(r => r.json());
+    setProduct(updated);
+    setUploading(false);
+    e.target.value = '';
+  };
+
+  const handleDeleteMedia = async (imageId: string) => {
+    if (!confirm('Delete this media?')) return;
     await fetch(`/api/admin/products/${id}/images`, {
-      method: 'POST',
+      method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        url,
-        alt: product.name,
-        isPrimary: product.images.length === 0,
-      }),
+      body: JSON.stringify({ imageId }),
     });
+    const updated = await fetch(`/api/admin/products/${id}`).then(r => r.json());
+    setProduct(updated);
+  };
 
+  const handleSetPrimary = async (imageId: string) => {
+    await fetch(`/api/admin/products/${id}/images/${imageId}/primary`, { method: 'POST' });
     const updated = await fetch(`/api/admin/products/${id}`).then(r => r.json());
     setProduct(updated);
   };
@@ -176,22 +200,49 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
           </div>
         </div>
 
-        {/* Sidebar: Images */}
+        {/* Sidebar: Media */}
         <div className="space-y-8">
           <div className="bg-[#0A0A0A] border border-[#BFA06A]/10 p-6 rounded">
-            <h3 className="font-montserrat text-[#F0E6C2] text-xs tracking-[0.2em] uppercase font-medium mb-4">Images</h3>
+            <h3 className="font-montserrat text-[#F0E6C2] text-xs tracking-[0.2em] uppercase font-medium mb-4">
+              Media ({product.images.length})
+            </h3>
             <div className="grid grid-cols-2 gap-3 mb-4">
-              {product.images.map((img) => (
-                <div key={img.id} className="relative aspect-[4/5] bg-[#111] border border-[#BFA06A]/10">
-                  <Image src={img.url} alt={img.alt || ''} fill className="object-cover" />
+              {product.images.map((media) => (
+                <div key={media.id} className="relative aspect-[4/5] bg-[#111] border border-[#BFA06A]/10 group">
+                  {media.mediaType === 'video' ? (
+                    <video src={media.url} className="w-full h-full object-cover" muted playsInline loop
+                      onMouseEnter={e => (e.currentTarget as HTMLVideoElement).play()}
+                      onMouseLeave={e => { (e.currentTarget as HTMLVideoElement).pause(); (e.currentTarget as HTMLVideoElement).currentTime = 0; }}
+                    />
+                  ) : (
+                    <Image src={media.url} alt={media.alt || ''} fill className="object-cover" />
+                  )}
+                  {media.isPrimary && (
+                    <span className="absolute top-1 left-1 bg-[#BFA06A] text-black text-[0.5rem] font-bold px-1.5 py-0.5 uppercase tracking-wider">Primary</span>
+                  )}
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    {media.mediaType === 'image' && !media.isPrimary && (
+                      <button onClick={() => handleSetPrimary(media.id)}
+                        className="text-[0.55rem] font-montserrat tracking-widest uppercase text-[#BFA06A] border border-[#BFA06A]/50 px-2 py-1 hover:bg-[#BFA06A]/10 cursor-pointer">
+                        Set Primary
+                      </button>
+                    )}
+                    <button onClick={() => handleDeleteMedia(media.id)}
+                      className="text-red-400 hover:text-red-300 cursor-pointer">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
-            <label className="flex items-center gap-2 justify-center border border-dashed border-[#BFA06A]/30 py-4 cursor-pointer hover:border-[#BFA06A] transition-colors">
+            <label className={`flex items-center gap-2 justify-center border border-dashed border-[#BFA06A]/30 py-4 cursor-pointer hover:border-[#BFA06A] transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
               <Upload className="w-4 h-4 text-[#BFA06A]" />
-              <span className="font-montserrat text-[#BFA06A] text-xs tracking-[0.15em] uppercase">Upload Image</span>
-              <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+              <span className="font-montserrat text-[#BFA06A] text-xs tracking-[0.15em] uppercase">
+                {uploading ? 'Uploading...' : 'Upload Photos & Videos'}
+              </span>
+              <input type="file" accept="image/*,video/*" multiple onChange={handleMediaUpload} className="hidden" />
             </label>
+            <p className="font-montserrat text-[#F0E6C2]/30 text-[0.6rem] text-center mt-2">Select multiple files at once · Photos up to 10MB · Videos up to 100MB</p>
           </div>
 
           {/* Variants */}

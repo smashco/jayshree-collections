@@ -7,12 +7,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   if (error) return error;
 
   const { id } = await params;
-  const { url, alt, isPrimary } = await request.json();
+  const { url, alt, isPrimary, mediaType } = await request.json();
 
   if (!url) return NextResponse.json({ error: 'url required' }, { status: 400 });
 
-  // If this is primary, unset existing primary
-  if (isPrimary) {
+  // Only images can be primary
+  if (isPrimary && mediaType !== 'video') {
     await prisma.productImage.updateMany({
       where: { productId: id },
       data: { isPrimary: false },
@@ -25,6 +25,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       url,
       alt: alt ?? null,
       isPrimary: isPrimary ?? false,
+      mediaType: mediaType ?? 'image',
       sortOrder: 0,
     },
   });
