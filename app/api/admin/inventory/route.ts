@@ -11,16 +11,19 @@ export async function GET(request: NextRequest) {
 
   const variants = await prisma.productVariant.findMany({
     where: {
-      isActive: true,
-      ...(lowStockOnly && {
-        stock: { lte: 2 },
-      }),
+      ...(lowStockOnly && { stock: { lte: 2 } }),
     },
     include: {
-      product: { select: { name: true, slug: true } },
+      product: { select: { name: true, slug: true, isActive: true } },
     },
-    orderBy: { stock: 'asc' },
+    orderBy: [{ product: { name: 'asc' } }, { stock: 'asc' }],
   });
 
-  return NextResponse.json(variants);
+  // Also include products with no variants
+  const productsWithNoVariants = await prisma.product.findMany({
+    where: { variants: { none: {} } },
+    select: { id: true, name: true, slug: true, isActive: true },
+  });
+
+  return NextResponse.json({ variants, productsWithNoVariants });
 }

@@ -10,11 +10,20 @@ interface Variant {
   price: number;
   stock: number;
   lowStockThreshold: number;
-  product: { name: string; slug: string };
+  isActive: boolean;
+  product: { name: string; slug: string; isActive: boolean };
+}
+
+interface NoVariantProduct {
+  id: string;
+  name: string;
+  slug: string;
+  isActive: boolean;
 }
 
 export default function InventoryPage() {
   const [variants, setVariants] = useState<Variant[]>([]);
+  const [noVariantProducts, setNoVariantProducts] = useState<NoVariantProduct[]>([]);
   const [showLowOnly, setShowLowOnly] = useState(false);
   const [adjusting, setAdjusting] = useState<string | null>(null);
   const [adjustQty, setAdjustQty] = useState('');
@@ -24,7 +33,9 @@ export default function InventoryPage() {
   const fetchInventory = async () => {
     const params = showLowOnly ? '?lowStock=true' : '';
     const res = await fetch(`/api/admin/inventory${params}`);
-    setVariants(await res.json());
+    const data = await res.json();
+    setVariants(data.variants ?? []);
+    setNoVariantProducts(data.productsWithNoVariants ?? []);
   };
 
   useEffect(() => { fetchInventory(); }, [showLowOnly]);
@@ -76,6 +87,20 @@ export default function InventoryPage() {
             </tr>
           </thead>
           <tbody>
+            {noVariantProducts.map((p) => (
+              <tr key={p.id} className="border-b border-[#BFA06A]/5 bg-[#BFA06A]/5">
+                <td className="px-6 py-4 font-montserrat text-[#F0E6C2] text-sm">{p.name}</td>
+                <td className="px-6 py-4 font-montserrat text-[#F0E6C2]/30 text-xs">—</td>
+                <td className="px-6 py-4 font-montserrat text-amber-400/70 text-xs">No variants</td>
+                <td className="px-6 py-4 text-right font-montserrat text-[#F0E6C2]/30 text-sm">—</td>
+                <td className="px-6 py-4 text-right font-montserrat text-amber-400 text-sm">—</td>
+                <td className="px-6 py-4 text-right">
+                  <a href={`/admin/products/${p.id}`} className="font-montserrat text-xs text-[#BFA06A] hover:text-[#D4B580] cursor-pointer tracking-wide">
+                    Add Variant
+                  </a>
+                </td>
+              </tr>
+            ))}
             {variants.map((v) => (
               <>
                 <tr key={v.id} className="border-b border-[#BFA06A]/5 hover:bg-white/[0.02] transition-colors">
