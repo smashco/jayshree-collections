@@ -17,12 +17,12 @@ export const updateProductSchema = createProductSchema.partial();
 export const createVariantSchema = z.object({
   sku: z.string().min(1),
   name: z.string().min(1),
-  size: z.string().optional(),
-  weight: z.string().optional(),
-  purity: z.string().optional(),
+  size: z.string().nullish(),
+  weight: z.string().nullish(),
+  purity: z.string().nullish(),
   price: z.number().int().positive(),
-  stock: z.number().int().min(0).optional(),
-  lowStockThreshold: z.number().int().min(0).optional(),
+  stock: z.number().int().min(0).optional().default(0),
+  lowStockThreshold: z.number().int().min(0).optional().default(2),
 });
 
 export const createCategorySchema = z.object({
