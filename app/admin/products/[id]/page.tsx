@@ -73,19 +73,23 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     formData.append('productSlug', product.slug);
 
     const res = await fetch('/api/upload', { method: 'POST', body: formData });
-    if (res.ok) {
-      const { url } = await res.json();
-      // Create image record
-      await fetch(`/api/admin/products/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}), // trigger to refresh
-      });
-      // For now, reload product data
-      const updated = await fetch(`/api/admin/products/${id}`).then(r => r.json());
-      setProduct(updated);
-      alert(`Image uploaded: ${url}`);
-    }
+    if (!res.ok) { alert('Upload failed'); return; }
+
+    const { url } = await res.json();
+
+    // Save image record to database
+    await fetch(`/api/admin/products/${id}/images`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        url,
+        alt: product.name,
+        isPrimary: product.images.length === 0,
+      }),
+    });
+
+    const updated = await fetch(`/api/admin/products/${id}`).then(r => r.json());
+    setProduct(updated);
   };
 
   const handleDeleteVariant = async (variantId: string) => {
