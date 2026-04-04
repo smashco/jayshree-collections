@@ -2,6 +2,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/admin-auth';
 
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string; variantId: string }> }
+) {
+  const { error } = await requireAuth();
+  if (error) return error;
+  const { variantId } = await params;
+
+  const { stock } = await request.json();
+  const variant = await prisma.productVariant.update({
+    where: { id: variantId },
+    data: { stock: Number(stock) },
+  });
+
+  return NextResponse.json(variant);
+}
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string; variantId: string }> }

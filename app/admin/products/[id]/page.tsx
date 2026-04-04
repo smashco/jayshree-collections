@@ -116,6 +116,18 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     setProduct(updated);
   };
 
+  const handleStockUpdate = async (variantId: string, newStock: number) => {
+    await fetch(`/api/admin/products/${id}/variants/${variantId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ stock: newStock }),
+    });
+    setProduct(prev => prev ? {
+      ...prev,
+      variants: prev.variants.map(v => v.id === variantId ? { ...v, stock: newStock } : v),
+    } : prev);
+  };
+
   const handleDeleteVariant = async (variantId: string) => {
     if (!confirm('Delete this variant?')) return;
     await fetch(`/api/admin/products/${id}/variants/${variantId}`, { method: 'DELETE' });
@@ -255,18 +267,33 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
             </div>
             <div className="space-y-3">
               {product.variants.map((v) => (
-                <div key={v.id} className="flex items-center justify-between border border-[#BFA06A]/10 px-4 py-3">
-                  <div>
-                    <p className="font-montserrat text-[#F0E6C2] text-sm">{v.name}</p>
-                    <p className="font-montserrat text-[#F0E6C2]/40 text-xs">SKU: {v.sku} | Stock: {v.stock}</p>
+                <div key={v.id} className="border border-[#BFA06A]/10 px-4 py-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <p className="font-montserrat text-[#F0E6C2] text-sm">{v.name}</p>
+                      <p className="font-montserrat text-[#F0E6C2]/40 text-xs">SKU: {v.sku}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="font-montserrat text-[#BFA06A] text-sm">
+                        {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v.price / 100)}
+                      </span>
+                      <button onClick={() => handleDeleteVariant(v.id)} className="text-[#F0E6C2]/30 hover:text-red-400 cursor-pointer">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="font-montserrat text-[#BFA06A] text-sm">
-                      {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(v.price / 100)}
+                  <div className="flex items-center gap-2">
+                    <label className="font-montserrat text-[#F0E6C2]/50 text-xs tracking-widest uppercase">Stock:</label>
+                    <input
+                      type="number"
+                      min={0}
+                      defaultValue={v.stock}
+                      onBlur={(e) => handleStockUpdate(v.id, parseInt(e.target.value) || 0)}
+                      className="w-20 bg-[#111] border border-[#BFA06A]/20 text-[#F0E6C2] font-montserrat text-sm px-2 py-1 focus:border-[#BFA06A] outline-none"
+                    />
+                    <span className={`font-montserrat text-xs ${v.stock === 0 ? 'text-red-400' : v.stock <= 5 ? 'text-amber-400' : 'text-green-400/70'}`}>
+                      {v.stock === 0 ? 'Out of stock' : v.stock <= 5 ? 'Low stock' : 'In stock'}
                     </span>
-                    <button onClick={() => handleDeleteVariant(v.id)} className="text-[#F0E6C2]/30 hover:text-red-400 cursor-pointer">
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
                   </div>
                 </div>
               ))}
