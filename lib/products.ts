@@ -15,7 +15,7 @@ export interface ProductListItem {
 }
 
 export interface ProductDetail extends ProductListItem {
-  images: { id: string; url: string; alt: string | null; isPrimary: boolean }[];
+  images: { id: string; url: string; alt: string | null; isPrimary: boolean; mediaType: string }[];
   variants: {
     id: string;
     sku: string;
@@ -105,6 +105,7 @@ export async function getProductBySlug(slug: string): Promise<ProductDetail | nu
       url: i.url,
       alt: i.alt,
       isPrimary: i.isPrimary,
+      mediaType: i.mediaType,
     })),
     variants: p.variants.map((v) => ({
       id: v.id,

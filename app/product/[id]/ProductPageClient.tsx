@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useCart, CartProduct } from '@/context/CartContext';
 import { ProductDetail, ProductListItem } from '@/lib/products';
@@ -14,10 +14,50 @@ interface ProductPageClientProps {
     relatedProducts: ProductListItem[];
 }
 
+type MediaItem = ProductDetail['images'][number];
+
+function MediaViewer({ media }: { media: MediaItem }) {
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    if (media.mediaType === 'video') {
+        return (
+            <video
+                ref={videoRef}
+                key={media.url}
+                src={media.url}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+            />
+        );
+    }
+    return (
+        <Image
+            key={media.url}
+            src={media.url}
+            alt={media.alt || ''}
+            fill
+            className="object-cover transition-transform duration-700 hover:scale-105"
+            priority
+            sizes="(max-width: 768px) 100vw, 50vw"
+        />
+    );
+}
+
 export default function ProductPageClient({ product, relatedProducts }: ProductPageClientProps) {
     const { addToCart } = useCart();
     const [quantity, setQuantity] = useState(1);
     const [selectedVariant, setSelectedVariant] = useState(product.variants[0] || null);
+
+    const allMedia: MediaItem[] = product.images.length > 0
+        ? product.images
+        : [{ id: 'fallback', url: product.image, alt: product.name, isPrimary: true, mediaType: 'image' }];
+
+    const primaryIndex = allMedia.findIndex(m => m.isPrimary && m.mediaType === 'image');
+    const [activeIndex, setActiveIndex] = useState(primaryIndex >= 0 ? primaryIndex : 0);
+    const activeMedia = allMedia[activeIndex];
 
     const displayPrice = selectedVariant?.formattedPrice || product.formattedPrice;
 
@@ -52,21 +92,45 @@ export default function ProductPageClient({ product, relatedProducts }: ProductP
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24 mb-32">
-                        {/* Image */}
+
+                        {/* Media Gallery */}
                         <motion.div
                             initial={{ opacity: 0, x: -30 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                            className="relative aspect-[4/5] md:aspect-auto md:h-[600px] lg:h-[800px] bg-[#0A0A0A] border border-[#BFA06A]/10 overflow-hidden"
+                            className="flex gap-4"
                         >
-                            <Image
-                                src={product.image}
-                                alt={product.name}
-                                fill
-                                className="object-cover transition-transform duration-700 hover:scale-105"
-                                priority
-                                sizes="(max-width: 768px) 100vw, 50vw"
-                            />
+                            {/* Thumbnails — vertical strip */}
+                            {allMedia.length > 1 && (
+                                <div className="flex flex-col gap-2 w-16 shrink-0">
+                                    {allMedia.map((media, i) => (
+                                        <button
+                                            key={media.id}
+                                            onClick={() => setActiveIndex(i)}
+                                            className={`relative w-16 aspect-[4/5] border overflow-hidden shrink-0 cursor-pointer transition-all duration-300
+                                                ${activeIndex === i ? 'border-[#BFA06A]' : 'border-[#BFA06A]/15 opacity-50 hover:opacity-100'}`}
+                                        >
+                                            {media.mediaType === 'video' ? (
+                                                <div className="w-full h-full bg-[#111] flex items-center justify-center">
+                                                    <span className="text-[#BFA06A] text-lg">▶</span>
+                                                </div>
+                                            ) : (
+                                                <Image src={media.url} alt={media.alt || ''} fill className="object-cover" sizes="64px" />
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Main viewer */}
+                            <div className="relative flex-1 aspect-[4/5] md:aspect-auto md:h-[600px] lg:h-[800px] bg-[#0A0A0A] border border-[#BFA06A]/10 overflow-hidden">
+                                <MediaViewer media={activeMedia} />
+                                {activeMedia.mediaType === 'video' && (
+                                    <div className="absolute bottom-3 left-3 bg-black/60 px-2 py-1">
+                                        <span className="font-montserrat text-[#BFA06A] text-[0.55rem] tracking-widest uppercase">Video</span>
+                                    </div>
+                                )}
+                            </div>
                         </motion.div>
 
                         {/* Details */}
@@ -118,7 +182,6 @@ export default function ProductPageClient({ product, relatedProducts }: ProductP
                                 </div>
                             </div>
 
-                            {/* Stock indicator */}
                             {selectedVariant && (
                                 <p className={`font-montserrat text-xs tracking-widest uppercase mb-6 font-medium ${selectedVariant.stock > 5 ? 'text-green-400/70' : selectedVariant.stock > 0 ? 'text-amber-400/70' : 'text-red-400/70'}`}>
                                     {selectedVariant.stock > 5 ? 'In Stock' : selectedVariant.stock > 0 ? `Only ${selectedVariant.stock} left` : 'Out of Stock'}
