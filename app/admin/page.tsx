@@ -40,12 +40,17 @@ const statusColors: Record<string, string> = {
 
 export default function AdminDashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetch('/api/admin/dashboard')
-      .then((res) => res.json())
+      .then(async (res) => {
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || `Server error ${res.status}`);
+        return json;
+      })
       .then(setData)
-      .catch(console.error);
+      .catch((err) => { console.error(err); setError(err.message); });
   }, []);
 
   const formatPrice = (paisa: number) =>
@@ -54,6 +59,14 @@ export default function AdminDashboard() {
       currency: 'INR',
       maximumFractionDigits: 0,
     }).format(paisa / 100);
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="font-montserrat text-red-400 text-sm">Dashboard error: {error}</p>
+      </div>
+    );
+  }
 
   if (!data) {
     return (
