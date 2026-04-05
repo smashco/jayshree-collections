@@ -1,4 +1,5 @@
 const BASE_URL = 'https://apiv2.shiprocket.in/v1/external';
+const TEST_MODE = process.env.SHIPROCKET_TEST_MODE === 'true';
 
 let cachedToken: string | null = null;
 let tokenExpiry: number = 0;
@@ -55,6 +56,12 @@ export async function createShiprocketOrder(payload: ShiprocketOrderPayload): Pr
   shipmentId: string;
   status: string;
 }> {
+  if (TEST_MODE) {
+    const fakeId = `TEST-${Date.now()}`;
+    console.log('[shiprocket:test] Fake order created for', payload.orderNumber);
+    return { orderId: fakeId, shipmentId: `SHIP-${fakeId}`, status: 'NEW' };
+  }
+
   const token = await getShiprocketToken();
 
   const body = {
@@ -111,6 +118,11 @@ export async function assignAWB(shipmentId: string): Promise<{
   awbCode: string;
   courierName: string;
 }> {
+  if (TEST_MODE) {
+    console.log('[shiprocket:test] Fake AWB assigned for shipment', shipmentId);
+    return { awbCode: `AWB-TEST-${Date.now()}`, courierName: 'Delhivery (Test)' };
+  }
+
   const token = await getShiprocketToken();
 
   const res = await fetch(`${BASE_URL}/courier/assign/awb`, {
@@ -134,6 +146,11 @@ export async function assignAWB(shipmentId: string): Promise<{
 }
 
 export async function generatePickup(shipmentId: string): Promise<void> {
+  if (TEST_MODE) {
+    console.log('[shiprocket:test] Fake pickup scheduled for', shipmentId);
+    return;
+  }
+
   const token = await getShiprocketToken();
 
   await fetch(`${BASE_URL}/courier/generate/pickup`, {
