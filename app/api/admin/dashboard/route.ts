@@ -9,6 +9,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  try {
   const [
     totalProducts,
     totalCategories,
@@ -55,4 +56,11 @@ export async function GET() {
       createdAt: o.createdAt,
     })),
   });
+  } catch (err) {
+    console.error('[dashboard] Error:', err);
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'Internal server error' },
+      { status: 500 }
+    );
+  }
 }
