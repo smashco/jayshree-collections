@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAuth } from '@/lib/admin-auth';
+import { sendStatusUpdate } from '@/lib/email';
 
 export async function GET(
   _request: NextRequest,
@@ -48,7 +49,21 @@ export async function PUT(
   if (body.paymentStatus) updateData.paymentStatus = body.paymentStatus;
   if (body.note !== undefined) updateData.note = body.note;
 
-  const order = await prisma.order.update({ where: { id }, data: updateData });
+  const order = await prisma.order.update({
+    where: { id },
+    data: updateData,
+    include: { customer: true },
+  });
+
+  // Send status email for key transitions
+  if (body.status && ['PROCESSING', 'DELIVERED', 'CANCELLED'].includes(body.status)) {
+    sendStatusUpdate({
+      customerName: `${order.customer.firstName} ${order.customer.lastName}`,
+      email: order.customer.email,
+      orderNumber: order.orderNumber,
+      status: body.status,
+    }).catch(e => console.error('[order-status] Email failed:', e));
+  }
 
   // If cancelled, restock items
   if (body.status === 'CANCELLED') {

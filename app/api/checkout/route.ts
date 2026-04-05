@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import crypto from 'crypto';
+import { sendOrderConfirmation } from '@/lib/email';
 
 const checkoutSchema = z.object({
   email: z.string().email(),
@@ -152,6 +153,37 @@ export async function POST(request: NextRequest) {
     });
 
     console.log('[checkout] Order created:', order.orderNumber);
+
+    // Send confirmation email (non-blocking)
+    const fullOrder = await prisma.order.findUnique({
+      where: { id: order.id },
+      include: {
+        customer: true,
+        shippingAddress: true,
+        items: true,
+      },
+    });
+
+    if (fullOrder) {
+      sendOrderConfirmation({
+        customerName: `${fullOrder.customer.firstName} ${fullOrder.customer.lastName}`,
+        email: fullOrder.customer.email,
+        orderNumber: fullOrder.orderNumber,
+        paymentId: data.razorpayPaymentId,
+        items: fullOrder.items.map(i => ({
+          name: i.name,
+          sku: i.sku,
+          quantity: i.quantity,
+          unitPrice: i.unitPrice,
+        })),
+        subtotal: fullOrder.subtotal,
+        taxAmount: fullOrder.taxAmount,
+        shippingAmount: fullOrder.shippingAmount,
+        totalAmount: fullOrder.totalAmount,
+        shippingAddress: fullOrder.shippingAddress,
+      }).catch(err => console.error('[checkout] Email failed:', err));
+    }
+
     return NextResponse.json({ orderId: order.id, orderNumber: order.orderNumber, totalAmount: order.totalAmount }, { status: 201 });
 
   } catch (err) {

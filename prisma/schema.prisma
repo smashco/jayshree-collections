@@ -221,9 +221,12 @@ model Order {
   razorpayOrderId   String?       @map("razorpay_order_id")
   razorpayPaymentId String?       @map("razorpay_payment_id")
   razorpaySignature String?       @map("razorpay_signature")
-  shippingMethod    String        @default("standard") @map("shipping_method")
-  trackingNumber    String?       @map("tracking_number")
-  note              String?
+  shippingMethod       String        @default("standard") @map("shipping_method")
+  trackingNumber       String?       @map("tracking_number")
+  shiprocketOrderId    String?       @map("shiprocket_order_id")
+  shiprocketShipmentId String?       @map("shiprocket_shipment_id")
+  courierName          String?       @map("courier_name")
+  note                 String?
   cancelledAt       DateTime?     @map("cancelled_at")
   shippedAt         DateTime?     @map("shipped_at")
   deliveredAt       DateTime?     @map("delivered_at")

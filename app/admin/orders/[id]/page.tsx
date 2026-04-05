@@ -17,6 +17,10 @@ interface OrderDetail {
   shippedAt: string | null;
   deliveredAt: string | null;
   cancelledAt: string | null;
+  shiprocketOrderId: string | null;
+  shiprocketShipmentId: string | null;
+  trackingNumber: string | null;
+  courierName: string | null;
   customer: { firstName: string; lastName: string; email: string; phone: string | null };
   shippingAddress: { firstName: string; lastName: string; address1: string; address2: string | null; city: string; state: string; pinCode: string };
   items: { id: string; name: string; sku: string; quantity: number; unitPrice: number; product: { slug: string; images: { url: string }[] } }[];
@@ -27,6 +31,8 @@ const statusFlow = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED'
 export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [order, setOrder] = useState<OrderDetail | null>(null);
+  const [creatingShipment, setCreatingShipment] = useState(false);
+  const [shipmentError, setShipmentError] = useState('');
 
   const fetchOrder = async () => {
     const res = await fetch(`/api/admin/orders/${id}`);
@@ -44,12 +50,26 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     fetchOrder();
   };
 
+  const createShipment = async () => {
+    setCreatingShipment(true);
+    setShipmentError('');
+    const res = await fetch(`/api/admin/orders/${id}/shipment`, { method: 'POST' });
+    const data = await res.json();
+    if (!res.ok) {
+      setShipmentError(data.error || 'Failed to create shipment');
+    } else {
+      fetchOrder();
+    }
+    setCreatingShipment(false);
+  };
+
   const formatPrice = (paisa: number) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(paisa / 100);
 
   if (!order) return <div className="text-[#F0E6C2]/40 font-montserrat text-sm">Loading...</div>;
 
   const currentIdx = statusFlow.indexOf(order.status);
+  const canShip = ['CONFIRMED', 'PROCESSING'].includes(order.status) && !order.shiprocketOrderId;
 
   return (
     <div>
@@ -58,7 +78,16 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
           <h1 className="font-cormorant text-white text-3xl font-medium">Order {order.orderNumber}</h1>
           <p className="font-montserrat text-[#F0E6C2]/40 text-xs mt-1">{new Date(order.createdAt).toLocaleString('en-IN')}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap justify-end">
+          {canShip && (
+            <button
+              onClick={createShipment}
+              disabled={creatingShipment}
+              className="bg-[#BFA06A]/20 border border-[#BFA06A]/40 text-[#BFA06A] font-montserrat text-xs tracking-[0.15em] uppercase px-4 py-2 font-semibold hover:bg-[#BFA06A]/30 cursor-pointer disabled:opacity-50"
+            >
+              {creatingShipment ? 'Creating...' : 'Create Shipment (Shiprocket)'}
+            </button>
+          )}
           {order.status !== 'CANCELLED' && order.status !== 'DELIVERED' && (
             <>
               {currentIdx < statusFlow.length - 1 && (
@@ -79,6 +108,12 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
           )}
         </div>
       </div>
+
+      {shipmentError && (
+        <div className="bg-red-500/10 border border-red-500/30 text-red-400 font-montserrat text-xs px-4 py-3 mb-6">
+          {shipmentError}
+        </div>
+      )}
 
       {/* Status Timeline */}
       <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
@@ -102,31 +137,61 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Items */}
-        <div className="lg:col-span-2 bg-[#0A0A0A] border border-[#BFA06A]/10 rounded p-6">
-          <h3 className="font-montserrat text-[#F0E6C2] text-xs tracking-[0.2em] uppercase font-medium mb-4">Items</h3>
-          <div className="space-y-4">
-            {order.items.map((item) => (
-              <div key={item.id} className="flex items-center gap-4 border-b border-[#BFA06A]/5 pb-4">
-                <div className="relative w-14 h-16 bg-[#111] border border-[#BFA06A]/10 shrink-0">
-                  {item.product.images[0] && <Image src={item.product.images[0].url} alt={item.name} fill className="object-cover" />}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-[#0A0A0A] border border-[#BFA06A]/10 rounded p-6">
+            <h3 className="font-montserrat text-[#F0E6C2] text-xs tracking-[0.2em] uppercase font-medium mb-4">Items</h3>
+            <div className="space-y-4">
+              {order.items.map((item) => (
+                <div key={item.id} className="flex items-center gap-4 border-b border-[#BFA06A]/5 pb-4">
+                  <div className="relative w-14 h-16 bg-[#111] border border-[#BFA06A]/10 shrink-0">
+                    {item.product.images[0] && <Image src={item.product.images[0].url} alt={item.name} fill className="object-cover" />}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-montserrat text-[#F0E6C2] text-sm">{item.name}</p>
+                    <p className="font-montserrat text-[#F0E6C2]/40 text-xs">SKU: {item.sku} | Qty: {item.quantity}</p>
+                  </div>
+                  <p className="font-montserrat text-[#BFA06A] text-sm">{formatPrice(item.unitPrice * item.quantity)}</p>
                 </div>
-                <div className="flex-1">
-                  <p className="font-montserrat text-[#F0E6C2] text-sm">{item.name}</p>
-                  <p className="font-montserrat text-[#F0E6C2]/40 text-xs">SKU: {item.sku} | Qty: {item.quantity}</p>
-                </div>
-                <p className="font-montserrat text-[#BFA06A] text-sm">{formatPrice(item.unitPrice * item.quantity)}</p>
+              ))}
+            </div>
+            <div className="mt-6 space-y-2 border-t border-[#BFA06A]/10 pt-4">
+              <div className="flex justify-between font-montserrat text-sm text-[#F0E6C2]/60"><span>Subtotal</span><span>{formatPrice(order.subtotal)}</span></div>
+              <div className="flex justify-between font-montserrat text-sm text-[#F0E6C2]/60"><span>Tax (3%)</span><span>{formatPrice(order.taxAmount)}</span></div>
+              <div className="flex justify-between font-montserrat text-sm text-[#F0E6C2]/60"><span>Shipping</span><span>{order.shippingAmount === 0 ? 'Free' : formatPrice(order.shippingAmount)}</span></div>
+              <div className="flex justify-between font-montserrat text-base text-[#BFA06A] font-medium border-t border-[#BFA06A]/10 pt-2"><span>Total</span><span>{formatPrice(order.totalAmount)}</span></div>
+            </div>
+          </div>
+
+          {/* Shiprocket Tracking Card */}
+          {order.shiprocketOrderId && (
+            <div className="bg-[#0A0A0A] border border-[#BFA06A]/10 rounded p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-2 h-2 rounded-full bg-green-400 shrink-0" />
+                <h3 className="font-montserrat text-[#F0E6C2] text-xs tracking-[0.2em] uppercase font-medium">Shiprocket Shipment</h3>
               </div>
-            ))}
-          </div>
-          <div className="mt-6 space-y-2 border-t border-[#BFA06A]/10 pt-4">
-            <div className="flex justify-between font-montserrat text-sm text-[#F0E6C2]/60"><span>Subtotal</span><span>{formatPrice(order.subtotal)}</span></div>
-            <div className="flex justify-between font-montserrat text-sm text-[#F0E6C2]/60"><span>Tax</span><span>{formatPrice(order.taxAmount)}</span></div>
-            <div className="flex justify-between font-montserrat text-sm text-[#F0E6C2]/60"><span>Shipping</span><span>{order.shippingAmount === 0 ? 'Free' : formatPrice(order.shippingAmount)}</span></div>
-            <div className="flex justify-between font-montserrat text-base text-[#BFA06A] font-medium border-t border-[#BFA06A]/10 pt-2"><span>Total</span><span>{formatPrice(order.totalAmount)}</span></div>
-          </div>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="font-montserrat text-[#F0E6C2]/40 text-xs tracking-widest uppercase">Courier</span>
+                  <span className="font-montserrat text-[#F0E6C2] text-xs">{order.courierName || '—'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-montserrat text-[#F0E6C2]/40 text-xs tracking-widest uppercase">AWB / Tracking</span>
+                  <span className="font-montserrat text-[#BFA06A] text-xs font-medium">{order.trackingNumber || '—'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-montserrat text-[#F0E6C2]/40 text-xs tracking-widest uppercase">Shiprocket Order ID</span>
+                  <span className="font-montserrat text-[#F0E6C2]/60 text-xs">{order.shiprocketOrderId}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-montserrat text-[#F0E6C2]/40 text-xs tracking-widest uppercase">Shipment ID</span>
+                  <span className="font-montserrat text-[#F0E6C2]/60 text-xs">{order.shiprocketShipmentId}</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Customer & Address */}
+        {/* Customer & Address & Payment */}
         <div className="space-y-6">
           <div className="bg-[#0A0A0A] border border-[#BFA06A]/10 rounded p-6">
             <h3 className="font-montserrat text-[#F0E6C2] text-xs tracking-[0.2em] uppercase font-medium mb-4">Customer</h3>
@@ -141,7 +206,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
               <p>{order.shippingAddress.firstName} {order.shippingAddress.lastName}</p>
               <p>{order.shippingAddress.address1}</p>
               {order.shippingAddress.address2 && <p>{order.shippingAddress.address2}</p>}
-              <p>{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.pinCode}</p>
+              <p>{order.shippingAddress.city}, {order.shippingAddress.state} — {order.shippingAddress.pinCode}</p>
             </div>
           </div>
 
