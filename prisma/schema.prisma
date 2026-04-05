@@ -221,6 +221,8 @@ model Order {
   razorpayOrderId   String?       @map("razorpay_order_id")
   razorpayPaymentId String?       @map("razorpay_payment_id")
   razorpaySignature String?       @map("razorpay_signature")
+  shippingMethod    String        @default("standard") @map("shipping_method")
+  trackingNumber    String?       @map("tracking_number")
   note              String?
   cancelledAt       DateTime?     @map("cancelled_at")
   shippedAt         DateTime?     @map("shipped_at")
