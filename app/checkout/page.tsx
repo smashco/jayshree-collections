@@ -78,6 +78,13 @@ export default function CheckoutPage() {
         setLoading(true);
         setError('');
 
+        const validItems = items.filter(item => item.variantId);
+        if (validItems.length === 0) {
+            setError('Your cart contains items without variant information. Please re-add items from the shop.');
+            setLoading(false);
+            return;
+        }
+
         try {
             // Load Razorpay script
             const loaded = await loadRazorpayScript();
@@ -122,13 +129,15 @@ export default function CheckoutPage() {
                                     razorpayOrderId: response.razorpay_order_id,
                                     razorpayPaymentId: response.razorpay_payment_id,
                                     razorpaySignature: response.razorpay_signature,
-                                    items: items.map(item => ({ variantId: item.variantId, quantity: item.quantity })),
+                                    items: items.filter(item => item.variantId).map(item => ({ variantId: item.variantId, quantity: item.quantity })),
                                 }),
                             });
 
                             if (!checkoutRes.ok) {
                                 const err = await checkoutRes.json();
-                                reject(new Error(err.error || 'Order creation failed'));
+                                console.error('[checkout] API error:', err);
+                                const msg = typeof err.error === 'string' ? err.error : (err.error?.formErrors?.[0] || JSON.stringify(err.details || err.error) || 'Order creation failed');
+                                reject(new Error(msg));
                                 return;
                             }
 
