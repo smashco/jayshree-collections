@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { requireAuth } from '@/lib/admin-auth';
 import { createShiprocketOrder, assignAWB, generatePickup } from '@/lib/shiprocket';
 import { sendShipmentNotification } from '@/lib/email';
 
@@ -9,8 +8,8 @@ export async function POST(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { error } = await requireAuth();
+  if (error) return error;
 
   const { id } = await params;
 
@@ -30,7 +29,6 @@ export async function POST(
   try {
     console.log('[shipment] Creating Shiprocket order for', order.orderNumber);
 
-    // 1. Create order on Shiprocket
     const { orderId: shiprocketOrderId, shipmentId: shiprocketShipmentId } = await createShiprocketOrder({
       orderNumber: order.orderNumber,
       orderDate: order.createdAt.toISOString(),
@@ -57,14 +55,11 @@ export async function POST(
 
     console.log('[shipment] Order created:', shiprocketOrderId, 'Shipment:', shiprocketShipmentId);
 
-    // 2. Assign AWB (courier + tracking number)
     const { awbCode, courierName } = await assignAWB(shiprocketShipmentId);
     console.log('[shipment] AWB assigned:', awbCode, 'via', courierName);
 
-    // 3. Generate pickup request
     await generatePickup(shiprocketShipmentId).catch(e => console.warn('[shipment] Pickup warning:', e));
 
-    // 4. Update order in DB
     const updated = await prisma.order.update({
       where: { id },
       data: {
@@ -77,7 +72,6 @@ export async function POST(
       },
     });
 
-    // 5. Send shipment email (non-blocking)
     sendShipmentNotification({
       customerName: `${order.customer.firstName} ${order.customer.lastName}`,
       email: order.customer.email,
@@ -107,8 +101,8 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const { error } = await requireAuth();
+  if (error) return error;
 
   const { id } = await params;
 
