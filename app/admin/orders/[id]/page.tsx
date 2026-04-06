@@ -69,7 +69,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
   if (!order) return <div className="text-[#F0E6C2]/40 font-montserrat text-sm">Loading...</div>;
 
   const currentIdx = statusFlow.indexOf(order.status);
-  const canShip = ['CONFIRMED', 'PROCESSING'].includes(order.status) && !order.shiprocketOrderId;
+  const canShip = ['PENDING', 'CONFIRMED', 'PROCESSING'].includes(order.status) && !order.shiprocketOrderId;
 
   return (
     <div>
