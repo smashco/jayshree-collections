@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { assetUrl } from '@/lib/assets';
+import LazyVideo from '@/components/ui/LazyVideo';
 
 const steps = [
     {
@@ -32,12 +33,10 @@ export default function ProcessSection() {
 
             {/* Background: v6.mp4 (artisan hands) at very low opacity */}
             <div className="absolute inset-0">
-                <video
-                    autoPlay loop muted playsInline
+                <LazyVideo
+                    src={assetUrl('/videos/v6.mp4')}
                     className="w-full h-full object-cover opacity-10"
-                >
-                    <source src={assetUrl('/videos/v6.mp4')} type="video/mp4" />
-                </video>
+                />
                 <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
             </div>
 
@@ -109,12 +108,10 @@ export default function ProcessSection() {
                     className="mt-20 relative overflow-hidden border border-[#BFA06A]/15"
                     style={{ height: '50vh', maxHeight: '480px' }}
                 >
-                    <video
-                        autoPlay loop muted playsInline
+                    <LazyVideo
+                        src={assetUrl('/videos/v6.mp4')}
                         className="w-full h-full object-cover"
-                    >
-                        <source src={assetUrl('/videos/v6.mp4')} type="video/mp4" />
-                    </video>
+                    />
                     <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/80" />
                     <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/70" />
 

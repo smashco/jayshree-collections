@@ -178,10 +178,10 @@ export default function Hero() {
                             {/* Main hero video — v2.mp4 (necklace light shaft) */}
                             <video
                                 autoPlay loop muted playsInline
+                                preload="auto"
                                 className="absolute inset-0 w-full h-full object-cover"
                             >
                                 <source src={assetUrl('/videos/v2.mp4')} type="video/mp4" />
-                                <source src={assetUrl('/videos/hero-jewelry.mp4')} type="video/mp4" />
                             </video>
 
                             {/* Gradient overlay */}

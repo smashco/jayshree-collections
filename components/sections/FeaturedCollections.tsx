@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { assetUrl } from '@/lib/assets';
+import LazyVideo from '@/components/ui/LazyVideo';
 import type { ProductListItem } from '@/lib/products';
 
 const chapters = [
@@ -83,12 +84,10 @@ function ChapterCard({ chapter, index }: { chapter: typeof chapters[0], index: n
 
             {/* Video background with image fallback */}
             <div className="absolute inset-0 bg-black">
-                <video
-                    autoPlay loop muted playsInline
+                <LazyVideo
+                    src={chapter.video}
                     className="w-full h-full object-cover opacity-80 transition-transform duration-[2s] ease-out group-hover:scale-105"
-                >
-                    <source src={chapter.video} type="video/mp4" />
-                </video>
+                />
                 {/* Dark gradient over video */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/20" />
                 {/* Gold tint on hover */}

@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { assetUrl } from '@/lib/assets';
+import LazyVideo from '@/components/ui/LazyVideo';
 
 const milestones = [
     { year: '2016', label: 'Founded in Maharashtra by Jayshree Bhoir' },
@@ -58,12 +59,10 @@ export default function BrandStory() {
                 {/* Left — Full cinematic video */}
                 <div className="relative overflow-hidden min-h-[45vh] lg:min-h-full">
                     <motion.div style={{ scale: imageScale }} className="absolute inset-0">
-                        <video
-                            autoPlay loop muted playsInline
+                        <LazyVideo
+                            src={assetUrl('/videos/v5.mp4')}
                             className="w-full h-full object-cover"
-                        >
-                            <source src={assetUrl('/videos/v5.mp4')} type="video/mp4" />
-                        </video>
+                        />
                         {/* Right-side fade to black — seamless merge with text panel */}
                         <div className="absolute inset-0"
                             style={{ background: 'linear-gradient(to right, transparent 50%, #000000 100%)' }} />
