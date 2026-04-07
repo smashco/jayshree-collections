@@ -4,7 +4,7 @@ function getTransporter() {
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
   const host = process.env.SMTP_HOST || 'smtpout.secureserver.net';
-  const port = Number(process.env.SMTP_PORT) || 465;
+  const port = Number(process.env.SMTP_PORT) || 587;
 
   console.log(`[email] Config: host=${host}, port=${port}, user=${user ? user : 'NOT SET'}, pass=${pass ? '***set***' : 'NOT SET'}`);
 
@@ -14,8 +14,12 @@ function getTransporter() {
   return nodemailer.createTransport({
     host,
     port,
-    secure: port === 465,
+    secure: false,
+    tls: { rejectUnauthorized: false },
     auth: { user, pass },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
   });
 }
 
