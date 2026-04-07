@@ -8,7 +8,7 @@ import Testimonials from '@/components/sections/Testimonials';
 import Footer from '@/components/ui/Footer';
 import { getProducts } from '@/lib/products';
 
-export const revalidate = 60; // revalidate every 60 seconds
+export const dynamic = 'force-dynamic';
 
 export default async function Home() {
     const featuredProducts = await getProducts({ featured: true, limit: 4 });
