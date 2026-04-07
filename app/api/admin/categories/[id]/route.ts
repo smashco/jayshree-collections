@@ -29,12 +29,17 @@ export async function PUT(
   const { id } = await params;
 
   const body = await request.json();
-  const parsed = updateCategorySchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
-  }
+  const { name, slug, sortOrder, parentId } = body;
 
-  const category = await prisma.category.update({ where: { id }, data: parsed.data });
+  const category = await prisma.category.update({
+    where: { id },
+    data: {
+      ...(name && { name }),
+      ...(slug && { slug }),
+      ...(sortOrder !== undefined && { sortOrder }),
+      parentId: parentId === '' ? null : parentId !== undefined ? parentId : undefined,
+    },
+  });
   return NextResponse.json(category);
 }
 

@@ -11,7 +11,17 @@ export async function GET() {
     orderBy: { sortOrder: 'asc' },
     include: {
       _count: { select: { products: true } },
-      parent: { select: { name: true } },
+      parent: { select: { id: true, name: true } },
+      children: {
+        orderBy: { sortOrder: 'asc' },
+        include: {
+          _count: { select: { products: true } },
+          children: {
+            orderBy: { sortOrder: 'asc' },
+            include: { _count: { select: { products: true } } },
+          },
+        },
+      },
     },
   });
 
@@ -23,11 +33,14 @@ export async function POST(request: NextRequest) {
   if (error) return error;
 
   const body = await request.json();
-  const parsed = createCategorySchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  const { name, slug, sortOrder, parentId } = body;
+
+  if (!name || !slug) {
+    return NextResponse.json({ error: 'Name and slug are required' }, { status: 400 });
   }
 
-  const category = await prisma.category.create({ data: parsed.data });
+  const category = await prisma.category.create({
+    data: { name, slug, sortOrder: sortOrder || 0, parentId: parentId || null },
+  });
   return NextResponse.json(category, { status: 201 });
 }
