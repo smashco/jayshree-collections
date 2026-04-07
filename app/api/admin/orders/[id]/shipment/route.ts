@@ -78,6 +78,10 @@ export async function POST(
       orderNumber: order.orderNumber,
       awbCode,
       courierName,
+      shippingMethod: order.shippingMethod,
+      items: order.items.map(i => ({ name: i.name, sku: i.sku, quantity: i.quantity, unitPrice: i.unitPrice })),
+      totalAmount: order.totalAmount,
+      shippingAddress: order.shippingAddress,
     }).catch(e => console.error('[shipment] Email failed:', e));
 
     return NextResponse.json({

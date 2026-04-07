@@ -15,11 +15,26 @@ function getTransporter() {
   });
 }
 
-const FROM = `Jayshree Collections <${process.env.SMTP_USER}>`;
-
+const FROM = `Jayshree Collections <${process.env.SMTP_USER || 'noreply@jayshree.com'}>`;
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://jayshree-collections-production.up.railway.app';
 const gold = '#BFA06A';
 const dark = '#0A0A0A';
+const lightText = '#F0E6C2';
+const mutedText = '#888';
 
+function formatRupees(paisa: number) {
+  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(paisa / 100);
+}
+
+function formatDate(date: string | Date) {
+  return new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function formatDateTime(date: string | Date) {
+  return new Date(date).toLocaleString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+// ─── BASE TEMPLATE ─────────────────────────────────────
 function baseTemplate(content: string) {
   return `<!DOCTYPE html>
 <html>
@@ -34,17 +49,24 @@ function baseTemplate(content: string) {
         <!-- Header -->
         <tr>
           <td style="padding:40px 48px 32px;border-bottom:1px solid #1a1a1a;text-align:center;">
-            <p style="margin:0;font-size:11px;letter-spacing:6px;color:${gold};text-transform:uppercase;font-weight:400;">Jayshree Collections</p>
-            <p style="margin:8px 0 0;font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">Luxury Jewellery</p>
+            <a href="${SITE_URL}" style="text-decoration:none;">
+              <p style="margin:0;font-size:13px;letter-spacing:8px;color:${gold};text-transform:uppercase;font-weight:400;">Jayshree Collections</p>
+              <p style="margin:8px 0 0;font-size:9px;letter-spacing:4px;color:#444;text-transform:uppercase;">Luxury Jewellery · Since 1985</p>
+            </a>
           </td>
         </tr>
         <!-- Content -->
         <tr><td style="padding:40px 48px;">${content}</td></tr>
         <!-- Footer -->
         <tr>
-          <td style="padding:24px 48px;border-top:1px solid #1a1a1a;text-align:center;">
-            <p style="margin:0;font-size:10px;color:#333;letter-spacing:2px;">For queries, reply to this email</p>
-            <p style="margin:8px 0 0;font-size:9px;color:#222;letter-spacing:1px;">© ${new Date().getFullYear()} Jayshree Collections. All rights reserved.</p>
+          <td style="padding:32px 48px;border-top:1px solid #1a1a1a;text-align:center;">
+            <p style="margin:0;font-size:11px;color:#444;letter-spacing:2px;">
+              <a href="${SITE_URL}/shop" style="color:${gold};text-decoration:none;">Shop</a>
+              &nbsp;&nbsp;·&nbsp;&nbsp;
+              <a href="${SITE_URL}/track" style="color:${gold};text-decoration:none;">Track Order</a>
+            </p>
+            <p style="margin:12px 0 0;font-size:10px;color:#333;letter-spacing:1px;">For queries, reply to this email or WhatsApp us.</p>
+            <p style="margin:8px 0 0;font-size:9px;color:#222;letter-spacing:1px;">&copy; ${new Date().getFullYear()} Jayshree Collections. All rights reserved.</p>
           </td>
         </tr>
       </table>
@@ -54,13 +76,106 @@ function baseTemplate(content: string) {
 </html>`;
 }
 
-function divider() {
-  return `<tr><td style="padding:16px 0;"><div style="border-top:1px solid #1a1a1a;"></div></td></tr>`;
+// ─── REUSABLE BLOCKS ───────────────────────────────────
+function ctaButton(text: string, url: string) {
+  return `<p style="text-align:center;margin:32px 0;">
+    <a href="${url}" style="display:inline-block;background:${gold};color:#000;font-size:11px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;padding:16px 40px;font-weight:700;">${text}</a>
+  </p>`;
 }
 
+function infoRow(label: string, value: string, valueColor = '#F0E6C2') {
+  return `<tr>
+    <td style="padding:12px 16px;border-bottom:1px solid #1a1a1a;">
+      <span style="font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">${label}</span>
+      <span style="float:right;font-size:13px;color:${valueColor};font-weight:500;">${value}</span>
+    </td>
+  </tr>`;
+}
+
+function infoCard(rows: string) {
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="background:#111;border:1px solid #1a1a1a;margin-bottom:32px;">
+    ${rows}
+  </table>`;
+}
+
+function sectionTitle(text: string) {
+  return `<p style="margin:0 0 12px;font-size:10px;letter-spacing:4px;color:#555;text-transform:uppercase;">${text}</p>`;
+}
+
+function itemsTable(items: { name: string; sku: string; quantity: number; unitPrice: number }[]) {
+  const rows = items.map(item => `
+    <tr>
+      <td style="padding:12px 0;border-bottom:1px solid #151515;">
+        <p style="margin:0;color:${lightText};font-size:13px;font-weight:500;">${item.name}</p>
+        <p style="margin:4px 0 0;color:#555;font-size:10px;letter-spacing:1px;">SKU: ${item.sku} &middot; Qty: ${item.quantity}</p>
+      </td>
+      <td style="padding:12px 0;border-bottom:1px solid #151515;text-align:right;color:${gold};font-size:13px;white-space:nowrap;vertical-align:top;">
+        ${formatRupees(item.unitPrice * item.quantity)}
+      </td>
+    </tr>
+  `).join('');
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">${rows}</table>`;
+}
+
+function totalsTable(subtotal: number, taxAmount: number, shippingAmount: number, totalAmount: number) {
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+    <tr>
+      <td style="padding:6px 0;font-size:13px;color:#666;">Subtotal</td>
+      <td style="padding:6px 0;font-size:13px;color:#666;text-align:right;">${formatRupees(subtotal)}</td>
+    </tr>
+    <tr>
+      <td style="padding:6px 0;font-size:13px;color:#666;">GST (3%)</td>
+      <td style="padding:6px 0;font-size:13px;color:#666;text-align:right;">${formatRupees(taxAmount)}</td>
+    </tr>
+    <tr>
+      <td style="padding:6px 0;font-size:13px;color:#666;">Shipping</td>
+      <td style="padding:6px 0;font-size:13px;color:#666;text-align:right;">${shippingAmount === 0 ? 'Free' : formatRupees(shippingAmount)}</td>
+    </tr>
+    <tr>
+      <td style="padding:14px 0 6px;font-size:16px;color:${gold};font-weight:600;border-top:1px solid #1a1a1a;">Total Paid</td>
+      <td style="padding:14px 0 6px;font-size:16px;color:${gold};font-weight:600;text-align:right;border-top:1px solid #1a1a1a;">${formatRupees(totalAmount)}</td>
+    </tr>
+  </table>`;
+}
+
+function addressBlock(address: { firstName?: string; lastName?: string; address1: string; address2?: string | null; city: string; state: string; pinCode: string }) {
+  const name = address.firstName ? `${address.firstName} ${address.lastName || ''}` : '';
+  return `
+    ${sectionTitle('Delivering To')}
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#111;border:1px solid #1a1a1a;margin-bottom:32px;">
+      <tr><td style="padding:16px;">
+        ${name ? `<p style="margin:0 0 4px;color:${lightText};font-size:13px;font-weight:600;">${name}</p>` : ''}
+        <p style="margin:0;font-size:13px;color:#888;line-height:1.8;">
+          ${address.address1}${address.address2 ? ', ' + address.address2 : ''}<br/>
+          ${address.city}, ${address.state} &mdash; ${address.pinCode}<br/>
+          India
+        </p>
+      </td></tr>
+    </table>`;
+}
+
+function timelineStep(step: string, title: string, desc: string, active: boolean) {
+  const color = active ? gold : '#333';
+  const textColor = active ? lightText : '#555';
+  return `<tr>
+    <td style="padding:8px 0;vertical-align:top;width:36px;">
+      <div style="width:24px;height:24px;border-radius:50%;background:${active ? gold : '#1a1a1a'};color:${active ? '#000' : '#444'};font-size:11px;font-weight:700;text-align:center;line-height:24px;">${step}</div>
+    </td>
+    <td style="padding:8px 0 8px 12px;">
+      <p style="margin:0;font-size:13px;color:${textColor};font-weight:${active ? '600' : '400'};">${title}</p>
+      <p style="margin:3px 0 0;font-size:11px;color:#555;">${desc}</p>
+    </td>
+  </tr>`;
+}
+
+
+// ═══════════════════════════════════════════════════════
+// 1. ORDER CONFIRMATION
+// ═══════════════════════════════════════════════════════
 export interface OrderConfirmationData {
   customerName: string;
   email: string;
+  phone?: string;
   orderNumber: string;
   paymentId: string;
   items: { name: string; sku: string; quantity: number; unitPrice: number }[];
@@ -68,86 +183,67 @@ export interface OrderConfirmationData {
   taxAmount: number;
   shippingAmount: number;
   totalAmount: number;
+  shippingMethod: string;
   shippingAddress: {
+    firstName?: string;
+    lastName?: string;
     address1: string;
     address2?: string | null;
     city: string;
     state: string;
     pinCode: string;
   };
-}
-
-function formatRupees(paisa: number) {
-  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(paisa / 100);
+  createdAt: string | Date;
 }
 
 export async function sendOrderConfirmation(data: OrderConfirmationData) {
-  const itemRows = data.items.map(item => `
-    <tr>
-      <td style="padding:10px 0;border-bottom:1px solid #111;">
-        <p style="margin:0;color:#F0E6C2;font-size:13px;">${item.name}</p>
-        <p style="margin:4px 0 0;color:#555;font-size:11px;letter-spacing:1px;">SKU: ${item.sku} · Qty: ${item.quantity}</p>
-      </td>
-      <td style="padding:10px 0;border-bottom:1px solid #111;text-align:right;color:${gold};font-size:13px;white-space:nowrap;">
-        ${formatRupees(item.unitPrice * item.quantity)}
-      </td>
-    </tr>
-  `).join('');
+  const trackUrl = `${SITE_URL}/track?order=${encodeURIComponent(data.orderNumber)}`;
+  const estimatedDelivery = data.shippingMethod === 'express' ? '1–2 business days' : '5–7 business days';
 
   const content = `
     <p style="margin:0 0 8px;font-size:10px;letter-spacing:4px;color:${gold};text-transform:uppercase;">Payment Confirmed</p>
-    <h1 style="margin:0 0 24px;font-size:28px;color:#fff;font-weight:300;line-height:1.2;">Thank you for your order, ${data.customerName.split(' ')[0]}.</h1>
-    <p style="margin:0 0 32px;font-size:13px;color:#888;line-height:1.7;">
-      Your order has been confirmed and our craftsmen have been notified. We will send you shipping details once your piece is dispatched.
+    <h1 style="margin:0 0 8px;font-size:28px;color:#fff;font-weight:300;line-height:1.2;">Thank you, ${data.customerName.split(' ')[0]}!</h1>
+    <p style="margin:0 0 32px;font-size:13px;color:${mutedText};line-height:1.7;">
+      Your order has been confirmed and our craftsmen have been notified. You'll receive tracking details once your jewellery is dispatched.
     </p>
 
-    <!-- Order Details -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#111;border:1px solid #1a1a1a;margin-bottom:32px;">
-      <tr>
-        <td style="padding:12px 16px;border-bottom:1px solid #1a1a1a;">
-          <span style="font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">Order Number</span>
-          <span style="float:right;font-size:13px;color:${gold};font-weight:600;">${data.orderNumber}</span>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding:12px 16px;">
-          <span style="font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">Payment ID</span>
-          <span style="float:right;font-size:11px;color:#666;">${data.paymentId}</span>
-        </td>
-      </tr>
-    </table>
+    <!-- Order Details Card -->
+    ${infoCard(
+      infoRow('Order Number', data.orderNumber, gold) +
+      infoRow('Payment ID', data.paymentId, '#777') +
+      infoRow('Order Date', formatDate(data.createdAt)) +
+      infoRow('Delivery Method', data.shippingMethod === 'express' ? 'Express (1–2 days)' : 'Standard (5–7 days)') +
+      infoRow('Est. Delivery', estimatedDelivery, gold) +
+      `<tr><td style="padding:12px 16px;">
+        <span style="font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">Status</span>
+        <span style="float:right;font-size:12px;color:#4ade80;font-weight:600;letter-spacing:1px;">CONFIRMED &amp; PAID &#10003;</span>
+      </td></tr>`
+    )}
 
     <!-- Items -->
-    <p style="margin:0 0 12px;font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">Your Items</p>
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
-      ${itemRows}
-    </table>
+    ${sectionTitle('Your Items')}
+    ${itemsTable(data.items)}
 
     <!-- Totals -->
+    ${totalsTable(data.subtotal, data.taxAmount, data.shippingAmount, data.totalAmount)}
+
+    <!-- Address -->
+    ${addressBlock(data.shippingAddress)}
+
+    <!-- Timeline -->
+    ${sectionTitle('What Happens Next')}
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
-      <tr>
-        <td style="padding:6px 0;font-size:13px;color:#666;">Subtotal</td>
-        <td style="padding:6px 0;font-size:13px;color:#666;text-align:right;">${formatRupees(data.subtotal)}</td>
-      </tr>
-      <tr>
-        <td style="padding:6px 0;font-size:13px;color:#666;">GST (3%)</td>
-        <td style="padding:6px 0;font-size:13px;color:#666;text-align:right;">${formatRupees(data.taxAmount)}</td>
-      </tr>
-      <tr>
-        <td style="padding:6px 0;font-size:13px;color:#666;">Shipping</td>
-        <td style="padding:6px 0;font-size:13px;color:#666;text-align:right;">${data.shippingAmount === 0 ? 'Free' : formatRupees(data.shippingAmount)}</td>
-      </tr>
-      <tr>
-        <td style="padding:12px 0 6px;font-size:15px;color:${gold};font-weight:600;border-top:1px solid #1a1a1a;">Total</td>
-        <td style="padding:12px 0 6px;font-size:15px;color:${gold};font-weight:600;text-align:right;border-top:1px solid #1a1a1a;">${formatRupees(data.totalAmount)}</td>
-      </tr>
+      ${timelineStep('1', 'Order Confirmed', 'Payment verified and order locked in.', true)}
+      ${timelineStep('2', 'Carefully Packed', 'Individually inspected and packed in our signature box.', false)}
+      ${timelineStep('3', 'Shipped', 'Dispatched with tracking — email notification sent.', false)}
+      ${timelineStep('4', 'Delivered', 'Insured delivery right to your door.', false)}
     </table>
 
-    <!-- Shipping Address -->
-    <p style="margin:0 0 12px;font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">Delivering To</p>
-    <p style="margin:0;font-size:13px;color:#888;line-height:1.8;">
-      ${data.shippingAddress.address1}${data.shippingAddress.address2 ? ', ' + data.shippingAddress.address2 : ''}<br/>
-      ${data.shippingAddress.city}, ${data.shippingAddress.state} — ${data.shippingAddress.pinCode}
+    ${ctaButton('Track Your Order', trackUrl)}
+
+    <p style="margin:0;font-size:11px;color:#444;line-height:1.7;text-align:center;">
+      Save your order number <strong style="color:${gold};">${data.orderNumber}</strong> for reference.<br/>
+      You can track your order anytime at <a href="${trackUrl}" style="color:${gold};text-decoration:underline;">${SITE_URL}/track</a>
     </p>
   `;
 
@@ -159,99 +255,234 @@ export async function sendOrderConfirmation(data: OrderConfirmationData) {
   });
 }
 
+
+// ═══════════════════════════════════════════════════════
+// 2. SHIPMENT / DISPATCHED NOTIFICATION
+// ═══════════════════════════════════════════════════════
 export interface ShipmentNotificationData {
   customerName: string;
   email: string;
   orderNumber: string;
   awbCode: string;
   courierName: string;
+  shippingMethod?: string;
+  items?: { name: string; sku: string; quantity: number; unitPrice: number }[];
+  totalAmount?: number;
+  shippingAddress?: {
+    firstName?: string;
+    lastName?: string;
+    address1: string;
+    address2?: string | null;
+    city: string;
+    state: string;
+    pinCode: string;
+  };
   trackingUrl?: string;
 }
 
 export async function sendShipmentNotification(data: ShipmentNotificationData) {
+  const trackUrl = data.trackingUrl || `${SITE_URL}/track?order=${encodeURIComponent(data.orderNumber)}`;
+  const estimatedDelivery = data.shippingMethod === 'express' ? '1–2 business days' : '5–7 business days';
+
   const content = `
     <p style="margin:0 0 8px;font-size:10px;letter-spacing:4px;color:${gold};text-transform:uppercase;">Your Order Is On Its Way</p>
-    <h1 style="margin:0 0 24px;font-size:28px;color:#fff;font-weight:300;line-height:1.2;">Your jewellery has been dispatched.</h1>
-    <p style="margin:0 0 32px;font-size:13px;color:#888;line-height:1.7;">
-      Great news! Your order <strong style="color:#F0E6C2;">${data.orderNumber}</strong> has been handed over to ${data.courierName} and is on its way to you.
+    <h1 style="margin:0 0 8px;font-size:28px;color:#fff;font-weight:300;line-height:1.2;">Your jewellery has been dispatched!</h1>
+    <p style="margin:0 0 32px;font-size:13px;color:${mutedText};line-height:1.7;">
+      Great news, ${data.customerName.split(' ')[0]}! Your order <strong style="color:${lightText};">${data.orderNumber}</strong> has been handed over to <strong style="color:${lightText};">${data.courierName}</strong> and is on its way to you.
     </p>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#111;border:1px solid #1a1a1a;margin-bottom:32px;">
-      <tr>
-        <td style="padding:12px 16px;border-bottom:1px solid #1a1a1a;">
-          <span style="font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">Courier</span>
-          <span style="float:right;font-size:13px;color:#F0E6C2;">${data.courierName}</span>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding:12px 16px;">
-          <span style="font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">AWB / Tracking No.</span>
-          <span style="float:right;font-size:13px;color:${gold};font-weight:600;">${data.awbCode}</span>
-        </td>
-      </tr>
+    <!-- Tracking Card -->
+    ${infoCard(
+      infoRow('Order Number', data.orderNumber, gold) +
+      infoRow('Courier Partner', data.courierName) +
+      infoRow('AWB / Tracking No.', data.awbCode, gold) +
+      infoRow('Est. Delivery', estimatedDelivery, gold) +
+      `<tr><td style="padding:12px 16px;">
+        <span style="font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">Status</span>
+        <span style="float:right;font-size:12px;color:#22d3ee;font-weight:600;letter-spacing:1px;">SHIPPED &#128230;</span>
+      </td></tr>`
+    )}
+
+    ${ctaButton('Track Your Shipment', trackUrl)}
+
+    <!-- Timeline -->
+    ${sectionTitle('Delivery Progress')}
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+      ${timelineStep('1', 'Order Confirmed', 'Payment verified.', true)}
+      ${timelineStep('2', 'Packed & Ready', 'Inspected and packed.', true)}
+      ${timelineStep('3', 'Shipped', `Dispatched via ${data.courierName} — AWB: ${data.awbCode}`, true)}
+      ${timelineStep('4', 'Out for Delivery', 'On its way to you.', false)}
     </table>
 
-    ${data.trackingUrl ? `<p style="text-align:center;margin:0 0 32px;"><a href="${data.trackingUrl}" style="display:inline-block;background:${gold};color:#000;font-size:11px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;padding:14px 32px;font-weight:700;">Track Your Order</a></p>` : ''}
+    ${data.items && data.items.length > 0 ? `
+      ${sectionTitle('Items in This Shipment')}
+      ${itemsTable(data.items)}
+    ` : ''}
 
-    <p style="margin:0;font-size:12px;color:#555;line-height:1.7;">
-      You can use the AWB number to track your shipment on the ${data.courierName} website. If you have any questions, reply to this email.
+    ${data.totalAmount ? `
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:#111;border:1px solid #1a1a1a;margin-bottom:32px;">
+        <tr><td style="padding:14px 16px;">
+          <span style="font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">Total Amount</span>
+          <span style="float:right;font-size:16px;color:${gold};font-weight:600;">${formatRupees(data.totalAmount)}</span>
+        </td></tr>
+      </table>
+    ` : ''}
+
+    ${data.shippingAddress ? addressBlock(data.shippingAddress) : ''}
+
+    <p style="margin:0;font-size:11px;color:#444;line-height:1.7;text-align:center;">
+      Use AWB <strong style="color:${gold};">${data.awbCode}</strong> to track on the ${data.courierName} website.<br/>
+      If you have any questions, just reply to this email.
     </p>
   `;
 
   await getTransporter().sendMail({
     from: FROM,
     to: data.email,
-    subject: `Shipped — ${data.orderNumber} · ${data.awbCode} | Jayshree Collections`,
+    subject: `Shipped! ${data.orderNumber} · AWB ${data.awbCode} | Jayshree Collections`,
     html: baseTemplate(content),
   });
 }
 
+
+// ═══════════════════════════════════════════════════════
+// 3. STATUS UPDATE EMAILS
+// ═══════════════════════════════════════════════════════
 export interface StatusUpdateData {
   customerName: string;
   email: string;
   orderNumber: string;
   status: string;
+  trackingNumber?: string | null;
+  courierName?: string | null;
+  items?: { name: string; sku: string; quantity: number; unitPrice: number }[];
+  totalAmount?: number;
+  deliveredAt?: string | Date | null;
 }
 
-const STATUS_MESSAGES: Record<string, { subject: string; heading: string; body: string }> = {
-  PROCESSING: {
-    subject: 'Your order is being prepared',
-    heading: 'We are preparing your order.',
-    body: 'Your jewellery is currently being carefully inspected, packaged, and prepared for dispatch. We will notify you once it has been shipped.',
-  },
-  DELIVERED: {
-    subject: 'Your order has been delivered',
-    heading: 'Your jewellery has arrived.',
-    body: 'Your order has been marked as delivered. We hope you love your new piece. If you have any questions or concerns, please reply to this email.',
-  },
-  CANCELLED: {
-    subject: 'Your order has been cancelled',
-    heading: 'Your order has been cancelled.',
-    body: 'Your order has been cancelled. If a payment was made, a refund will be processed within 5–7 business days to your original payment method. Please reply to this email if you have any questions.',
-  },
-};
-
 export async function sendStatusUpdate(data: StatusUpdateData) {
-  const template = STATUS_MESSAGES[data.status];
-  if (!template) return;
+  const trackUrl = `${SITE_URL}/track?order=${encodeURIComponent(data.orderNumber)}`;
+  const firstName = data.customerName.split(' ')[0];
 
-  const content = `
-    <h1 style="margin:0 0 24px;font-size:28px;color:#fff;font-weight:300;line-height:1.2;">${template.heading}</h1>
-    <p style="margin:0 0 24px;font-size:13px;color:#888;line-height:1.7;">${template.body}</p>
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#111;border:1px solid #1a1a1a;">
-      <tr>
-        <td style="padding:12px 16px;">
-          <span style="font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">Order Number</span>
-          <span style="float:right;font-size:13px;color:${gold};font-weight:600;">${data.orderNumber}</span>
-        </td>
-      </tr>
-    </table>
-  `;
+  let content = '';
+
+  switch (data.status) {
+    case 'PROCESSING':
+      content = `
+        <p style="margin:0 0 8px;font-size:10px;letter-spacing:4px;color:${gold};text-transform:uppercase;">Order Update</p>
+        <h1 style="margin:0 0 8px;font-size:28px;color:#fff;font-weight:300;line-height:1.2;">We're preparing your order, ${firstName}.</h1>
+        <p style="margin:0 0 32px;font-size:13px;color:${mutedText};line-height:1.7;">
+          Your jewellery is being carefully inspected, polished, and packed in our signature gift box. We'll email you the moment it ships.
+        </p>
+
+        ${infoCard(
+          infoRow('Order Number', data.orderNumber, gold) +
+          `<tr><td style="padding:12px 16px;">
+            <span style="font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">Status</span>
+            <span style="float:right;font-size:12px;color:#c084fc;font-weight:600;letter-spacing:1px;">PROCESSING &#9881;</span>
+          </td></tr>`
+        )}
+
+        ${sectionTitle('Progress')}
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+          ${timelineStep('1', 'Order Confirmed', 'Payment verified.', true)}
+          ${timelineStep('2', 'Preparing Your Order', 'Being packed with care.', true)}
+          ${timelineStep('3', 'Ready to Ship', 'Awaiting courier pickup.', false)}
+          ${timelineStep('4', 'Delivered', 'On its way to your door.', false)}
+        </table>
+
+        ${ctaButton('Track Your Order', trackUrl)}
+      `;
+      break;
+
+    case 'DELIVERED':
+      content = `
+        <p style="margin:0 0 8px;font-size:10px;letter-spacing:4px;color:#4ade80;text-transform:uppercase;">Delivered</p>
+        <h1 style="margin:0 0 8px;font-size:28px;color:#fff;font-weight:300;line-height:1.2;">Your jewellery has arrived, ${firstName}!</h1>
+        <p style="margin:0 0 32px;font-size:13px;color:${mutedText};line-height:1.7;">
+          Your order <strong style="color:${lightText};">${data.orderNumber}</strong> has been delivered. We hope you absolutely love your new piece.
+        </p>
+
+        ${infoCard(
+          infoRow('Order Number', data.orderNumber, gold) +
+          (data.courierName ? infoRow('Courier', data.courierName) : '') +
+          (data.trackingNumber ? infoRow('AWB', data.trackingNumber, gold) : '') +
+          (data.deliveredAt ? infoRow('Delivered On', formatDateTime(data.deliveredAt)) : '') +
+          `<tr><td style="padding:12px 16px;">
+            <span style="font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">Status</span>
+            <span style="float:right;font-size:12px;color:#4ade80;font-weight:600;letter-spacing:1px;">DELIVERED &#10003;</span>
+          </td></tr>`
+        )}
+
+        ${sectionTitle('Delivery Complete')}
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+          ${timelineStep('1', 'Order Confirmed', 'Payment verified.', true)}
+          ${timelineStep('2', 'Packed', 'Inspected and packed.', true)}
+          ${timelineStep('3', 'Shipped', `Via ${data.courierName || 'courier'}`, true)}
+          ${timelineStep('4', 'Delivered', data.deliveredAt ? formatDateTime(data.deliveredAt) : 'Successfully delivered!', true)}
+        </table>
+
+        ${data.items && data.items.length > 0 ? `
+          ${sectionTitle('What You Received')}
+          ${itemsTable(data.items)}
+        ` : ''}
+
+        ${data.totalAmount ? `
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#111;border:1px solid #1a1a1a;margin-bottom:32px;">
+            <tr><td style="padding:14px 16px;">
+              <span style="font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">Total Paid</span>
+              <span style="float:right;font-size:16px;color:${gold};font-weight:600;">${formatRupees(data.totalAmount)}</span>
+            </td></tr>
+          </table>
+        ` : ''}
+
+        <p style="margin:0 0 32px;font-size:13px;color:${mutedText};line-height:1.7;text-align:center;">
+          We'd love to hear your feedback! If there's anything wrong with your order, please reply to this email within 7 days.
+        </p>
+
+        ${ctaButton('Continue Shopping', `${SITE_URL}/shop`)}
+      `;
+      break;
+
+    case 'CANCELLED':
+      content = `
+        <p style="margin:0 0 8px;font-size:10px;letter-spacing:4px;color:#f87171;text-transform:uppercase;">Order Cancelled</p>
+        <h1 style="margin:0 0 8px;font-size:28px;color:#fff;font-weight:300;line-height:1.2;">Your order has been cancelled.</h1>
+        <p style="margin:0 0 32px;font-size:13px;color:${mutedText};line-height:1.7;">
+          Order <strong style="color:${lightText};">${data.orderNumber}</strong> has been cancelled. If payment was already processed, a full refund will be initiated within <strong style="color:${lightText};">5–7 business days</strong> to your original payment method.
+        </p>
+
+        ${infoCard(
+          infoRow('Order Number', data.orderNumber, gold) +
+          (data.totalAmount ? infoRow('Refund Amount', formatRupees(data.totalAmount), '#f87171') : '') +
+          `<tr><td style="padding:12px 16px;">
+            <span style="font-size:10px;letter-spacing:3px;color:#555;text-transform:uppercase;">Status</span>
+            <span style="float:right;font-size:12px;color:#f87171;font-weight:600;letter-spacing:1px;">CANCELLED &#10005;</span>
+          </td></tr>`
+        )}
+
+        <p style="margin:0 0 32px;font-size:13px;color:${mutedText};line-height:1.7;text-align:center;">
+          If this was a mistake or you have questions about the refund, reply to this email or contact our support.
+        </p>
+
+        ${ctaButton('Return to Shop', `${SITE_URL}/shop`)}
+      `;
+      break;
+
+    default:
+      return; // Unknown status, don't send
+  }
+
+  const subjectMap: Record<string, string> = {
+    PROCESSING: `Being Prepared — ${data.orderNumber}`,
+    DELIVERED: `Delivered! — ${data.orderNumber}`,
+    CANCELLED: `Cancelled — ${data.orderNumber}`,
+  };
 
   await getTransporter().sendMail({
     from: FROM,
     to: data.email,
-    subject: `${template.subject} — ${data.orderNumber} | Jayshree Collections`,
+    subject: `${subjectMap[data.status] || data.status} | Jayshree Collections`,
     html: baseTemplate(content),
   });
 }

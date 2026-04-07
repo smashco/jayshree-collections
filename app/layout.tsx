@@ -23,6 +23,10 @@ export const metadata: Metadata = {
     title: "Jayshree Collections — 2026 Luxury Edition",
     description: "Discover handcrafted imitation jewellery inspired by the rich heritage of Maharashtra. Paithani-inspired necklaces, temple earrings, Kolhapuri bangles and bridal maang tikkas.",
     keywords: "Maharashtra jewellery, imitation jewellery, Paithani, temple jewellery, jhumka, bangles, maang tikka, Jayshree Collections",
+    icons: {
+        icon: '/favicon.png',
+        apple: '/apple-touch-icon.png',
+    },
     openGraph: {
         title: "Jayshree Collections",
         description: "Modern Maharashtra Jewellery",

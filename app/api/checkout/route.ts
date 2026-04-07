@@ -168,6 +168,7 @@ export async function POST(request: NextRequest) {
       sendOrderConfirmation({
         customerName: `${fullOrder.customer.firstName} ${fullOrder.customer.lastName}`,
         email: fullOrder.customer.email,
+        phone: fullOrder.customer.phone || undefined,
         orderNumber: fullOrder.orderNumber,
         paymentId: data.razorpayPaymentId,
         items: fullOrder.items.map(i => ({
@@ -180,7 +181,9 @@ export async function POST(request: NextRequest) {
         taxAmount: fullOrder.taxAmount,
         shippingAmount: fullOrder.shippingAmount,
         totalAmount: fullOrder.totalAmount,
+        shippingMethod: fullOrder.shippingMethod,
         shippingAddress: fullOrder.shippingAddress,
+        createdAt: fullOrder.createdAt,
       }).catch(err => console.error('[checkout] Email failed:', err));
     }
 

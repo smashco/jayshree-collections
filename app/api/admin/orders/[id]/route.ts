@@ -52,7 +52,7 @@ export async function PUT(
   const order = await prisma.order.update({
     where: { id },
     data: updateData,
-    include: { customer: true },
+    include: { customer: true, items: true },
   });
 
   // Send status email for key transitions
@@ -62,6 +62,11 @@ export async function PUT(
       email: order.customer.email,
       orderNumber: order.orderNumber,
       status: body.status,
+      trackingNumber: order.trackingNumber,
+      courierName: order.courierName,
+      items: order.items.map(i => ({ name: i.name, sku: i.sku, quantity: i.quantity, unitPrice: i.unitPrice })),
+      totalAmount: order.totalAmount,
+      deliveredAt: order.deliveredAt,
     }).catch(e => console.error('[order-status] Email failed:', e));
   }
 

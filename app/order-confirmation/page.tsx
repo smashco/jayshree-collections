@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Navbar from '@/components/ui/Navbar';
 import Footer from '@/components/ui/Footer';
 
@@ -15,20 +16,24 @@ function OrderConfirmationContent() {
     return (
         <section className="flex-1 pt-32 pb-20 md:pt-48 md:pb-32 relative z-20 flex items-center justify-center">
             <div className="max-w-2xl mx-auto px-6 text-center w-full">
+                {/* Logo */}
                 <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                    className="w-20 h-20 mx-auto mb-10 border border-[#BFA06A]/40 flex items-center justify-center">
-                    <svg className="w-8 h-8 text-[#BFA06A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                    </svg>
+                    className="w-24 h-24 mx-auto mb-10 rounded-full overflow-hidden border-2 border-[#BFA06A]/30">
+                    <Image src="/images/jc-logo.jpeg" alt="Jayshree Collections" width={96} height={96} className="object-cover w-full h-full" />
                 </motion.div>
 
                 <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>
-                    <p className="font-montserrat text-[#BFA06A] text-[0.6rem] tracking-[0.6em] uppercase mb-4">Payment Confirmed</p>
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                        <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                        <p className="font-montserrat text-green-400 text-[0.6rem] tracking-[0.6em] uppercase">Payment Confirmed</p>
+                    </div>
                     <h1 className="font-cormorant text-white font-light leading-none mb-6" style={{ fontSize: 'clamp(3rem, 6vw, 5rem)' }}>
                         Thank You for Your <em className="text-[#BFA06A]">Order</em>
                     </h1>
                     <p className="font-montserrat text-[#F0E6C2]/60 text-sm leading-relaxed mb-10 max-w-md mx-auto">
-                        Your jewellery has been reserved and our craftsmen have been notified. We will send a confirmation email shortly.
+                        Your jewellery has been reserved and our craftsmen have been notified. A confirmation email with all details has been sent to your inbox.
                     </p>
 
                     <div className="border border-[#BFA06A]/15 p-8 mb-10 text-left space-y-4">
@@ -48,6 +53,10 @@ function OrderConfirmationContent() {
                             <span className="font-montserrat text-[#F0E6C2]/50 text-xs tracking-[0.2em] uppercase">Status</span>
                             <span className="font-montserrat text-green-400 text-xs tracking-wider uppercase">Confirmed & Paid</span>
                         </div>
+                        <div className="flex justify-between items-center border-b border-[#BFA06A]/10 pb-4">
+                            <span className="font-montserrat text-[#F0E6C2]/50 text-xs tracking-[0.2em] uppercase">Email</span>
+                            <span className="font-montserrat text-[#F0E6C2]/70 text-xs">Confirmation sent to your email</span>
+                        </div>
                         <div className="flex justify-between items-start">
                             <span className="font-montserrat text-[#F0E6C2]/50 text-xs tracking-[0.2em] uppercase">Delivery</span>
                             <span className="font-montserrat text-[#F0E6C2]/70 text-xs text-right">Tracking details sent via email once shipped</span>
@@ -58,7 +67,7 @@ function OrderConfirmationContent() {
                         <p className="font-montserrat text-[#BFA06A]/80 text-[0.6rem] tracking-[0.5em] uppercase mb-6 text-center">What Happens Next</p>
                         <div className="space-y-4">
                             {[
-                                { step: '01', title: 'Order Confirmed', desc: 'Payment verified and order locked in.' },
+                                { step: '01', title: 'Order Confirmed', desc: 'Payment verified and order locked in. Confirmation email sent.' },
                                 { step: '02', title: 'Carefully Packed', desc: 'Individually inspected and packed in our signature box.' },
                                 { step: '03', title: 'Shipped', desc: 'Dispatched with tracking — SMS and email notification sent.' },
                                 { step: '04', title: 'Delivered', desc: 'Insured delivery right to your door.' },
@@ -75,7 +84,13 @@ function OrderConfirmationContent() {
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link href="/shop" className="btn-gold inline-flex items-center justify-center px-8 py-4"><span>Continue Shopping</span></Link>
+                        {orderNumber && (
+                            <Link href={`/track?order=${orderNumber}`}
+                                className="btn-gold inline-flex items-center justify-center px-8 py-4">
+                                <span>Track Your Order</span>
+                            </Link>
+                        )}
+                        <Link href="/shop" className="border border-[#BFA06A]/20 text-[#F0E6C2]/70 font-montserrat text-xs tracking-[0.25em] uppercase px-8 py-4 hover:border-[#BFA06A]/50 transition-colors text-center">Continue Shopping</Link>
                         <Link href="/" className="border border-[#BFA06A]/20 text-[#F0E6C2]/70 font-montserrat text-xs tracking-[0.25em] uppercase px-8 py-4 hover:border-[#BFA06A]/50 transition-colors text-center">Return Home</Link>
                     </div>
                 </motion.div>
