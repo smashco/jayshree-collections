@@ -1,18 +1,21 @@
 import nodemailer from 'nodemailer';
 
 function getTransporter() {
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  const host = process.env.SMTP_HOST || 'smtpout.secureserver.net';
+  const port = Number(process.env.SMTP_PORT) || 465;
+
+  console.log(`[email] Config: host=${host}, port=${port}, user=${user ? user : 'NOT SET'}, pass=${pass ? '***set***' : 'NOT SET'}`);
+
+  if (!user || !pass) {
     throw new Error('SMTP_USER and SMTP_PASS env vars are not configured');
   }
-  const port = Number(process.env.SMTP_PORT) || 465;
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtpout.secureserver.net',
+    host,
     port,
     secure: port === 465,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
+    auth: { user, pass },
   });
 }
 

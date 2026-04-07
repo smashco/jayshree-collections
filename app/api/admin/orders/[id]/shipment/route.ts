@@ -82,7 +82,7 @@ export async function POST(
       items: order.items.map(i => ({ name: i.name, sku: i.sku, quantity: i.quantity, unitPrice: i.unitPrice })),
       totalAmount: order.totalAmount,
       shippingAddress: order.shippingAddress,
-    }).catch(e => console.error('[shipment] Email failed:', e));
+    }).catch(e => console.error('[shipment] Email failed:', e.message, e.code, e.responseCode));
 
     return NextResponse.json({
       shiprocketOrderId,
