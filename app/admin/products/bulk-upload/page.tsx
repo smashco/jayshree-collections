@@ -17,6 +17,7 @@ interface UploadResponse {
   updated: number;
   errors: number;
   variantsProcessed: number;
+  categoriesCreated: number;
   results: UploadResult[];
 }
 
@@ -164,6 +165,12 @@ export default function BulkUploadPage() {
               <p className="font-cormorant text-purple-400 text-3xl font-medium">{response.variantsProcessed}</p>
               <p className="font-montserrat text-purple-400/60 text-[0.6rem] tracking-[0.2em] uppercase mt-1">Extra Variants</p>
             </div>
+            {response.categoriesCreated > 0 && (
+              <div className="bg-[#0A0A0A] border border-cyan-400/20 p-5 rounded text-center">
+                <p className="font-cormorant text-cyan-400 text-3xl font-medium">{response.categoriesCreated}</p>
+                <p className="font-montserrat text-cyan-400/60 text-[0.6rem] tracking-[0.2em] uppercase mt-1">Categories Created</p>
+              </div>
+            )}
           </div>
 
           {/* Detail Table */}

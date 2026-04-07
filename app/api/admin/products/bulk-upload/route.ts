@@ -30,10 +30,46 @@ export async function POST(request: NextRequest) {
     const variantSheet = workbook.Sheets['Variants'];
     const variantRows = variantSheet ? XLSX.utils.sheet_to_json<Record<string, unknown>>(variantSheet) : [];
 
+    // Read Categories sheet (optional) and create them first
+    const catSheet = workbook.Sheets['Categories'];
+    const catRows = catSheet ? XLSX.utils.sheet_to_json<Record<string, unknown>>(catSheet) : [];
+    let categoriesCreated = 0;
+
     // Cache categories
     const categories = await prisma.category.findMany();
     const categoryMap = new Map(categories.map(c => [c.name.toLowerCase(), c.id]));
     const categorySlugMap = new Map(categories.map(c => [c.slug.toLowerCase(), c.id]));
+
+    // Process Categories sheet — parents first, then children
+    const parentCatRows = catRows.filter(r => !String(r['Parent Category'] || '').trim());
+    const childCatRows = catRows.filter(r => String(r['Parent Category'] || '').trim());
+
+    for (const row of [...parentCatRows, ...childCatRows]) {
+      const catName = String(row['Category Name'] || '').trim();
+      const status = String(row['Status'] || '').trim();
+      if (!catName || status.includes('existing')) continue;
+
+      const catSlug = String(row['Slug'] || '').trim() || slugify(catName);
+      const parentName = String(row['Parent Category'] || '').trim();
+      const sortOrder = parseInt(String(row['Sort Order'] || '0')) || 0;
+
+      // Skip if already exists
+      if (categoryMap.has(catName.toLowerCase()) || categorySlugMap.has(catSlug)) continue;
+
+      const parentId = parentName ? (categoryMap.get(parentName.toLowerCase()) || null) : null;
+
+      try {
+        const newCat = await prisma.category.create({
+          data: { name: catName, slug: catSlug, sortOrder, parentId },
+        });
+        categoryMap.set(catName.toLowerCase(), newCat.id);
+        categorySlugMap.set(catSlug, newCat.id);
+        categoriesCreated++;
+        console.log(`[bulk-upload] Created category: ${catName}${parentName ? ` (under ${parentName})` : ''}`);
+      } catch (err) {
+        console.error(`[bulk-upload] Failed to create category ${catName}:`, err);
+      }
+    }
 
     const results: { row: number; product: string; status: string; error?: string }[] = [];
     let created = 0;
@@ -225,11 +261,12 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({
-      message: `Upload complete: ${created} created, ${updated} updated, ${errors} errors`,
+      message: `Upload complete: ${created} created, ${updated} updated, ${errors} errors, ${categoriesCreated} categories created`,
       created,
       updated,
       errors,
       variantsProcessed,
+      categoriesCreated,
       results,
     });
 
@@ -340,6 +377,49 @@ export async function GET() {
   ];
   XLSX.utils.book_append_sheet(wb, vs, 'Variants');
 
+  // Categories sheet
+  const allCats = await prisma.category.findMany({
+    orderBy: { sortOrder: 'asc' },
+    include: { parent: { select: { name: true } }, _count: { select: { products: true } } },
+  });
+
+  const categoriesData = [
+    // Existing categories
+    ...allCats.map(c => ({
+      'Category Name': c.name,
+      'Slug': c.slug,
+      'Parent Category': c.parent?.name || '',
+      'Sort Order': c.sortOrder,
+      'Status': '(existing)',
+    })),
+    // Sample new entries
+    {
+      'Category Name': 'Bridal Collection',
+      'Slug': 'bridal-collection',
+      'Parent Category': '',
+      'Sort Order': 10,
+      'Status': '(sample — delete)',
+    },
+    {
+      'Category Name': 'Heavy Bridal',
+      'Slug': 'heavy-bridal',
+      'Parent Category': 'Bridal Collection',
+      'Sort Order': 1,
+      'Status': '(sample — delete)',
+    },
+    {
+      'Category Name': 'Light Bridal',
+      'Slug': 'light-bridal',
+      'Parent Category': 'Bridal Collection',
+      'Sort Order': 2,
+      'Status': '(sample — delete)',
+    },
+  ];
+
+  const cs = XLSX.utils.json_to_sheet(categoriesData);
+  cs['!cols'] = [{ wch: 25 }, { wch: 25 }, { wch: 25 }, { wch: 12 }, { wch: 15 }];
+  XLSX.utils.book_append_sheet(wb, cs, 'Categories');
+
   // Instructions sheet
   const instructions = [
     { Instructions: '=== JAYSHREE COLLECTIONS — BULK PRODUCT UPLOAD ===' },
@@ -370,6 +450,15 @@ export async function GET() {
     { Instructions: '  • Product Slug (required) — Must match a product from Sheet 1' },
     { Instructions: '  • SKU (required) — Unique code for this variant' },
     { Instructions: '  • Variant Name, Price, Size, Weight, Purity, Stock' },
+    { Instructions: '' },
+    { Instructions: 'SHEET 3: Categories (Optional — bulk create categories & sub-categories)' },
+    { Instructions: '  • Category Name (required) — Name of the category' },
+    { Instructions: '  • Slug — URL-friendly name (auto-generated if empty)' },
+    { Instructions: '  • Parent Category — Name of the parent category (leave empty for top-level)' },
+    { Instructions: '  • Sort Order — Display order (lower = first)' },
+    { Instructions: '  • Status — "(existing)" rows are your current categories, don\'t edit them' },
+    { Instructions: '  • Add unlimited sub-categories by setting Parent Category to any existing or new category' },
+    { Instructions: '  • Categories are created BEFORE products, so you can reference new categories in Products sheet' },
     { Instructions: '' },
     { Instructions: 'NOTES:' },
     { Instructions: '  • Prices are in Rupees (₹), NOT paisa' },
