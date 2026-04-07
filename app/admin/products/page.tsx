@@ -50,12 +50,20 @@ export default function ProductsPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-cormorant text-white text-3xl font-medium">Products ({total})</h1>
-        <Link
-          href="/admin/products/new"
-          className="flex items-center gap-2 bg-[#BFA06A] text-black font-montserrat text-xs tracking-[0.2em] uppercase px-5 py-3 font-semibold hover:bg-[#D4B580] transition-colors"
-        >
-          <Plus className="w-4 h-4" /> Add Product
-        </Link>
+        <div className="flex gap-3">
+          <Link
+            href="/admin/products/bulk-upload"
+            className="flex items-center gap-2 bg-[#BFA06A]/20 border border-[#BFA06A]/40 text-[#BFA06A] font-montserrat text-xs tracking-[0.15em] uppercase px-4 py-3 font-semibold hover:bg-[#BFA06A]/30 transition-colors"
+          >
+            Bulk Upload
+          </Link>
+          <Link
+            href="/admin/products/new"
+            className="flex items-center gap-2 bg-[#BFA06A] text-black font-montserrat text-xs tracking-[0.2em] uppercase px-5 py-3 font-semibold hover:bg-[#D4B580] transition-colors"
+          >
+            <Plus className="w-4 h-4" /> Add Product
+          </Link>
+        </div>
       </div>
 
       {/* Search */}
