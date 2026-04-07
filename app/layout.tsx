@@ -41,7 +41,28 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" suppressHydrationWarning className={`${cormorant.variable} ${montserrat.variable}`}>
-            <head />
+            <head>
+                <script dangerouslySetInnerHTML={{ __html: `
+                    (function(){
+                        var CART_VER = 3;
+                        var key = 'jayshree_cart_v2';
+                        var verKey = 'jayshree_cart_ver';
+                        try {
+                            var ver = parseInt(localStorage.getItem(verKey) || '0');
+                            if (ver < CART_VER) {
+                                var raw = localStorage.getItem(key);
+                                if (raw) {
+                                    var items = JSON.parse(raw);
+                                    var clean = items.filter(function(i){ return i.variantId && i.variantId.length > 5; });
+                                    localStorage.setItem(key, JSON.stringify(clean));
+                                }
+                                localStorage.removeItem('jayshree_cart');
+                                localStorage.setItem(verKey, String(CART_VER));
+                            }
+                        } catch(e){}
+                    })();
+                `}} />
+            </head>
             <body className="bg-brand antialiased overflow-x-hidden">
                 <div className="bg-noise" />
                 <CartProvider>
