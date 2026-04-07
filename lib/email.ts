@@ -1,29 +1,7 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-function getTransporter() {
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  const host = process.env.SMTP_HOST || 'smtpout.secureserver.net';
-  const port = Number(process.env.SMTP_PORT) || 587;
-
-  console.log(`[email] Config: host=${host}, port=${port}, user=${user ? user : 'NOT SET'}, pass=${pass ? '***set***' : 'NOT SET'}`);
-
-  if (!user || !pass) {
-    throw new Error('SMTP_USER and SMTP_PASS env vars are not configured');
-  }
-  return nodemailer.createTransport({
-    host,
-    port,
-    secure: false,
-    tls: { rejectUnauthorized: false },
-    auth: { user, pass },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
-  });
-}
-
-const FROM = `Jayshree Collections <${process.env.SMTP_USER || 'noreply@jayshree.com'}>`;
+const resend = new Resend(process.env.RESEND_API_KEY);
+const FROM_EMAIL = process.env.EMAIL_FROM || 'Jayshree Collections <onboarding@resend.dev>';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://jayshree-collections-production.up.railway.app';
 const gold = '#BFA06A';
 const dark = '#0A0A0A';
@@ -255,8 +233,9 @@ export async function sendOrderConfirmation(data: OrderConfirmationData) {
     </p>
   `;
 
-  await getTransporter().sendMail({
-    from: FROM,
+  console.log(`[email] Sending to ${data.email} via Resend API`);
+  await resend.emails.send({
+    from: FROM_EMAIL,
     to: data.email,
     subject: `Order Confirmed — ${data.orderNumber} | Jayshree Collections`,
     html: baseTemplate(content),
@@ -344,8 +323,9 @@ export async function sendShipmentNotification(data: ShipmentNotificationData) {
     </p>
   `;
 
-  await getTransporter().sendMail({
-    from: FROM,
+  console.log(`[email] Sending to ${data.email} via Resend API`);
+  await resend.emails.send({
+    from: FROM_EMAIL,
     to: data.email,
     subject: `Shipped! ${data.orderNumber} · AWB ${data.awbCode} | Jayshree Collections`,
     html: baseTemplate(content),
@@ -487,8 +467,9 @@ export async function sendStatusUpdate(data: StatusUpdateData) {
     CANCELLED: `Cancelled — ${data.orderNumber}`,
   };
 
-  await getTransporter().sendMail({
-    from: FROM,
+  console.log(`[email] Sending to ${data.email} via Resend API`);
+  await resend.emails.send({
+    from: FROM_EMAIL,
     to: data.email,
     subject: `${subjectMap[data.status] || data.status} | Jayshree Collections`,
     html: baseTemplate(content),
