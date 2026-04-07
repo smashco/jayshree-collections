@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useCart, CartProduct } from '@/context/CartContext';
 import { ProductDetail, ProductListItem } from '@/lib/products';
@@ -60,9 +60,14 @@ export default function ProductPageClient({ product, relatedProducts }: ProductP
     const activeMedia = allMedia[activeIndex];
 
     const displayPrice = selectedVariant?.formattedPrice || product.formattedPrice;
+    const stock = selectedVariant?.stock ?? 0;
+    const outOfStock = stock <= 0;
+
+    // Reset quantity when variant changes
+    useEffect(() => { setQuantity(1); }, [selectedVariant?.id]);
 
     const handleAddToCart = () => {
-        if (!selectedVariant) return;
+        if (!selectedVariant || outOfStock || quantity > stock) return;
         const cartProduct: CartProduct = {
             slug: product.slug,
             name: product.name,
@@ -173,18 +178,23 @@ export default function ProductPageClient({ product, relatedProducts }: ProductP
                             <div className="border-y border-[#BFA06A]/15 py-8 mb-10">
                                 <div className="flex flex-col sm:flex-row gap-6">
                                     <div className="flex items-center justify-between border border-[#BFA06A]/30 px-6 py-4 sm:w-1/3">
-                                        <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="text-[#F0E6C2]/70 hover:text-[#BFA06A] transition-colors text-lg md:text-xl">-</button>
+                                        <button onClick={() => setQuantity(Math.max(1, quantity - 1))} disabled={outOfStock} className="text-[#F0E6C2]/70 hover:text-[#BFA06A] transition-colors text-lg md:text-xl disabled:opacity-30">-</button>
                                         <span className="font-montserrat text-white font-medium text-lg">{quantity}</span>
-                                        <button onClick={() => setQuantity(quantity + 1)} className="text-[#F0E6C2]/70 hover:text-[#BFA06A] transition-colors text-lg md:text-xl">+</button>
+                                        <button onClick={() => setQuantity(Math.min(stock, quantity + 1))} disabled={outOfStock || quantity >= stock} className="text-[#F0E6C2]/70 hover:text-[#BFA06A] transition-colors text-lg md:text-xl disabled:opacity-30">+</button>
                                     </div>
                                     <button
                                         onClick={handleAddToCart}
-                                        disabled={!selectedVariant}
+                                        disabled={!selectedVariant || outOfStock}
                                         className="btn-gold flex-1 justify-center text-xs md:text-sm tracking-[0.25em] font-bold disabled:opacity-40 disabled:cursor-not-allowed"
                                     >
-                                        <span>{selectedVariant ? 'Add to Bag' : 'Unavailable'}</span>
+                                        <span>{outOfStock ? 'Out of Stock' : !selectedVariant ? 'Unavailable' : 'Add to Bag'}</span>
                                     </button>
                                 </div>
+                                {selectedVariant && (
+                                    <p className={`font-montserrat text-xs mt-3 ${stock <= 3 && stock > 0 ? 'text-amber-400' : stock <= 0 ? 'text-red-400' : 'text-[#F0E6C2]/40'}`}>
+                                        {stock <= 0 ? 'Currently out of stock' : stock <= 3 ? `Only ${stock} left in stock` : `${stock} in stock`}
+                                    </p>
+                                )}
                             </div>
 
                             {selectedVariant && (
