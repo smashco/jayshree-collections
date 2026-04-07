@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCart, CartProduct } from '@/context/CartContext';
 
 interface ProductItem {
     slug: string;
@@ -21,7 +20,7 @@ const categories = ['All', 'Necklaces', 'Earrings', 'Bangles', 'Rings'];
 export default function ProductShowcase() {
     const [activeCategory, setActiveCategory] = useState('All');
     const [products, setProducts] = useState<ProductItem[]>([]);
-    const { addToCart } = useCart();
+
 
     useEffect(() => {
         fetch('/api/products')
@@ -35,17 +34,8 @@ export default function ProductShowcase() {
         : products.filter(p => p.category === activeCategory);
 
     const handleAddToCart = (product: ProductItem) => {
-        const cartProduct: CartProduct = {
-            slug: product.slug,
-            name: product.name,
-            price: product.price,
-            formattedPrice: product.formattedPrice,
-            image: product.image,
-            material: product.material,
-            variantId: '',
-            variantName: 'Default',
-        };
-        addToCart(cartProduct);
+        // Redirect to product page where variant can be selected
+        window.location.href = `/product/${product.slug}`;
     };
 
     return (

@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCart, CartProduct } from '@/context/CartContext';
 import { ProductListItem } from '@/lib/products';
 import Navbar from '@/components/ui/Navbar';
 import Footer from '@/components/ui/Footer';
@@ -16,24 +15,15 @@ interface ShopClientProps {
 
 export default function ShopClient({ products, categoryNames }: ShopClientProps) {
     const [activeCategory, setActiveCategory] = useState('All');
-    const { addToCart } = useCart();
+
 
     const filteredProducts = activeCategory === 'All'
         ? products
         : products.filter(p => p.category === activeCategory);
 
     const handleAddToCart = (product: ProductListItem) => {
-        const cartProduct: CartProduct = {
-            slug: product.slug,
-            name: product.name,
-            price: product.price,
-            formattedPrice: product.formattedPrice,
-            image: product.image,
-            material: product.material,
-            variantId: '',
-            variantName: 'Default',
-        };
-        addToCart(cartProduct);
+        // Redirect to product page where variant can be selected
+        window.location.href = `/product/${product.slug}`;
     };
 
     return (
