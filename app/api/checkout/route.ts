@@ -37,6 +37,14 @@ export async function POST(request: NextRequest) {
     console.log('[checkout] Received body keys:', Object.keys(body));
     console.log('[checkout] Items:', JSON.stringify(body.items));
 
+    // Clean empty variantIds before validation
+    if (Array.isArray(body.items)) {
+      body.items = body.items.filter((i: { variantId?: string }) => i.variantId);
+      if (body.items.length === 0) {
+        return NextResponse.json({ error: 'Your cart has no valid items. Please clear your cart and re-add items from the shop.' }, { status: 400 });
+      }
+    }
+
     const parsed = checkoutSchema.safeParse(body);
     if (!parsed.success) {
       console.error('[checkout] Validation failed:', JSON.stringify(parsed.error.flatten(), null, 2));
