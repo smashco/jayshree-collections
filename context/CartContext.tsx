@@ -38,13 +38,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
 
-    // Load from local storage on mount + migrate old cart
+    // Load from local storage on mount, clean invalid items
     useEffect(() => {
-        // Try new cart format first
-        let savedCart = localStorage.getItem(CART_KEY);
+        let loaded: CartItem[] = [];
+
+        const savedCart = localStorage.getItem(CART_KEY);
         if (savedCart) {
             try {
-                setItems(JSON.parse(savedCart));
+                loaded = JSON.parse(savedCart);
             } catch {
                 console.error('Failed to parse cart');
             }
@@ -54,25 +55,30 @@ export function CartProvider({ children }: { children: ReactNode }) {
             if (oldCart) {
                 try {
                     const oldItems = JSON.parse(oldCart);
-                    // Old items had `id` instead of `slug`, no variantId
-                    const migrated: CartItem[] = oldItems.map((item: Record<string, unknown>) => ({
+                    loaded = oldItems.map((item: Record<string, unknown>) => ({
                         slug: item.id || item.slug,
                         name: item.name,
                         price: item.price,
                         formattedPrice: item.formattedPrice,
                         image: item.image,
                         material: item.material,
-                        variantId: '', // no variant info in old format
-                        variantName: 'Default',
+                        variantId: item.variantId || '',
+                        variantName: item.variantName || 'Default',
                         quantity: item.quantity || 1,
                     }));
-                    setItems(migrated);
                     localStorage.removeItem('jayshree_cart');
                 } catch {
                     console.error('Failed to migrate old cart');
                 }
             }
         }
+
+        // Remove items with missing variantId — they can't be checked out
+        const valid = loaded.filter(item => item.variantId);
+        if (valid.length !== loaded.length) {
+            localStorage.setItem(CART_KEY, JSON.stringify(valid));
+        }
+        setItems(valid);
         setTimeout(() => setIsMounted(true), 0);
     }, []);
 

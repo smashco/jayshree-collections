@@ -78,9 +78,8 @@ export default function CheckoutPage() {
         setLoading(true);
         setError('');
 
-        const validItems = items.filter(item => item.variantId);
-        if (validItems.length === 0) {
-            setError('Your cart contains items without variant information. Please re-add items from the shop.');
+        if (items.length === 0) {
+            setError('Your cart is empty. Please add items from the shop.');
             setLoading(false);
             return;
         }
@@ -129,7 +128,7 @@ export default function CheckoutPage() {
                                     razorpayOrderId: response.razorpay_order_id,
                                     razorpayPaymentId: response.razorpay_payment_id,
                                     razorpaySignature: response.razorpay_signature,
-                                    items: items.filter(item => item.variantId).map(item => ({ variantId: item.variantId, quantity: item.quantity })),
+                                    items: items.map(item => ({ variantId: item.variantId, quantity: item.quantity })),
                                 }),
                             });
 

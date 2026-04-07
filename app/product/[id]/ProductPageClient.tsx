@@ -62,15 +62,16 @@ export default function ProductPageClient({ product, relatedProducts }: ProductP
     const displayPrice = selectedVariant?.formattedPrice || product.formattedPrice;
 
     const handleAddToCart = () => {
+        if (!selectedVariant) return;
         const cartProduct: CartProduct = {
             slug: product.slug,
             name: product.name,
-            price: selectedVariant?.price || product.price,
-            formattedPrice: displayPrice,
+            price: selectedVariant.price,
+            formattedPrice: selectedVariant.formattedPrice,
             image: product.image,
             material: product.material,
-            variantId: selectedVariant?.id || '',
-            variantName: selectedVariant?.name || 'Default',
+            variantId: selectedVariant.id,
+            variantName: selectedVariant.name,
         };
         addToCart(cartProduct, quantity);
     };
@@ -176,8 +177,12 @@ export default function ProductPageClient({ product, relatedProducts }: ProductP
                                         <span className="font-montserrat text-white font-medium text-lg">{quantity}</span>
                                         <button onClick={() => setQuantity(quantity + 1)} className="text-[#F0E6C2]/70 hover:text-[#BFA06A] transition-colors text-lg md:text-xl">+</button>
                                     </div>
-                                    <button onClick={handleAddToCart} className="btn-gold flex-1 justify-center text-xs md:text-sm tracking-[0.25em] font-bold">
-                                        <span>Add to Bag</span>
+                                    <button
+                                        onClick={handleAddToCart}
+                                        disabled={!selectedVariant}
+                                        className="btn-gold flex-1 justify-center text-xs md:text-sm tracking-[0.25em] font-bold disabled:opacity-40 disabled:cursor-not-allowed"
+                                    >
+                                        <span>{selectedVariant ? 'Add to Bag' : 'Unavailable'}</span>
                                     </button>
                                 </div>
                             </div>
