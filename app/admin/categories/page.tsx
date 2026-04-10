@@ -24,6 +24,7 @@ export default function CategoriesPage() {
 
   const fetchCategories = async () => {
     const res = await fetch('/api/admin/categories');
+    if (!res.ok) { console.error('Failed to fetch categories'); return; }
     const data = await res.json();
     setAllCategories(data);
     // Auto-expand all on first load
@@ -45,7 +46,7 @@ export default function CategoriesPage() {
     const url = editId ? `/api/admin/categories/${editId}` : '/api/admin/categories';
     const method = editId ? 'PUT' : 'POST';
 
-    await fetch(url, {
+    const res = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -55,6 +56,8 @@ export default function CategoriesPage() {
         parentId: form.parentId || null,
       }),
     });
+
+    if (!res.ok) { const err = await res.json().catch(() => ({})); alert(err.error || 'Failed to save category'); return; }
 
     setForm({ name: '', slug: '', sortOrder: 0, parentId: '' });
     setEditId(null);
@@ -70,7 +73,8 @@ export default function CategoriesPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this category and all its sub-categories?')) return;
-    await fetch(`/api/admin/categories/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/admin/categories/${id}`, { method: 'DELETE' });
+    if (!res.ok) { alert('Failed to delete category'); return; }
     fetchCategories();
   };
 

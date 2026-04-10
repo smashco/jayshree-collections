@@ -25,7 +25,7 @@ export default function CartDrawer() {
             style: 'currency',
             currency: 'INR',
             maximumFractionDigits: 0,
-        }).format(price);
+        }).format(price / 100);
     };
 
     return (
@@ -77,8 +77,10 @@ export default function CartDrawer() {
                                 </div>
                             ) : (
                                 <div className="flex flex-col gap-8">
-                                    {items.map((item) => (
-                                        <div key={item.slug} className="flex gap-6 group">
+                                    {items.map((item) => {
+                                        const itemKey = item.variantId || item.slug;
+                                        return (
+                                        <div key={itemKey} className="flex gap-6 group">
                                             {/* Image */}
                                             <Link href={`/product/${item.slug}`} onClick={() => setIsCartOpen(false)} className="relative w-24 h-32 bg-[#111] shrink-0 border border-[#BFA06A]/10 group-hover:border-[#BFA06A]/30 transition-colors cursor-pointer">
                                                 <Image
@@ -99,7 +101,7 @@ export default function CartDrawer() {
                                                             </h3>
                                                         </Link>
                                                         <button
-                                                            onClick={() => removeFromCart(item.slug)}
+                                                            onClick={() => removeFromCart(itemKey)}
                                                             className="text-[#F0E6C2]/50 hover:text-red-400 transition-colors uppercase text-[10px] md:text-xs tracking-widest shrink-0 mt-1 cursor-pointer font-medium"
                                                         >
                                                             Remove
@@ -114,7 +116,7 @@ export default function CartDrawer() {
                                                     {/* Quantity Controls */}
                                                     <div className="flex items-center gap-4 border border-[#BFA06A]/20 px-3 py-1.5">
                                                         <button
-                                                            onClick={() => updateQuantity(item.slug, item.quantity - 1)}
+                                                            onClick={() => updateQuantity(itemKey, item.quantity - 1)}
                                                             className="text-[#F0E6C2]/50 hover:text-[#BFA06A] transition-colors cursor-pointer"
                                                         >
                                                             <Minus className="w-3 h-3" />
@@ -123,7 +125,7 @@ export default function CartDrawer() {
                                                             {item.quantity}
                                                         </span>
                                                         <button
-                                                            onClick={() => updateQuantity(item.slug, item.quantity + 1)}
+                                                            onClick={() => updateQuantity(itemKey, item.quantity + 1)}
                                                             className="text-[#F0E6C2]/50 hover:text-[#BFA06A] transition-colors cursor-pointer"
                                                         >
                                                             <Plus className="w-3 h-3" />
@@ -137,7 +139,8 @@ export default function CartDrawer() {
                                                 </div>
                                             </div>
                                         </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             )}
                         </div>

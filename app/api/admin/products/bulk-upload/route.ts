@@ -281,6 +281,7 @@ export async function GET() {
   const { error } = await requireAuth();
   if (error) return error;
 
+  try {
   const categories = await prisma.category.findMany({ orderBy: { name: 'asc' } });
   const categoryNames = categories.map(c => c.name).join(', ');
 
@@ -480,4 +481,8 @@ export async function GET() {
       'Content-Disposition': 'attachment; filename="jayshree-bulk-upload-template.xlsx"',
     },
   });
+  } catch (err) {
+    console.error('[bulk-upload] Template generation failed:', err);
+    return NextResponse.json({ error: 'Failed to generate template' }, { status: 500 });
+  }
 }

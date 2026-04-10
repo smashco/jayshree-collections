@@ -27,9 +27,10 @@ export default function ProductsPage() {
     const params = new URLSearchParams({ page: String(page), limit: '20' });
     if (search) params.set('search', search);
     const res = await fetch(`/api/admin/products?${params}`);
+    if (!res.ok) { console.error('Failed to fetch products'); return; }
     const data = await res.json();
-    setProducts(data.products);
-    setTotal(data.total);
+    setProducts(data.products || []);
+    setTotal(data.total || 0);
   };
 
   useEffect(() => { fetchProducts(); }, [page, search]);
@@ -39,7 +40,8 @@ export default function ProductsPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this product? This cannot be undone.')) return;
-    await fetch(`/api/admin/products/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/admin/products/${id}`, { method: 'DELETE' });
+    if (!res.ok) { alert('Failed to delete product'); return; }
     fetchProducts();
   };
 

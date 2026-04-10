@@ -141,6 +141,10 @@ export default function CheckoutPage() {
                             }
 
                             const data = await checkoutRes.json();
+                            if (!data.orderNumber) {
+                                reject(new Error('Order created but missing order number'));
+                                return;
+                            }
                             clearCart();
                             router.push(`/order-confirmation?order=${data.orderNumber}&payment=${response.razorpay_payment_id}`);
                             resolve();

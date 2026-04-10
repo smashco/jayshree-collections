@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Instagram, Facebook, Youtube, MapPin, Phone, Mail, Heart } from 'lucide-react';
 
 const Footer = () => (
@@ -46,14 +47,20 @@ const Footer = () => (
                 {/* Customer Care */}
                 <div>
                     <h3 className="font-playfair text-lg font-bold text-yellow-50 mb-5">Customer Care</h3>
-                    {['My Orders', 'Return Policy', 'Shipping Info', 'Size Guide', 'FAQs'].map((link) => (
-                        <a
-                            key={link}
-                            href="#"
+                    {[
+                        { label: 'Track Order', href: '/track' },
+                        { label: 'Terms of Service', href: '/policies/terms-of-service' },
+                        { label: 'Privacy Policy', href: '/policies/privacy-policy' },
+                        { label: 'Shipping Info', href: '#' },
+                        { label: 'FAQs', href: '#' },
+                    ].map((link) => (
+                        <Link
+                            key={link.label}
+                            href={link.href}
                             className="block font-inter text-sm md:text-base text-yellow-100/80 hover:text-gold transition-colors duration-200 mb-3 cursor-pointer font-medium"
                         >
-                            {link}
-                        </a>
+                            {link.label}
+                        </Link>
                     ))}
                 </div>
 
@@ -78,13 +85,15 @@ const Footer = () => (
                     {/* Social */}
                     <div className="flex gap-3 mt-6">
                         {[
-                            { Icon: Instagram, label: 'Instagram' },
-                            { Icon: Facebook, label: 'Facebook' },
-                            { Icon: Youtube, label: 'YouTube' },
-                        ].map(({ Icon, label }) => (
+                            { Icon: Instagram, label: 'Instagram', href: 'https://www.instagram.com/jayashricollection_official/' },
+                            { Icon: Facebook, label: 'Facebook', href: 'https://www.facebook.com/jayashricollectionthane/' },
+                            { Icon: Youtube, label: 'YouTube', href: '#' },
+                        ].map(({ Icon, label, href }) => (
                             <a
                                 key={label}
-                                href="#"
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 aria-label={label}
                                 className="w-9 h-9 glass-gold rounded-full flex items-center justify-center hover:bg-gold hover:text-maroon-dark transition-all duration-200 cursor-pointer"
                             >

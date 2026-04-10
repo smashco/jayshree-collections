@@ -153,7 +153,7 @@ export async function generatePickup(shipmentId: string): Promise<void> {
 
   const token = await getShiprocketToken();
 
-  await fetch(`${BASE_URL}/courier/generate/pickup`, {
+  const res = await fetch(`${BASE_URL}/courier/generate/pickup`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -161,6 +161,12 @@ export async function generatePickup(shipmentId: string): Promise<void> {
     },
     body: JSON.stringify({ shipment_id: [shipmentId] }),
   });
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    console.error('[shiprocket] generatePickup failed:', errData);
+    throw new Error(`Shiprocket pickup failed: ${res.status}`);
+  }
 }
 
 export async function trackShipment(awbCode: string): Promise<{
