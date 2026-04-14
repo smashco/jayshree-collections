@@ -146,7 +146,7 @@ export default function CheckoutPage() {
                                 return;
                             }
                             clearCart();
-                            router.push(`/order-confirmation?order=${data.orderNumber}&payment=${response.razorpay_payment_id}`);
+                            router.push(`/order-confirmation?order=${data.orderNumber}&payment=${response.razorpay_payment_id}&email=${encodeURIComponent(form.email)}`);
                             resolve();
                         } catch (err) {
                             reject(err);

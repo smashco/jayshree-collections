@@ -12,6 +12,7 @@ function OrderConfirmationContent() {
     const params = useSearchParams();
     const orderNumber = params.get('order');
     const paymentId = params.get('payment');
+    const email = params.get('email');
 
     return (
         <section className="flex-1 pt-32 pb-20 md:pt-48 md:pb-32 relative z-20 flex items-center justify-center">
@@ -85,7 +86,7 @@ function OrderConfirmationContent() {
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         {orderNumber && (
-                            <Link href={`/track?order=${orderNumber}`}
+                            <Link href={`/track?order=${encodeURIComponent(orderNumber)}${email ? `&email=${encodeURIComponent(email)}` : ''}`}
                                 className="btn-gold inline-flex items-center justify-center px-8 py-4">
                                 <span>Track Your Order</span>
                             </Link>

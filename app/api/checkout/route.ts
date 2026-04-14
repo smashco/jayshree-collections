@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import crypto from 'crypto';
+import Razorpay from 'razorpay';
 import { sendOrderConfirmation } from '@/lib/email';
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID!,
+  key_secret: process.env.RAZORPAY_KEY_SECRET!,
+});
 
 const checkoutSchema = z.object({
   email: z.string().email(),
@@ -71,7 +77,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Payment verification failed' }, { status: 400 });
     }
 
-    console.log('[checkout] Signature verified. Looking up variants...');
+    console.log('[checkout] Signature verified. Checking for duplicate payment...');
+
+    // Idempotency: prevent duplicate orders from same payment
+    const existingOrder = await prisma.order.findFirst({
+      where: { razorpayPaymentId: data.razorpayPaymentId },
+    });
+    if (existingOrder) {
+      console.log('[checkout] Duplicate payment detected, returning existing order:', existingOrder.orderNumber);
+      return NextResponse.json({
+        orderId: existingOrder.id,
+        orderNumber: existingOrder.orderNumber,
+        totalAmount: existingOrder.totalAmount,
+      }, { status: 200 });
+    }
+
+    console.log('[checkout] Looking up variants...');
 
     // Validate stock
     const variants = await prisma.productVariant.findMany({
@@ -112,7 +133,24 @@ export async function POST(request: NextRequest) {
     const taxAmount = Math.round(subtotal * 0.03);
     const totalAmount = subtotal + taxAmount + shippingAmount;
 
-    console.log('[checkout] Creating order in DB...');
+    // Verify amount matches what Razorpay actually charged
+    try {
+      const razorpayOrder = await razorpay.orders.fetch(data.razorpayOrderId);
+      const chargedAmount = Number(razorpayOrder.amount);
+      if (chargedAmount !== totalAmount) {
+        console.error('[checkout] Amount mismatch. Razorpay charged:', chargedAmount, 'Server computed:', totalAmount);
+        return NextResponse.json({ error: 'Payment amount mismatch. Please contact support.' }, { status: 400 });
+      }
+      if (razorpayOrder.status !== 'paid') {
+        console.error('[checkout] Razorpay order not paid. Status:', razorpayOrder.status);
+        return NextResponse.json({ error: 'Payment not completed' }, { status: 400 });
+      }
+    } catch (err) {
+      console.error('[checkout] Razorpay verification failed:', err);
+      return NextResponse.json({ error: 'Unable to verify payment with Razorpay' }, { status: 500 });
+    }
+
+    console.log('[checkout] Amount verified. Creating order in DB...');
 
     const order = await prisma.$transaction(async (tx) => {
       let customer = await tx.customer.findUnique({ where: { email: data.email } });
@@ -148,10 +186,14 @@ export async function POST(request: NextRequest) {
       });
 
       for (const item of data.items) {
-        await tx.productVariant.update({
-          where: { id: item.variantId },
+        // Atomic: only decrement if stock is still sufficient. Prevents overselling under concurrent checkouts.
+        const result = await tx.productVariant.updateMany({
+          where: { id: item.variantId, stock: { gte: item.quantity } },
           data: { stock: { decrement: item.quantity } },
         });
+        if (result.count === 0) {
+          throw new Error(`STOCK_DEPLETED:${item.variantId}`);
+        }
         await tx.stockAdjustment.create({
           data: { variantId: item.variantId, quantity: -item.quantity, reason: 'ORDER_PLACED', note: `Order ${order.orderNumber}` },
         });
@@ -198,6 +240,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ orderId: order.id, orderNumber: order.orderNumber, totalAmount: order.totalAmount }, { status: 201 });
 
   } catch (err) {
+    if (err instanceof Error && err.message.startsWith('STOCK_DEPLETED:')) {
+      console.error('[checkout] Stock depleted during checkout:', err.message);
+      return NextResponse.json({ error: 'Sorry, one of your items just sold out. Please refresh and try again. If payment was captured, we will issue a refund within 5-7 business days.' }, { status: 409 });
+    }
     console.error('[checkout] Unexpected error:', err);
     return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 });
   }

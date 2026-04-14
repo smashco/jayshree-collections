@@ -183,7 +183,7 @@ export interface OrderConfirmationData {
 }
 
 export async function sendOrderConfirmation(data: OrderConfirmationData) {
-  const trackUrl = `${SITE_URL}/track?order=${encodeURIComponent(data.orderNumber)}`;
+  const trackUrl = `${SITE_URL}/track?order=${encodeURIComponent(data.orderNumber)}&email=${encodeURIComponent(data.email)}`;
   const estimatedDelivery = data.shippingMethod === 'express' ? '1–2 business days' : '5–7 business days';
 
   const content = `
@@ -268,7 +268,7 @@ export interface ShipmentNotificationData {
 }
 
 export async function sendShipmentNotification(data: ShipmentNotificationData) {
-  const trackUrl = data.trackingUrl || `${SITE_URL}/track?order=${encodeURIComponent(data.orderNumber)}`;
+  const trackUrl = data.trackingUrl || `${SITE_URL}/track?order=${encodeURIComponent(data.orderNumber)}&email=${encodeURIComponent(data.email)}`;
   const estimatedDelivery = data.shippingMethod === 'express' ? '1–2 business days' : '5–7 business days';
 
   const content = `
@@ -349,7 +349,7 @@ export interface StatusUpdateData {
 }
 
 export async function sendStatusUpdate(data: StatusUpdateData) {
-  const trackUrl = `${SITE_URL}/track?order=${encodeURIComponent(data.orderNumber)}`;
+  const trackUrl = `${SITE_URL}/track?order=${encodeURIComponent(data.orderNumber)}&email=${encodeURIComponent(data.email)}`;
   const firstName = data.customerName.split(' ')[0];
 
   let content = '';

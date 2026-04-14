@@ -3,20 +3,26 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   const orderNumber = request.nextUrl.searchParams.get('order');
+  const email = request.nextUrl.searchParams.get('email');
+
   if (!orderNumber) {
     return NextResponse.json({ error: 'Order number is required' }, { status: 400 });
+  }
+  if (!email) {
+    return NextResponse.json({ error: 'Email is required' }, { status: 400 });
   }
 
   const order = await prisma.order.findUnique({
     where: { orderNumber },
     include: {
-      customer: { select: { firstName: true, lastName: true } },
+      customer: { select: { firstName: true, lastName: true, email: true } },
       shippingAddress: { select: { city: true, state: true, pinCode: true } },
       items: { select: { name: true, quantity: true, unitPrice: true } },
     },
   });
 
-  if (!order) {
+  // Return same 404 regardless of reason to prevent order number enumeration
+  if (!order || order.customer.email.toLowerCase() !== email.toLowerCase()) {
     return NextResponse.json({ error: 'Order not found' }, { status: 404 });
   }
 

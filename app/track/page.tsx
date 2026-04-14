@@ -37,18 +37,20 @@ const statusStyles: Record<string, { color: string; bg: string; label: string }>
 function TrackContent() {
   const params = useSearchParams();
   const prefilledOrder = params.get('order') || '';
+  const prefilledEmail = params.get('email') || '';
   const [orderInput, setOrderInput] = useState(prefilledOrder);
+  const [emailInput, setEmailInput] = useState(prefilledEmail);
   const [data, setData] = useState<TrackingData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const fetchTracking = async (orderNum: string) => {
-    if (!orderNum.trim()) return;
+  const fetchTracking = async (orderNum: string, email: string) => {
+    if (!orderNum.trim() || !email.trim()) return;
     setLoading(true);
     setError('');
     setData(null);
 
-    const res = await fetch(`/api/track?order=${encodeURIComponent(orderNum.trim())}`);
+    const res = await fetch(`/api/track?order=${encodeURIComponent(orderNum.trim())}&email=${encodeURIComponent(email.trim())}`);
     if (!res.ok) {
       const err = await res.json().catch(() => ({ error: 'Something went wrong' }));
       setError(err.error || 'Order not found');
@@ -59,8 +61,8 @@ function TrackContent() {
   };
 
   useEffect(() => {
-    if (prefilledOrder) fetchTracking(prefilledOrder);
-  }, [prefilledOrder]);
+    if (prefilledOrder && prefilledEmail) fetchTracking(prefilledOrder, prefilledEmail);
+  }, [prefilledOrder, prefilledEmail]);
 
   const formatPrice = (paisa: number) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(paisa / 100);
@@ -88,21 +90,30 @@ function TrackContent() {
         {/* Search */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}
           className="mb-12">
-          <form onSubmit={(e) => { e.preventDefault(); fetchTracking(orderInput); }} className="flex gap-3">
+          <form onSubmit={(e) => { e.preventDefault(); fetchTracking(orderInput, emailInput); }} className="flex flex-col gap-3">
             <input
               type="text"
               value={orderInput}
               onChange={e => setOrderInput(e.target.value)}
-              placeholder="Enter order number (e.g. JC-20260407-AB12)"
-              className="flex-1 bg-transparent border border-[#BFA06A]/20 focus:border-[#BFA06A] outline-none text-white font-montserrat text-sm px-5 py-4 transition-colors placeholder:text-[#F0E6C2]/30"
+              placeholder="Order number (e.g. JC-20260407-AB12)"
+              className="bg-transparent border border-[#BFA06A]/20 focus:border-[#BFA06A] outline-none text-white font-montserrat text-sm px-5 py-4 transition-colors placeholder:text-[#F0E6C2]/30"
             />
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-[#BFA06A] text-black font-montserrat text-xs tracking-[0.25em] uppercase px-8 py-4 font-bold hover:bg-[#D4B580] transition-colors cursor-pointer disabled:opacity-50 whitespace-nowrap"
-            >
-              {loading ? 'Tracking...' : 'Track'}
-            </button>
+            <div className="flex gap-3">
+              <input
+                type="email"
+                value={emailInput}
+                onChange={e => setEmailInput(e.target.value)}
+                placeholder="Email used at checkout"
+                className="flex-1 bg-transparent border border-[#BFA06A]/20 focus:border-[#BFA06A] outline-none text-white font-montserrat text-sm px-5 py-4 transition-colors placeholder:text-[#F0E6C2]/30"
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-[#BFA06A] text-black font-montserrat text-xs tracking-[0.25em] uppercase px-8 py-4 font-bold hover:bg-[#D4B580] transition-colors cursor-pointer disabled:opacity-50 whitespace-nowrap"
+              >
+                {loading ? 'Tracking...' : 'Track'}
+              </button>
+            </div>
           </form>
         </motion.div>
 
