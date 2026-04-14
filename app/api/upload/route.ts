@@ -3,8 +3,10 @@ import { requireAuth } from '@/lib/admin-auth';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import sharp from 'sharp';
 
+const REGION = process.env.AWS_REGION ?? 'ap-south-1';
+
 const s3 = new S3Client({
-  region: process.env.AWS_REGION ?? 'ap-south-1',
+  region: REGION,
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
@@ -64,6 +66,6 @@ export async function POST(request: NextRequest) {
     ACL: 'public-read',
   }));
 
-  const url = `https://${BUCKET}.s3.ap-south-1.amazonaws.com/${key}`;
+  const url = `https://${BUCKET}.s3.${REGION}.amazonaws.com/${key}`;
   return NextResponse.json({ url, mediaType: isVideo ? 'video' : 'image' });
 }

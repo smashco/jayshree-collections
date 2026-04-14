@@ -36,9 +36,14 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
 
   useEffect(() => {
     Promise.all([
-      fetch(`/api/admin/products/${id}`).then(r => r.json()),
-      fetch('/api/admin/categories').then(r => r.json()),
-    ]).then(([prod, cats]) => {
+      fetch(`/api/admin/products/${id}`),
+      fetch('/api/admin/categories'),
+    ]).then(async ([prodRes, catsRes]) => {
+      if (!prodRes.ok || !catsRes.ok) {
+        console.error('Failed to load product or categories');
+        return;
+      }
+      const [prod, cats] = await Promise.all([prodRes.json(), catsRes.json()]);
       setProduct(prod);
       setCategories(cats);
       setForm({
@@ -47,7 +52,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         basePrice: String(prod.basePrice / 100), categoryId: prod.categoryId,
         isFeatured: prod.isFeatured, isActive: prod.isActive,
       });
-    });
+    }).catch(err => console.error('Failed to load product:', err));
   }, [id]);
 
   const handleSave = async () => {

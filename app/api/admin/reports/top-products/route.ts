@@ -6,26 +6,36 @@ export async function GET() {
   const { error } = await requireAuth();
   if (error) return error;
 
-  const topProducts = await prisma.orderItem.groupBy({
-    by: ['productId'],
-    _sum: { quantity: true, unitPrice: true },
-    orderBy: { _sum: { quantity: 'desc' } },
-    take: 10,
+  const items = await prisma.orderItem.findMany({
+    where: { order: { paymentStatus: 'PAID' } },
+    select: { productId: true, quantity: true, unitPrice: true },
   });
 
+  const byProduct = new Map<string, { quantity: number; revenue: number }>();
+  for (const it of items) {
+    const prev = byProduct.get(it.productId) ?? { quantity: 0, revenue: 0 };
+    prev.quantity += it.quantity;
+    prev.revenue += it.quantity * it.unitPrice;
+    byProduct.set(it.productId, prev);
+  }
+
+  const top = [...byProduct.entries()]
+    .sort((a, b) => b[1].quantity - a[1].quantity)
+    .slice(0, 10);
+
   const products = await prisma.product.findMany({
-    where: { id: { in: topProducts.map(t => t.productId) } },
+    where: { id: { in: top.map(([id]) => id) } },
     select: { id: true, name: true, slug: true },
   });
 
-  const result = topProducts.map(tp => {
-    const product = products.find(p => p.id === tp.productId);
+  const result = top.map(([productId, stats]) => {
+    const product = products.find(p => p.id === productId);
     return {
-      productId: tp.productId,
+      productId,
       name: product?.name || 'Unknown',
       slug: product?.slug || '',
-      totalQuantity: tp._sum.quantity || 0,
-      totalRevenue: tp._sum.unitPrice || 0,
+      totalQuantity: stats.quantity,
+      totalRevenue: stats.revenue,
     };
   });
 
