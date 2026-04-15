@@ -1,5 +1,6 @@
 const BASE_URL = 'https://apiv2.shiprocket.in/v1/external';
 const TEST_MODE = process.env.SHIPROCKET_TEST_MODE === 'true';
+const PICKUP_LOCATION = process.env.SHIPROCKET_PICKUP_LOCATION || 'Primary';
 
 let cachedToken: string | null = null;
 let tokenExpiry: number = 0;
@@ -67,7 +68,7 @@ export async function createShiprocketOrder(payload: ShiprocketOrderPayload): Pr
   const body = {
     order_id: payload.orderNumber,
     order_date: new Date(payload.orderDate).toISOString().replace('T', ' ').slice(0, 19),
-    pickup_location: 'Primary',
+    pickup_location: PICKUP_LOCATION,
     billing_customer_name: payload.customer.firstName,
     billing_last_name: payload.customer.lastName,
     billing_address: payload.customer.address1,
