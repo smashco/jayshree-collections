@@ -65,8 +65,6 @@ export async function createShiprocketOrder(payload: ShiprocketOrderPayload): Pr
 
   const token = await getShiprocketToken();
 
-  console.log('[shiprocket] Using pickup_location:', JSON.stringify(PICKUP_LOCATION), 'length:', PICKUP_LOCATION.length);
-
   const body = {
     order_id: payload.orderNumber,
     order_date: new Date(payload.orderDate).toISOString().replace('T', ' ').slice(0, 19),
