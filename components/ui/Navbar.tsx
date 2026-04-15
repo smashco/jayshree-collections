@@ -58,7 +58,7 @@ export default function Navbar() {
                             className="font-cormorant text-white font-medium tracking-[0.25em] hover:text-[#BFA06A] transition-all duration-700 drop-shadow-md"
                             style={{ fontSize: 'clamp(1.5rem, 4vw, 2.2rem)', letterSpacing: '0.3em' }}
                         >
-                            JAYSHREE
+                            JAYASHRI
                         </span>
                         <span className="font-montserrat text-[#BFA06A]/90 text-[0.55rem] md:text-[0.65rem] tracking-[0.6em] uppercase font-medium mt-1 drop-shadow-sm">
                             Maison · Est. 1976
@@ -150,7 +150,7 @@ export default function Navbar() {
                                 transition={{ delay: 0.75 }}
                                 className="font-montserrat text-[#BFA06A]/30 text-[0.5rem] tracking-[0.6em] uppercase font-light"
                             >
-                                Jayshree Maison · Est. 1976
+                                Jayashri Maison · Est. 1976
                             </motion.p>
                         </div>
                     </motion.div>

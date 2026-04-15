@@ -3,8 +3,8 @@ import Footer from '@/components/ui/Footer';
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Terms of Service | Jayshree Collections',
-  description: 'The terms and conditions that govern your use of Jayshree Collections.',
+  title: 'Terms of Service | Jayashri Collections',
+  description: 'The terms and conditions that govern your use of Jayashri Collections.',
 };
 
 export default function TermsOfServicePage() {
@@ -26,7 +26,7 @@ export default function TermsOfServicePage() {
         <div className="space-y-10 font-montserrat text-[#F0E6C2]/80 text-sm md:text-base leading-relaxed">
           <section>
             <p>
-              Welcome to Jayshree Collections. These Terms of Service (&quot;Terms&quot;) govern your access to and use of
+              Welcome to Jayashri Collections. These Terms of Service (&quot;Terms&quot;) govern your access to and use of
               our website, products and services. By visiting our site or placing an order with us, you agree to be
               bound by these Terms. If you do not agree, please do not use our Service.
             </p>
@@ -58,7 +58,7 @@ export default function TermsOfServicePage() {
           <section>
             <h2 className="font-cormorant text-2xl md:text-3xl text-[#BFA06A] mb-4">3. Product Information & Accuracy</h2>
             <p>
-              Every piece at Jayshree Collections is hand-crafted or hand-finished. Weights, stone placements, and
+              Every piece at Jayashri Collections is hand-crafted or hand-finished. Weights, stone placements, and
               finishes may vary slightly from one piece to the next — this is a mark of authenticity, not a defect.
               Colours shown on your screen may differ from the actual product depending on your display. We make
               every effort to represent our collections accurately but do not warrant that product descriptions or
@@ -110,8 +110,8 @@ export default function TermsOfServicePage() {
           <section>
             <h2 className="font-cormorant text-2xl md:text-3xl text-[#BFA06A] mb-4">8. Intellectual Property</h2>
             <p>
-              All content on this site — including product photographs, videos, designs, text, logos, the Jayshree
-              Collections name and the overall look and feel — is the property of Jayshree Collections or its licensors
+              All content on this site — including product photographs, videos, designs, text, logos, the Jayashri
+              Collections name and the overall look and feel — is the property of Jayashri Collections or its licensors
               and is protected by Indian and international intellectual property laws. You may not copy, reproduce,
               distribute or create derivative works from any of our content without our prior written consent.
             </p>
@@ -154,7 +154,7 @@ export default function TermsOfServicePage() {
               We do not guarantee that your use of our service will be uninterrupted, timely, secure or error-free.
               The service and all products and services delivered to you through the service are (except as expressly
               stated by us) provided &apos;as is&apos; and &apos;as available&apos; for your use, without any representation,
-              warranties or conditions of any kind. In no case shall Jayshree Collections, our directors, officers,
+              warranties or conditions of any kind. In no case shall Jayashri Collections, our directors, officers,
               employees, affiliates, agents or suppliers be liable for any injury, loss, claim, or any direct,
               indirect, incidental, punitive, special or consequential damages of any kind arising out of your use
               of the service or any products procured using the service.
@@ -164,7 +164,7 @@ export default function TermsOfServicePage() {
           <section>
             <h2 className="font-cormorant text-2xl md:text-3xl text-[#BFA06A] mb-4">13. Indemnification</h2>
             <p>
-              You agree to indemnify, defend and hold harmless Jayshree Collections and its affiliates from any claim
+              You agree to indemnify, defend and hold harmless Jayashri Collections and its affiliates from any claim
               or demand, including reasonable legal fees, made by any third party due to or arising out of your
               breach of these Terms or your violation of any law or the rights of a third party.
             </p>

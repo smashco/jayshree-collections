@@ -6,7 +6,7 @@ import { assetUrl } from '@/lib/assets';
 import LazyVideo from '@/components/ui/LazyVideo';
 
 const milestones = [
-    { year: '2016', label: 'Founded in Maharashtra by Jayshree Bhoir' },
+    { year: '2016', label: 'Founded in Maharashtra by Jayashri Bhoir' },
     { year: '2021', label: 'Expansion across Thane and Mumbai' },
     { year: '2026', label: 'Lakhs of happy customers across the state' },
 ];
@@ -107,7 +107,7 @@ export default function BrandStory() {
                             transition={{ duration: 1, delay: 0.2 }}
                             className="font-montserrat text-white text-sm md:text-base leading-relaxed font-medium mb-14 max-w-md drop-shadow-md"
                         >
-                            For 10 years, Jayshree Collections has kept Maharashtrian jewelry making alive. Every piece mixes old traditions with new designs — made by hand by our best jewelry makers.
+                            For 10 years, Jayashri Collections has kept Maharashtrian jewelry making alive. Every piece mixes old traditions with new designs — made by hand by our best jewelry makers.
                         </motion.p>
 
                         {/* Gold timeline */}

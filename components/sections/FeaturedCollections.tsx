@@ -185,7 +185,7 @@ export default function FeaturedCollections({ featuredProducts = [] }: { feature
                         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                     >
                         <p className="font-montserrat text-[#BFA06A]/90 text-[0.55rem] tracking-[0.7em] uppercase font-light mb-5">
-                            Jayshree Maison · Curated Collections
+                            Jayashri Maison · Curated Collections
                         </p>
                         <h2
                             className="font-cormorant text-[#F0E6C2] font-light leading-none"
@@ -223,7 +223,7 @@ export default function FeaturedCollections({ featuredProducts = [] }: { feature
                     <div className="marquee-track">
                         {Array.from({ length: 10 }).map((_, i) => (
                             <span key={i} className="font-montserrat text-[#BFA06A]/20 text-[0.5rem] tracking-[0.6em] uppercase font-light mx-6 shrink-0">
-                                Jayshree Maison &nbsp;•&nbsp; Crafted in Maharashtra &nbsp;•&nbsp; Est. 1976 &nbsp;•&nbsp;
+                                Jayashri Maison &nbsp;•&nbsp; Crafted in Maharashtra &nbsp;•&nbsp; Est. 1976 &nbsp;•&nbsp;
                             </span>
                         ))}
                     </div>
@@ -240,7 +240,7 @@ export default function FeaturedCollections({ featuredProducts = [] }: { feature
                             className="mb-12"
                         >
                             <p className="font-montserrat text-[#BFA06A]/90 text-[0.55rem] tracking-[0.7em] uppercase font-light mb-4">
-                                Jayshree Maison · Handpicked
+                                Jayashri Maison · Handpicked
                             </p>
                             <h2
                                 className="font-cormorant text-[#F0E6C2] font-light leading-none"

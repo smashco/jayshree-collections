@@ -20,15 +20,15 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-    title: "Jayshree Collections — 2026 Luxury Edition",
+    title: "Jayashri Collections — 2026 Luxury Edition",
     description: "Discover handcrafted imitation jewellery inspired by the rich heritage of Maharashtra. Paithani-inspired necklaces, temple earrings, Kolhapuri bangles and bridal maang tikkas.",
-    keywords: "Maharashtra jewellery, imitation jewellery, Paithani, temple jewellery, jhumka, bangles, maang tikka, Jayshree Collections",
+    keywords: "Maharashtra jewellery, imitation jewellery, Paithani, temple jewellery, jhumka, bangles, maang tikka, Jayashri Collections",
     icons: {
         icon: '/favicon.png',
         apple: '/apple-touch-icon.png',
     },
     openGraph: {
-        title: "Jayshree Collections",
+        title: "Jayashri Collections",
         description: "Modern Maharashtra Jewellery",
         type: "website",
     },

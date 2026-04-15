@@ -20,7 +20,7 @@ function OrderConfirmationContent() {
                 {/* Logo */}
                 <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                     className="w-24 h-24 mx-auto mb-10 rounded-full overflow-hidden border-2 border-[#BFA06A]/30">
-                    <Image src="/images/jc-logo.jpeg" alt="Jayshree Collections" width={96} height={96} className="object-cover w-full h-full" />
+                    <Image src="/images/jc-logo.jpeg" alt="Jayashri Collections" width={96} height={96} className="object-cover w-full h-full" />
                 </motion.div>
 
                 <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>

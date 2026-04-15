@@ -18,7 +18,7 @@ const Footer = () => (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
                 {/* Brand */}
                 <div className="lg:col-span-1">
-                    <h2 className="font-samarkan text-4xl shimmer-text mb-2">Jayshree</h2>
+                    <h2 className="font-samarkan text-4xl shimmer-text mb-2">Jayashri</h2>
                     <p className="text-yellow-200/80 text-[11px] md:text-xs tracking-[0.4em] uppercase mb-4 font-medium">Collections</p>
                     <p className="font-inter text-yellow-100/90 text-sm md:text-base leading-relaxed mb-6 font-medium">
                         Imitation jewellery crafted with the spirit of Maharashtra.
@@ -70,15 +70,20 @@ const Footer = () => (
                     <div className="space-y-4">
                         <div className="flex items-start gap-3">
                             <MapPin className="w-5 h-5 text-gold mt-0.5 shrink-0" />
-                            <p className="font-inter text-yellow-100/80 text-sm md:text-base font-medium">Nagpur, Maharashtra, India</p>
+                            <p className="font-inter text-yellow-100/80 text-sm md:text-base font-medium">
+                                Jayashri Collection<br />
+                                Shop No. 4 &amp; 5, Indraratna Palace,<br />
+                                Near Ganpati Mandir, Jambhali Naka,<br />
+                                Thane West, Thane, Maharashtra 400602
+                            </p>
                         </div>
                         <div className="flex items-center gap-3">
                             <Phone className="w-5 h-5 text-gold shrink-0" />
-                            <a href="tel:+919876543210" className="font-inter text-yellow-100/80 text-sm md:text-base font-medium hover:text-gold transition-colors">+91 98765 43210</a>
+                            <a href="tel:+919518900906" className="font-inter text-yellow-100/80 text-sm md:text-base font-medium hover:text-gold transition-colors">+91 95189 00906</a>
                         </div>
                         <div className="flex items-center gap-3">
                             <Mail className="w-5 h-5 text-gold shrink-0" />
-                            <a href="mailto:hello@jayshreecollections.com" className="font-inter text-yellow-100/80 text-sm md:text-base font-medium hover:text-gold transition-colors break-all">hello@jayshreecollections.com</a>
+                            <a href="mailto:order@jc-admin.services" className="font-inter text-yellow-100/80 text-sm md:text-base font-medium hover:text-gold transition-colors break-all">order@jc-admin.services</a>
                         </div>
                     </div>
 
@@ -107,7 +112,7 @@ const Footer = () => (
             {/* Bottom */}
             <div className="mt-12 pt-6 border-t border-yellow-100/10 flex flex-col md:flex-row items-center justify-between gap-4">
                 <p className="font-inter text-yellow-100/60 text-xs md:text-sm font-medium">
-                    © 2026 Jayshree Collections. All rights reserved.
+                    © 2026 Jayashri Collections. All rights reserved.
                 </p>
                 <p className="font-inter text-yellow-100/60 text-xs md:text-sm font-medium flex items-center gap-1.5">
                     Made with <Heart className="w-4 h-4 text-primary fill-primary" /> in Maharashtra, India

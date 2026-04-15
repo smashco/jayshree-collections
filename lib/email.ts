@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = process.env.EMAIL_FROM || 'Jayshree Collections <onboarding@resend.dev>';
+const FROM_EMAIL = process.env.EMAIL_FROM || 'Jayashri Collections <onboarding@resend.dev>';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://jayshree-collections-production.up.railway.app';
 const gold = '#BFA06A';
 const dark = '#0A0A0A';
@@ -36,7 +36,7 @@ function baseTemplate(content: string) {
         <tr>
           <td style="padding:40px 48px 32px;border-bottom:1px solid #1a1a1a;text-align:center;">
             <a href="${SITE_URL}" style="text-decoration:none;">
-              <p style="margin:0;font-size:13px;letter-spacing:8px;color:${gold};text-transform:uppercase;font-weight:400;">Jayshree Collections</p>
+              <p style="margin:0;font-size:13px;letter-spacing:8px;color:${gold};text-transform:uppercase;font-weight:400;">Jayashri Collections</p>
               <p style="margin:8px 0 0;font-size:9px;letter-spacing:4px;color:#444;text-transform:uppercase;">Luxury Jewellery · Since 1985</p>
             </a>
           </td>
@@ -52,7 +52,7 @@ function baseTemplate(content: string) {
               <a href="${SITE_URL}/track" style="color:${gold};text-decoration:none;">Track Order</a>
             </p>
             <p style="margin:12px 0 0;font-size:10px;color:#333;letter-spacing:1px;">For queries, reply to this email or WhatsApp us.</p>
-            <p style="margin:8px 0 0;font-size:9px;color:#222;letter-spacing:1px;">&copy; ${new Date().getFullYear()} Jayshree Collections. All rights reserved.</p>
+            <p style="margin:8px 0 0;font-size:9px;color:#222;letter-spacing:1px;">&copy; ${new Date().getFullYear()} Jayashri Collections. All rights reserved.</p>
           </td>
         </tr>
       </table>
@@ -237,7 +237,7 @@ export async function sendOrderConfirmation(data: OrderConfirmationData) {
   await resend.emails.send({
     from: FROM_EMAIL,
     to: data.email,
-    subject: `Order Confirmed — ${data.orderNumber} | Jayshree Collections`,
+    subject: `Order Confirmed — ${data.orderNumber} | Jayashri Collections`,
     html: baseTemplate(content),
   });
 }
@@ -327,7 +327,7 @@ export async function sendShipmentNotification(data: ShipmentNotificationData) {
   await resend.emails.send({
     from: FROM_EMAIL,
     to: data.email,
-    subject: `Shipped! ${data.orderNumber} · AWB ${data.awbCode} | Jayshree Collections`,
+    subject: `Shipped! ${data.orderNumber} · AWB ${data.awbCode} | Jayashri Collections`,
     html: baseTemplate(content),
   });
 }
@@ -471,7 +471,7 @@ export async function sendStatusUpdate(data: StatusUpdateData) {
   await resend.emails.send({
     from: FROM_EMAIL,
     to: data.email,
-    subject: `${subjectMap[data.status] || data.status} | Jayshree Collections`,
+    subject: `${subjectMap[data.status] || data.status} | Jayashri Collections`,
     html: baseTemplate(content),
   });
 }

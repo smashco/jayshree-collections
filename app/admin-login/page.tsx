@@ -37,7 +37,7 @@ export default function AdminLoginPage() {
         {/* Brand */}
         <div className="text-center mb-12">
           <h1 className="font-cormorant text-white text-4xl font-medium tracking-[0.2em] mb-2">
-            JAYSHREE
+            JAYASHRI
           </h1>
           <p className="font-montserrat text-[#BFA06A]/70 text-[0.65rem] tracking-[0.5em] uppercase">
             Admin Portal

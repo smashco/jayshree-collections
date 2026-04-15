@@ -6,6 +6,7 @@ export const createProductSchema = z.object({
   description: z.string().optional(),
   material: z.string().optional(),
   basePrice: z.number().int().positive(),
+  compareAt: z.number().int().positive().nullable().optional(),
   categoryId: z.string().min(1),
   isFeatured: z.boolean().optional(),
   isActive: z.boolean().optional(),

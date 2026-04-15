@@ -35,7 +35,7 @@ export default function Sidebar() {
       <div className="p-6 border-b border-[#BFA06A]/10">
         <Link href="/admin" className="block">
           <h1 className="font-cormorant text-white text-xl font-medium tracking-[0.2em]">
-            JAYSHREE
+            JAYASHRI
           </h1>
           <p className="font-montserrat text-[#BFA06A]/60 text-[0.55rem] tracking-[0.4em] uppercase mt-1">
             Admin Panel

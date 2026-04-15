@@ -11,6 +11,9 @@ interface ProductItem {
     category: string;
     price: number;
     formattedPrice: string;
+    compareAtPrice: number | null;
+    formattedCompareAtPrice: string | null;
+    discountPercent: number | null;
     image: string;
     material: string;
 }
@@ -55,7 +58,7 @@ export default function ProductShowcase() {
                         <div className="marquee-track flex whitespace-nowrap">
                             {Array.from({ length: 10 }).map((_, i) => (
                                 <span key={i} className="font-montserrat text-[#BFA06A] text-[0.65rem] md:text-[0.75rem] tracking-[0.3em] uppercase font-semibold mx-6 shrink-0">
-                                    Maharashtra &nbsp;•&nbsp; Est. 1976 &nbsp;•&nbsp; Jayshree Maison &nbsp;•&nbsp; Crafted in Maharashtra &nbsp;•&nbsp; Est. 1976 &nbsp;•&nbsp;
+                                    Maharashtra &nbsp;•&nbsp; Est. 1976 &nbsp;•&nbsp; Jayashri Maison &nbsp;•&nbsp; Crafted in Maharashtra &nbsp;•&nbsp; Est. 1976 &nbsp;•&nbsp;
                                 </span>
                             ))}
                         </div>
@@ -120,6 +123,11 @@ export default function ProductShowcase() {
                         >
                             {/* Image Container with Hover Effect */}
                             <div className="relative aspect-[4/5] overflow-hidden bg-[#111] mb-6 border border-[#BFA06A]/10 group-hover:border-[#BFA06A]/30 transition-colors duration-500">
+                                {product.discountPercent && (
+                                    <div className="absolute top-3 left-3 z-30 bg-[#BFA06A] text-black font-montserrat text-[0.6rem] md:text-xs tracking-[0.15em] uppercase font-bold px-2.5 py-1">
+                                        {product.discountPercent}% Off
+                                    </div>
+                                )}
                                 <Link href={`/product/${product.slug}`} className="block w-full h-full cursor-pointer z-10 relative">
                                     <Image
                                         src={product.image}
@@ -154,9 +162,16 @@ export default function ProductShowcase() {
                                 <h3 className="font-cormorant text-white text-2xl md:text-3xl font-medium mb-3 group-hover:text-[#BFA06A] transition-colors drop-shadow-sm">
                                     {product.name}
                                 </h3>
-                                <p className="font-montserrat text-[#BFA06A] text-sm md:text-base tracking-widest font-medium">
-                                    {product.formattedPrice}
-                                </p>
+                                <div className="flex items-baseline gap-3">
+                                    <p className="font-montserrat text-[#BFA06A] text-sm md:text-base tracking-widest font-medium">
+                                        {product.formattedPrice}
+                                    </p>
+                                    {product.formattedCompareAtPrice && (
+                                        <p className="font-montserrat text-[#F0E6C2]/40 text-xs md:text-sm line-through">
+                                            {product.formattedCompareAtPrice}
+                                        </p>
+                                    )}
+                                </div>
                             </Link>
                         </motion.div>
                     ))}

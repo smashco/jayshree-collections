@@ -117,7 +117,7 @@ export default function Hero() {
                             style={{ opacity: brandOpacity, y: brandY }}
                             className="font-montserrat text-[#BFA06A] text-[0.6rem] tracking-[0.7em] uppercase font-light mb-10"
                         >
-                            Jayshree Collections
+                            Jayashri Collections
                         </motion.p>
 
                         {/* Main title block */}

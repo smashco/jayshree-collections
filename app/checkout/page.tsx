@@ -105,7 +105,7 @@ export default function CheckoutPage() {
                     key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
                     amount: total,
                     currency: 'INR',
-                    name: 'Jayshree Collections',
+                    name: 'Jayashri Collections',
                     description: `${totalItems} piece${totalItems > 1 ? 's' : ''} · Luxury Jewellery`,
                     image: '/images/logo.png',
                     order_id: razorpayOrderId,

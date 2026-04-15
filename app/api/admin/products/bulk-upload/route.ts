@@ -423,7 +423,7 @@ export async function GET() {
 
   // Instructions sheet
   const instructions = [
-    { Instructions: '=== JAYSHREE COLLECTIONS — BULK PRODUCT UPLOAD ===' },
+    { Instructions: '=== JAYASHRI COLLECTIONS — BULK PRODUCT UPLOAD ===' },
     { Instructions: '' },
     { Instructions: 'SHEET 1: Products (Required)' },
     { Instructions: '  • Product Name (required) — Full product name' },

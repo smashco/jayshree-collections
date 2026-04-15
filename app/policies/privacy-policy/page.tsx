@@ -3,8 +3,8 @@ import Footer from '@/components/ui/Footer';
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Privacy Policy | Jayshree Collections',
-  description: 'How Jayshree Collections collects, uses and protects your personal information.',
+  title: 'Privacy Policy | Jayashri Collections',
+  description: 'How Jayashri Collections collects, uses and protects your personal information.',
 };
 
 export default function PrivacyPolicyPage() {
@@ -26,7 +26,7 @@ export default function PrivacyPolicyPage() {
         <div className="space-y-10 font-montserrat text-[#F0E6C2]/80 text-sm md:text-base leading-relaxed">
           <section>
             <p>
-              At Jayshree Collections, your trust means everything to us. This Privacy Policy explains what information
+              At Jayashri Collections, your trust means everything to us. This Privacy Policy explains what information
               we collect when you visit jc-admin.services and related sites, how we use it, and the choices you have.
               By using our site and placing an order, you agree to the practices described below.
             </p>

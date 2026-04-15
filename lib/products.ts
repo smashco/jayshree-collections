@@ -9,6 +9,9 @@ export interface ProductListItem {
   categorySlug: string;
   price: number;
   formattedPrice: string;
+  compareAtPrice: number | null;
+  formattedCompareAtPrice: string | null;
+  discountPercent: number | null;
   image: string;
   material: string;
   description: string;
@@ -60,6 +63,8 @@ export async function getProducts(options?: {
 
   return products.map((p) => {
     const lowestPrice = p.variants[0]?.price ?? p.basePrice;
+    const compareAt = p.compareAt && p.compareAt > lowestPrice ? p.compareAt : null;
+    const discountPercent = compareAt ? Math.round(((compareAt - lowestPrice) / compareAt) * 100) : null;
     return {
       id: p.id,
       slug: p.slug,
@@ -68,6 +73,9 @@ export async function getProducts(options?: {
       categorySlug: p.category.slug,
       price: lowestPrice,
       formattedPrice: formatPrice(lowestPrice),
+      compareAtPrice: compareAt,
+      formattedCompareAtPrice: compareAt ? formatPrice(compareAt) : null,
+      discountPercent,
       image: p.images[0]?.url ?? '/images/placeholder.png',
       material: p.material ?? '',
       description: p.description ?? '',
@@ -88,6 +96,8 @@ export async function getProductBySlug(slug: string): Promise<ProductDetail | nu
   if (!p) return null;
 
   const lowestPrice = p.variants[0]?.price ?? p.basePrice;
+  const compareAt = p.compareAt && p.compareAt > lowestPrice ? p.compareAt : null;
+  const discountPercent = compareAt ? Math.round(((compareAt - lowestPrice) / compareAt) * 100) : null;
 
   return {
     id: p.id,
@@ -97,6 +107,9 @@ export async function getProductBySlug(slug: string): Promise<ProductDetail | nu
     categorySlug: p.category.slug,
     price: lowestPrice,
     formattedPrice: formatPrice(lowestPrice),
+    compareAtPrice: compareAt,
+    formattedCompareAtPrice: compareAt ? formatPrice(compareAt) : null,
+    discountPercent,
     image: p.images.find((i) => i.isPrimary)?.url ?? p.images[0]?.url ?? '/images/placeholder.png',
     material: p.material ?? '',
     description: p.description ?? '',

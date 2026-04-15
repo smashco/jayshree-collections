@@ -133,9 +133,16 @@ export default function CartDrawer() {
                                                     </div>
 
                                                     {/* Price */}
-                                                    <p className="font-montserrat text-sm md:text-base text-[#BFA06A] tracking-widest font-medium">
-                                                        {formatPrice(item.price * item.quantity)}
-                                                    </p>
+                                                    <div className="flex flex-col items-end">
+                                                        <p className="font-montserrat text-sm md:text-base text-[#BFA06A] tracking-widest font-medium">
+                                                            {formatPrice(item.price * item.quantity)}
+                                                        </p>
+                                                        {item.compareAtPrice && item.compareAtPrice > item.price && (
+                                                            <p className="font-montserrat text-xs text-[#F0E6C2]/40 line-through">
+                                                                {formatPrice(item.compareAtPrice * item.quantity)}
+                                                            </p>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

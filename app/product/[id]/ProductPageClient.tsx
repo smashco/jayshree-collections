@@ -73,6 +73,7 @@ export default function ProductPageClient({ product, relatedProducts }: ProductP
             name: product.name,
             price: selectedVariant.price,
             formattedPrice: selectedVariant.formattedPrice,
+            compareAtPrice: product.compareAtPrice,
             image: product.image,
             material: product.material,
             variantId: selectedVariant.id,
@@ -150,7 +151,21 @@ export default function ProductPageClient({ product, relatedProducts }: ProductP
                             <h1 className="font-cormorant text-white font-medium leading-none mb-6 drop-shadow-md" style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)' }}>
                                 {product.name}
                             </h1>
-                            <p className="font-montserrat text-[#BFA06A] text-2xl md:text-3xl tracking-widest font-medium mb-10 drop-shadow-sm">{displayPrice}</p>
+                            <div className="flex items-baseline flex-wrap gap-4 mb-10">
+                                <p className="font-montserrat text-[#BFA06A] text-2xl md:text-3xl tracking-widest font-medium drop-shadow-sm">{displayPrice}</p>
+                                {product.formattedCompareAtPrice && (
+                                    <>
+                                        <p className="font-montserrat text-[#F0E6C2]/40 text-lg md:text-xl line-through">
+                                            {product.formattedCompareAtPrice}
+                                        </p>
+                                        {product.discountPercent && (
+                                            <span className="bg-[#BFA06A] text-black font-montserrat text-xs tracking-[0.15em] uppercase font-bold px-3 py-1">
+                                                {product.discountPercent}% Off
+                                            </span>
+                                        )}
+                                    </>
+                                )}
+                            </div>
                             <p className="font-montserrat text-[#F0E6C2]/90 text-sm md:text-base leading-relaxed font-medium mb-12 max-w-xl">{product.description}</p>
 
                             {/* Variant Selector */}
@@ -225,11 +240,21 @@ export default function ProductPageClient({ product, relatedProducts }: ProductP
                                     <motion.div key={p.slug} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: i * 0.1 }}>
                                         <Link href={`/product/${p.slug}`} className="group block">
                                             <div className="relative aspect-[4/5] bg-[#111] mb-6 border border-[#BFA06A]/10 overflow-hidden">
+                                                {p.discountPercent && (
+                                                    <div className="absolute top-3 left-3 z-30 bg-[#BFA06A] text-black font-montserrat text-[0.6rem] tracking-[0.15em] uppercase font-bold px-2.5 py-1">
+                                                        {p.discountPercent}% Off
+                                                    </div>
+                                                )}
                                                 <Image src={p.image} alt={p.name} fill className="object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105 opacity-90 group-hover:opacity-100" />
                                             </div>
                                             <div className="text-center">
                                                 <h3 className="font-cormorant text-white text-xl font-medium mb-2 group-hover:text-[#BFA06A] transition-colors drop-shadow-sm">{p.name}</h3>
-                                                <p className="font-montserrat text-[#BFA06A] text-sm md:text-base tracking-widest font-medium">{p.formattedPrice}</p>
+                                                <div className="flex items-baseline justify-center gap-2">
+                                                    <p className="font-montserrat text-[#BFA06A] text-sm md:text-base tracking-widest font-medium">{p.formattedPrice}</p>
+                                                    {p.formattedCompareAtPrice && (
+                                                        <p className="font-montserrat text-[#F0E6C2]/40 text-xs line-through">{p.formattedCompareAtPrice}</p>
+                                                    )}
+                                                </div>
                                             </div>
                                         </Link>
                                     </motion.div>

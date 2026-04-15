@@ -7,6 +7,7 @@ export interface CartProduct {
     name: string;
     price: number;
     formattedPrice: string;
+    compareAtPrice?: number | null;
     image: string;
     material: string;
     variantId: string;

@@ -12,6 +12,7 @@ interface ProductData {
   description: string | null;
   material: string | null;
   basePrice: number;
+  compareAt: number | null;
   categoryId: string;
   isFeatured: boolean;
   isActive: boolean;
@@ -32,7 +33,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   const [product, setProduct] = useState<ProductData | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ name: '', slug: '', description: '', material: '', basePrice: '', categoryId: '', isFeatured: false, isActive: true });
+  const [form, setForm] = useState({ name: '', slug: '', description: '', material: '', basePrice: '', compareAt: '', categoryId: '', isFeatured: false, isActive: true });
 
   useEffect(() => {
     Promise.all([
@@ -49,7 +50,9 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       setForm({
         name: prod.name, slug: prod.slug,
         description: prod.description || '', material: prod.material || '',
-        basePrice: String(prod.basePrice / 100), categoryId: prod.categoryId,
+        basePrice: String(prod.basePrice / 100),
+        compareAt: prod.compareAt ? String(prod.compareAt / 100) : '',
+        categoryId: prod.categoryId,
         isFeatured: prod.isFeatured, isActive: prod.isActive,
       });
     }).catch(err => console.error('Failed to load product:', err));
@@ -63,6 +66,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
       body: JSON.stringify({
         ...form,
         basePrice: Math.round(parseFloat(form.basePrice) * 100),
+        compareAt: form.compareAt ? Math.round(parseFloat(form.compareAt) * 100) : null,
       }),
     });
     setSaving(false);
@@ -206,6 +210,17 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
             <div>
               <label className={labelClass}>Base Price (INR)</label>
               <input type="number" value={form.basePrice} onChange={(e) => setForm({ ...form, basePrice: e.target.value })} className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass}>Compare At Price (INR) — optional</label>
+              <input
+                type="number"
+                value={form.compareAt}
+                onChange={(e) => setForm({ ...form, compareAt: e.target.value })}
+                placeholder="Original price (shown as strikethrough)"
+                className={inputClass}
+              />
+              <p className="font-montserrat text-[#F0E6C2]/30 text-[10px] mt-1">Leave empty for no discount. Must be higher than Base Price.</p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">

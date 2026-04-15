@@ -126,7 +126,7 @@ export default function ProcessSection() {
                             <em className="text-[#BFA06A]">in gold.&quot;</em>
                         </h3>
                         <p className="font-montserrat text-[#F0E6C2]/70 text-[0.6rem] tracking-widest uppercase mt-4 font-light">
-                            — Jayshree Bhoir, Founder
+                            — Jayashri Bhoir, Founder
                         </p>
                     </div>
                 </motion.div>
