@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import LenisProvider from "@/components/providers/LenisProvider";
 import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 import { Cormorant, Montserrat } from 'next/font/google';
 import "./globals.css";
 
@@ -66,9 +67,11 @@ export default function RootLayout({
             <body className="bg-brand antialiased overflow-x-hidden">
                 <div className="bg-noise" />
                 <CartProvider>
-                    <LenisProvider>
-                        {children}
-                    </LenisProvider>
+                    <WishlistProvider>
+                        <LenisProvider>
+                            {children}
+                        </LenisProvider>
+                    </WishlistProvider>
                 </CartProvider>
             </body>
         </html>

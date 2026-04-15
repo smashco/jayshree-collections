@@ -76,10 +76,28 @@ model Product {
   variants   ProductVariant[]
   images     ProductImage[]
   orderItems OrderItem[]
+  reviews    Review[]
 
   @@index([categoryId])
   @@index([isActive, isFeatured])
   @@map("products")
+}
+
+model Review {
+  id             String   @id @default(cuid())
+  productId      String   @map("product_id")
+  product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customerName   String   @map("customer_name")
+  customerEmail  String   @map("customer_email")
+  rating         Int
+  title          String?
+  comment        String   @db.Text
+  isApproved     Boolean  @default(false) @map("is_approved")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@index([productId, isApproved])
+  @@map("reviews")
 }
 
 model ProductVariant {

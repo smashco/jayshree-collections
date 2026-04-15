@@ -4,22 +4,33 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Heart } from 'lucide-react';
 import { ProductListItem, LOW_STOCK_THRESHOLD } from '@/lib/products';
 import Navbar from '@/components/ui/Navbar';
 import Footer from '@/components/ui/Footer';
+import { useWishlist } from '@/context/WishlistContext';
 
 interface ShopClientProps {
     products: ProductListItem[];
     categoryNames: string[];
+    initialSearch?: string;
 }
 
-export default function ShopClient({ products, categoryNames }: ShopClientProps) {
+export default function ShopClient({ products, categoryNames, initialSearch = '' }: ShopClientProps) {
     const [activeCategory, setActiveCategory] = useState('All');
+    const [minPrice, setMinPrice] = useState<string>('');
+    const [maxPrice, setMaxPrice] = useState<string>('');
+    const { toggle: toggleWishlist, has: isWishlisted } = useWishlist();
 
 
-    const filteredProducts = activeCategory === 'All'
-        ? products
-        : products.filter(p => p.category === activeCategory);
+    const min = minPrice ? parseInt(minPrice) * 100 : 0;
+    const max = maxPrice ? parseInt(maxPrice) * 100 : Infinity;
+
+    const filteredProducts = products.filter(p => {
+        if (activeCategory !== 'All' && p.category !== activeCategory) return false;
+        if (p.price < min || p.price > max) return false;
+        return true;
+    });
 
     const handleAddToCart = (product: ProductListItem) => {
         // Redirect to product page where variant can be selected
@@ -44,11 +55,18 @@ export default function ShopClient({ products, categoryNames }: ShopClientProps)
                                 The Collections
                             </p>
                             <h1
-                                className="font-cormorant text-white font-medium leading-none mb-8 drop-shadow-lg"
+                                className="font-cormorant text-white font-medium leading-none mb-4 drop-shadow-lg"
                                 style={{ fontSize: 'clamp(3rem, 6vw, 6rem)' }}
                             >
-                                Shop <em className="text-[#BFA06A] drop-shadow-md">All</em>
+                                {initialSearch ? (
+                                    <>Results for <em className="text-[#BFA06A] drop-shadow-md">&ldquo;{initialSearch}&rdquo;</em></>
+                                ) : (
+                                    <>Shop <em className="text-[#BFA06A] drop-shadow-md">All</em></>
+                                )}
                             </h1>
+                            {initialSearch && (
+                                <p className="font-montserrat text-[#F0E6C2]/50 text-sm mb-8">{products.length} piece{products.length !== 1 ? 's' : ''} found</p>
+                            )}
                         </motion.div>
 
                         {/* Filters */}
@@ -75,6 +93,39 @@ export default function ShopClient({ products, categoryNames }: ShopClientProps)
                                     )}
                                 </button>
                             ))}
+                        </motion.div>
+
+                        {/* Price range */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 1, delay: 0.4 }}
+                            className="flex items-center gap-4 mt-6"
+                        >
+                            <span className="font-montserrat text-[#F0E6C2]/50 text-[0.6rem] tracking-[0.25em] uppercase">Price</span>
+                            <input
+                                type="number"
+                                value={minPrice}
+                                onChange={(e) => setMinPrice(e.target.value)}
+                                placeholder="Min ₹"
+                                className="w-24 bg-transparent border border-[#BFA06A]/20 focus:border-[#BFA06A] outline-none text-white font-montserrat text-xs px-3 py-2 transition-colors placeholder:text-[#F0E6C2]/30"
+                            />
+                            <span className="font-montserrat text-[#F0E6C2]/30 text-xs">—</span>
+                            <input
+                                type="number"
+                                value={maxPrice}
+                                onChange={(e) => setMaxPrice(e.target.value)}
+                                placeholder="Max ₹"
+                                className="w-24 bg-transparent border border-[#BFA06A]/20 focus:border-[#BFA06A] outline-none text-white font-montserrat text-xs px-3 py-2 transition-colors placeholder:text-[#F0E6C2]/30"
+                            />
+                            {(minPrice || maxPrice) && (
+                                <button
+                                    onClick={() => { setMinPrice(''); setMaxPrice(''); }}
+                                    className="font-montserrat text-[#BFA06A] text-[0.6rem] tracking-[0.2em] uppercase hover:text-[#D4B580] cursor-pointer"
+                                >
+                                    Clear
+                                </button>
+                            )}
                         </motion.div>
                     </div>
 
@@ -103,6 +154,22 @@ export default function ShopClient({ products, categoryNames }: ShopClientProps)
                                             Only {product.totalStock} Left
                                         </div>
                                     )}
+                                    <button
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            toggleWishlist({
+                                                slug: product.slug, name: product.name, price: product.price,
+                                                formattedPrice: product.formattedPrice, compareAtPrice: product.compareAtPrice,
+                                                formattedCompareAtPrice: product.formattedCompareAtPrice,
+                                                discountPercent: product.discountPercent, image: product.image, material: product.material,
+                                            });
+                                        }}
+                                        className="absolute bottom-3 right-3 z-30 w-10 h-10 bg-black/60 backdrop-blur-sm border border-[#BFA06A]/30 flex items-center justify-center hover:bg-[#BFA06A] hover:border-[#BFA06A] transition-all cursor-pointer"
+                                        aria-label="Toggle wishlist"
+                                    >
+                                        <Heart className={`w-4 h-4 ${isWishlisted(product.slug) ? 'text-[#BFA06A] fill-[#BFA06A]' : 'text-white/80'}`} />
+                                    </button>
                                     <Link href={`/product/${product.slug}`} className="block w-full h-full cursor-pointer z-10 relative">
                                         <Image
                                             src={product.image}

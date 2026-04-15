@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ShoppingBag, Search, Menu, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { ShoppingBag, Search, Menu, X, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import CartDrawer from './CartDrawer';
 import Link from 'next/link';
 
@@ -17,7 +19,20 @@ const links = [
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const router = useRouter();
     const { totalItems, setIsCartOpen } = useCart();
+    const { count: wishlistCount } = useWishlist();
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+            setSearchOpen(false);
+            setSearchQuery('');
+        }
+    };
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 60);
@@ -81,9 +96,25 @@ export default function Navbar() {
                         </div>
 
                         <div className="flex items-center gap-5">
-                            <button className="text-white/80 hover:text-[#BFA06A] transition-colors duration-400 cursor-pointer drop-shadow-sm" aria-label="Search">
+                            <button
+                                onClick={() => setSearchOpen(true)}
+                                className="text-white/80 hover:text-[#BFA06A] transition-colors duration-400 cursor-pointer drop-shadow-sm"
+                                aria-label="Search"
+                            >
                                 <Search className="w-5 h-5 md:w-6 md:h-6 stroke-[1.5]" />
                             </button>
+                            <Link
+                                href="/wishlist"
+                                className="relative text-white/80 hover:text-[#BFA06A] transition-colors duration-400 cursor-pointer drop-shadow-sm"
+                                aria-label="Wishlist"
+                            >
+                                <Heart className="w-5 h-5 md:w-6 md:h-6 stroke-[1.5]" />
+                                {wishlistCount > 0 && (
+                                    <span className="absolute -top-1.5 -right-2 w-4 h-4 md:w-5 md:h-5 bg-[#BFA06A] text-black text-[9px] md:text-xs rounded-full flex items-center justify-center font-bold">
+                                        {wishlistCount}
+                                    </span>
+                                )}
+                            </Link>
                             <button
                                 onClick={() => setIsCartOpen(true)}
                                 className="relative text-white/80 hover:text-[#BFA06A] transition-colors duration-400 cursor-pointer group drop-shadow-sm"
@@ -156,6 +187,53 @@ export default function Navbar() {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Search modal */}
+            <AnimatePresence>
+                {searchOpen && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60]"
+                            onClick={() => setSearchOpen(false)}
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, y: -40 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -40 }}
+                            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                            className="fixed top-0 left-0 right-0 z-[61] bg-black border-b border-[#BFA06A]/20 px-6 md:px-16 py-8"
+                        >
+                            <div className="max-w-4xl mx-auto">
+                                <div className="flex items-center justify-between mb-6">
+                                    <p className="font-montserrat text-[#BFA06A] text-[0.6rem] tracking-[0.4em] uppercase">Search the collection</p>
+                                    <button onClick={() => setSearchOpen(false)} aria-label="Close search" className="text-white/60 hover:text-[#BFA06A] cursor-pointer">
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
+                                <form onSubmit={handleSearch} className="flex items-center gap-4 border-b border-[#BFA06A]/30 pb-4">
+                                    <Search className="w-5 h-5 text-[#BFA06A] shrink-0" />
+                                    <input
+                                        type="text"
+                                        autoFocus
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder="Jhumkas, bridal sets, temple jewellery…"
+                                        className="flex-1 bg-transparent outline-none text-white font-cormorant text-2xl md:text-4xl placeholder:text-[#F0E6C2]/20"
+                                    />
+                                    <button type="submit" className="font-montserrat text-[#BFA06A] text-[0.65rem] tracking-[0.3em] uppercase hover:text-[#D4B580] cursor-pointer shrink-0">
+                                        Search →
+                                    </button>
+                                </form>
+                                <p className="font-montserrat text-[#F0E6C2]/30 text-[0.6rem] tracking-[0.2em] uppercase mt-4">Press Enter to search</p>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+
             <CartDrawer />
         </>
     );

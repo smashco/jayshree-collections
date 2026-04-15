@@ -7,6 +7,7 @@ import { useCart, CartProduct } from '@/context/CartContext';
 import { ProductDetail, ProductListItem } from '@/lib/products';
 import Navbar from '@/components/ui/Navbar';
 import Footer from '@/components/ui/Footer';
+import ReviewSection from '@/components/ui/ReviewSection';
 import Link from 'next/link';
 
 interface ProductPageClientProps {
@@ -228,6 +229,9 @@ export default function ProductPageClient({ product, relatedProducts }: ProductP
                             </div>
                         </motion.div>
                     </div>
+
+                    {/* Reviews */}
+                    <ReviewSection productId={product.id} />
 
                     {/* Related Products */}
                     {relatedProducts.length > 0 && (

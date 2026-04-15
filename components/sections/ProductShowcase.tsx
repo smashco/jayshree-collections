@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Heart } from 'lucide-react';
+import { useWishlist } from '@/context/WishlistContext';
 
 interface ProductItem {
     slug: string;
@@ -26,6 +28,7 @@ const categories = ['All', 'Necklaces', 'Earrings', 'Bangles', 'Rings'];
 export default function ProductShowcase() {
     const [activeCategory, setActiveCategory] = useState('All');
     const [products, setProducts] = useState<ProductItem[]>([]);
+    const { toggle: toggleWishlist, has: isWishlisted } = useWishlist();
 
 
     useEffect(() => {
@@ -140,6 +143,27 @@ export default function ProductShowcase() {
                                         Only {product.totalStock} Left
                                     </div>
                                 )}
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        toggleWishlist({
+                                            slug: product.slug,
+                                            name: product.name,
+                                            price: product.price,
+                                            formattedPrice: product.formattedPrice,
+                                            compareAtPrice: product.compareAtPrice,
+                                            formattedCompareAtPrice: product.formattedCompareAtPrice,
+                                            discountPercent: product.discountPercent,
+                                            image: product.image,
+                                            material: product.material,
+                                        });
+                                    }}
+                                    className="absolute bottom-3 right-3 z-30 w-10 h-10 bg-black/60 backdrop-blur-sm border border-[#BFA06A]/30 flex items-center justify-center hover:bg-[#BFA06A] hover:border-[#BFA06A] transition-all cursor-pointer group/wish"
+                                    aria-label="Add to wishlist"
+                                >
+                                    <Heart className={`w-4 h-4 transition-colors ${isWishlisted(product.slug) ? 'text-[#BFA06A] fill-[#BFA06A] group-hover/wish:text-black group-hover/wish:fill-black' : 'text-white/80 group-hover/wish:text-black'}`} />
+                                </button>
                                 <Link href={`/product/${product.slug}`} className="block w-full h-full cursor-pointer z-10 relative">
                                     <Image
                                         src={product.image}

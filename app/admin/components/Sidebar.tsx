@@ -12,6 +12,7 @@ import {
   Warehouse,
   Truck,
   BarChart3,
+  Star,
   LogOut,
 } from 'lucide-react';
 
@@ -21,6 +22,7 @@ const navItems = [
   { label: 'Categories', href: '/admin/categories', icon: FolderTree },
   { label: 'Orders', href: '/admin/orders', icon: ShoppingCart },
   { label: 'Customers', href: '/admin/customers', icon: Users },
+  { label: 'Reviews', href: '/admin/reviews', icon: Star },
   { label: 'Shipping', href: '/admin/shipping', icon: Truck },
   { label: 'Inventory', href: '/admin/inventory', icon: Warehouse },
   { label: 'Reports', href: '/admin/reports', icon: BarChart3 },
