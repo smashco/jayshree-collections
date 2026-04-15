@@ -14,9 +14,12 @@ interface ProductItem {
     compareAtPrice: number | null;
     formattedCompareAtPrice: string | null;
     discountPercent: number | null;
+    totalStock: number;
     image: string;
     material: string;
 }
+
+const LOW_STOCK_THRESHOLD = 5;
 
 const categories = ['All', 'Necklaces', 'Earrings', 'Bangles', 'Rings'];
 
@@ -128,6 +131,15 @@ export default function ProductShowcase() {
                                         {product.discountPercent}% Off
                                     </div>
                                 )}
+                                {product.totalStock === 0 ? (
+                                    <div className="absolute top-3 right-3 z-30 bg-red-600/95 text-white font-montserrat text-[0.6rem] md:text-xs tracking-[0.15em] uppercase font-bold px-2.5 py-1">
+                                        Sold Out
+                                    </div>
+                                ) : product.totalStock <= LOW_STOCK_THRESHOLD && (
+                                    <div className="absolute top-3 right-3 z-30 bg-amber-600/95 text-white font-montserrat text-[0.55rem] md:text-[0.65rem] tracking-[0.15em] uppercase font-bold px-2.5 py-1">
+                                        Only {product.totalStock} Left
+                                    </div>
+                                )}
                                 <Link href={`/product/${product.slug}`} className="block w-full h-full cursor-pointer z-10 relative">
                                     <Image
                                         src={product.image}
@@ -143,13 +155,15 @@ export default function ProductShowcase() {
                                 {/* Action Button (Add to Bag / Explore) */}
                                 <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out z-20 flex justify-center">
                                     <button
+                                        disabled={product.totalStock === 0}
                                         onClick={(e) => {
                                             e.preventDefault();
+                                            if (product.totalStock === 0) return;
                                             handleAddToCart(product);
                                         }}
-                                        className="bg-[#BFA06A] text-black font-montserrat text-[0.65rem] md:text-xs tracking-[0.2em] uppercase py-3 px-8 w-full font-semibold hover:bg-[#D4B580] transition-colors cursor-pointer"
+                                        className="bg-[#BFA06A] text-black font-montserrat text-[0.65rem] md:text-xs tracking-[0.2em] uppercase py-3 px-8 w-full font-semibold hover:bg-[#D4B580] transition-colors cursor-pointer disabled:bg-[#555] disabled:text-white/60 disabled:cursor-not-allowed"
                                     >
-                                        Add to Bag
+                                        {product.totalStock === 0 ? 'Sold Out' : 'Add to Bag'}
                                     </button>
                                 </div>
                             </div>

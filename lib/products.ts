@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prisma';
 import { formatPrice } from '@/lib/utils/format';
 
+export const LOW_STOCK_THRESHOLD = 5;
+
 export interface ProductListItem {
   id: string;
   slug: string;
@@ -12,6 +14,7 @@ export interface ProductListItem {
   compareAtPrice: number | null;
   formattedCompareAtPrice: string | null;
   discountPercent: number | null;
+  totalStock: number;
   image: string;
   material: string;
   description: string;
@@ -54,7 +57,7 @@ export async function getProducts(options?: {
     include: {
       category: true,
       images: { where: { isPrimary: true }, take: 1 },
-      variants: { where: { isActive: true }, orderBy: { price: 'asc' }, take: 1 },
+      variants: { where: { isActive: true }, orderBy: { price: 'asc' }, select: { price: true, stock: true } },
     },
     orderBy: { createdAt: 'desc' },
     take: options?.limit ?? 50,
@@ -63,6 +66,7 @@ export async function getProducts(options?: {
 
   return products.map((p) => {
     const lowestPrice = p.variants[0]?.price ?? p.basePrice;
+    const totalStock = p.variants.reduce((sum, v) => sum + v.stock, 0);
     const compareAt = p.compareAt && p.compareAt > lowestPrice ? p.compareAt : null;
     const discountPercent = compareAt ? Math.round(((compareAt - lowestPrice) / compareAt) * 100) : null;
     return {
@@ -76,6 +80,7 @@ export async function getProducts(options?: {
       compareAtPrice: compareAt,
       formattedCompareAtPrice: compareAt ? formatPrice(compareAt) : null,
       discountPercent,
+      totalStock,
       image: p.images[0]?.url ?? '/images/placeholder.png',
       material: p.material ?? '',
       description: p.description ?? '',
@@ -96,6 +101,7 @@ export async function getProductBySlug(slug: string): Promise<ProductDetail | nu
   if (!p) return null;
 
   const lowestPrice = p.variants[0]?.price ?? p.basePrice;
+  const totalStock = p.variants.reduce((sum, v) => sum + v.stock, 0);
   const compareAt = p.compareAt && p.compareAt > lowestPrice ? p.compareAt : null;
   const discountPercent = compareAt ? Math.round(((compareAt - lowestPrice) / compareAt) * 100) : null;
 
@@ -110,6 +116,7 @@ export async function getProductBySlug(slug: string): Promise<ProductDetail | nu
     compareAtPrice: compareAt,
     formattedCompareAtPrice: compareAt ? formatPrice(compareAt) : null,
     discountPercent,
+    totalStock,
     image: p.images.find((i) => i.isPrimary)?.url ?? p.images[0]?.url ?? '/images/placeholder.png',
     material: p.material ?? '',
     description: p.description ?? '',
