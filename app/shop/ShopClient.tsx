@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -16,21 +16,57 @@ interface ShopClientProps {
     initialSearch?: string;
 }
 
+type SortOption = 'newest' | 'price-asc' | 'price-desc' | 'name-asc' | 'discount';
+
 export default function ShopClient({ products, categoryNames, initialSearch = '' }: ShopClientProps) {
     const [activeCategory, setActiveCategory] = useState('All');
     const [minPrice, setMinPrice] = useState<string>('');
     const [maxPrice, setMaxPrice] = useState<string>('');
+    const [inStockOnly, setInStockOnly] = useState(false);
+    const [onSaleOnly, setOnSaleOnly] = useState(false);
+    const [sortBy, setSortBy] = useState<SortOption>('newest');
+    const [filtersOpen, setFiltersOpen] = useState(false);
     const { toggle: toggleWishlist, has: isWishlisted } = useWishlist();
 
 
     const min = minPrice ? parseInt(minPrice) * 100 : 0;
     const max = maxPrice ? parseInt(maxPrice) * 100 : Infinity;
 
-    const filteredProducts = products.filter(p => {
-        if (activeCategory !== 'All' && p.category !== activeCategory) return false;
-        if (p.price < min || p.price > max) return false;
-        return true;
-    });
+    const filteredProducts = products
+        .filter(p => {
+            if (activeCategory !== 'All' && p.category !== activeCategory) return false;
+            if (p.price < min || p.price > max) return false;
+            if (inStockOnly && p.totalStock === 0) return false;
+            if (onSaleOnly && !p.discountPercent) return false;
+            return true;
+        })
+        .slice()
+        .sort((a, b) => {
+            switch (sortBy) {
+                case 'price-asc': return a.price - b.price;
+                case 'price-desc': return b.price - a.price;
+                case 'name-asc': return a.name.localeCompare(b.name);
+                case 'discount': return (b.discountPercent ?? 0) - (a.discountPercent ?? 0);
+                case 'newest':
+                default: return 0;
+            }
+        });
+
+    const activeFilterCount = [
+        activeCategory !== 'All',
+        minPrice !== '',
+        maxPrice !== '',
+        inStockOnly,
+        onSaleOnly,
+    ].filter(Boolean).length;
+
+    const clearAllFilters = () => {
+        setActiveCategory('All');
+        setMinPrice('');
+        setMaxPrice('');
+        setInStockOnly(false);
+        setOnSaleOnly(false);
+    };
 
     const handleAddToCart = (product: ProductListItem) => {
         // Redirect to product page where variant can be selected
@@ -69,7 +105,7 @@ export default function ShopClient({ products, categoryNames, initialSearch = ''
                             )}
                         </motion.div>
 
-                        {/* Filters */}
+                        {/* Category tabs */}
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -94,40 +130,121 @@ export default function ShopClient({ products, categoryNames, initialSearch = ''
                                 </button>
                             ))}
                         </motion.div>
-
-                        {/* Price range */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 1, delay: 0.4 }}
-                            className="flex items-center gap-4 mt-6"
-                        >
-                            <span className="font-montserrat text-[#F0E6C2]/50 text-[0.6rem] tracking-[0.25em] uppercase">Price</span>
-                            <input
-                                type="number"
-                                value={minPrice}
-                                onChange={(e) => setMinPrice(e.target.value)}
-                                placeholder="Min ₹"
-                                className="w-24 bg-transparent border border-[#BFA06A]/20 focus:border-[#BFA06A] outline-none text-white font-montserrat text-xs px-3 py-2 transition-colors placeholder:text-[#F0E6C2]/30"
-                            />
-                            <span className="font-montserrat text-[#F0E6C2]/30 text-xs">—</span>
-                            <input
-                                type="number"
-                                value={maxPrice}
-                                onChange={(e) => setMaxPrice(e.target.value)}
-                                placeholder="Max ₹"
-                                className="w-24 bg-transparent border border-[#BFA06A]/20 focus:border-[#BFA06A] outline-none text-white font-montserrat text-xs px-3 py-2 transition-colors placeholder:text-[#F0E6C2]/30"
-                            />
-                            {(minPrice || maxPrice) && (
-                                <button
-                                    onClick={() => { setMinPrice(''); setMaxPrice(''); }}
-                                    className="font-montserrat text-[#BFA06A] text-[0.6rem] tracking-[0.2em] uppercase hover:text-[#D4B580] cursor-pointer"
-                                >
-                                    Clear
-                                </button>
-                            )}
-                        </motion.div>
                     </div>
+
+                    {/* Toolbar: filters button + count + sort */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.4 }}
+                        className="flex items-center justify-between gap-4 mb-8 pb-4 border-b border-[#BFA06A]/10"
+                    >
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => setFiltersOpen(!filtersOpen)}
+                                className="flex items-center gap-2 font-montserrat text-[#F0E6C2]/80 hover:text-[#BFA06A] text-[0.65rem] md:text-xs tracking-[0.25em] uppercase transition-colors cursor-pointer"
+                            >
+                                <span className="inline-block w-4 h-px bg-current" />
+                                <span className="inline-block w-3 h-px bg-current" />
+                                <span className="inline-block w-2 h-px bg-current" />
+                                <span className="ml-1">Filters</span>
+                                {activeFilterCount > 0 && (
+                                    <span className="ml-1 bg-[#BFA06A] text-black text-[0.55rem] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                                        {activeFilterCount}
+                                    </span>
+                                )}
+                            </button>
+                            <span className="font-montserrat text-[#F0E6C2]/40 text-[0.6rem] md:text-xs tracking-widest">
+                                {filteredProducts.length} piece{filteredProducts.length !== 1 ? 's' : ''}
+                            </span>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <label htmlFor="sort-select" className="font-montserrat text-[#F0E6C2]/50 text-[0.6rem] tracking-[0.25em] uppercase hidden sm:block">Sort</label>
+                            <select
+                                id="sort-select"
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                                className="bg-transparent border border-[#BFA06A]/20 focus:border-[#BFA06A] outline-none text-white font-montserrat text-[0.65rem] md:text-xs tracking-[0.15em] uppercase px-4 py-2 cursor-pointer"
+                            >
+                                <option value="newest" className="bg-black">Newest</option>
+                                <option value="price-asc" className="bg-black">Price: Low to High</option>
+                                <option value="price-desc" className="bg-black">Price: High to Low</option>
+                                <option value="name-asc" className="bg-black">Name A-Z</option>
+                                <option value="discount" className="bg-black">Biggest Discount</option>
+                            </select>
+                        </div>
+                    </motion.div>
+
+                    {/* Filter panel (collapsible) */}
+                    <AnimatePresence>
+                        {filtersOpen && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                                className="overflow-hidden"
+                            >
+                        <div className="bg-[#0A0A0A] border border-[#BFA06A]/15 p-6 md:p-8 mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Price range */}
+                            <div>
+                                <label className="font-montserrat text-[#BFA06A] text-[0.6rem] tracking-[0.3em] uppercase block mb-3">Price Range (₹)</label>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="number"
+                                        value={minPrice}
+                                        onChange={(e) => setMinPrice(e.target.value)}
+                                        placeholder="Min"
+                                        className="flex-1 min-w-0 bg-transparent border border-[#BFA06A]/20 focus:border-[#BFA06A] outline-none text-white font-montserrat text-xs px-3 py-2 transition-colors placeholder:text-[#F0E6C2]/30"
+                                    />
+                                    <span className="font-montserrat text-[#F0E6C2]/30 text-xs">—</span>
+                                    <input
+                                        type="number"
+                                        value={maxPrice}
+                                        onChange={(e) => setMaxPrice(e.target.value)}
+                                        placeholder="Max"
+                                        className="flex-1 min-w-0 bg-transparent border border-[#BFA06A]/20 focus:border-[#BFA06A] outline-none text-white font-montserrat text-xs px-3 py-2 transition-colors placeholder:text-[#F0E6C2]/30"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Availability toggles */}
+                            <div>
+                                <label className="font-montserrat text-[#BFA06A] text-[0.6rem] tracking-[0.3em] uppercase block mb-3">Availability</label>
+                                <div className="flex flex-col gap-3">
+                                    <label className="flex items-center gap-3 cursor-pointer group">
+                                        <div className={`w-4 h-4 border transition-colors ${inStockOnly ? 'border-[#BFA06A] bg-[#BFA06A]' : 'border-[#BFA06A]/30'}`}>
+                                            {inStockOnly && <span className="text-black text-[0.6rem] flex items-center justify-center leading-none pt-0.5">✓</span>}
+                                        </div>
+                                        <input type="checkbox" checked={inStockOnly} onChange={(e) => setInStockOnly(e.target.checked)} className="sr-only" />
+                                        <span className="font-montserrat text-[#F0E6C2]/80 text-xs tracking-wider group-hover:text-white">In stock only</span>
+                                    </label>
+                                    <label className="flex items-center gap-3 cursor-pointer group">
+                                        <div className={`w-4 h-4 border transition-colors ${onSaleOnly ? 'border-[#BFA06A] bg-[#BFA06A]' : 'border-[#BFA06A]/30'}`}>
+                                            {onSaleOnly && <span className="text-black text-[0.6rem] flex items-center justify-center leading-none pt-0.5">✓</span>}
+                                        </div>
+                                        <input type="checkbox" checked={onSaleOnly} onChange={(e) => setOnSaleOnly(e.target.checked)} className="sr-only" />
+                                        <span className="font-montserrat text-[#F0E6C2]/80 text-xs tracking-wider group-hover:text-white">On sale only</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            {/* Clear */}
+                            <div className="flex items-end md:justify-end">
+                                {activeFilterCount > 0 && (
+                                    <button
+                                        onClick={clearAllFilters}
+                                        className="font-montserrat text-[#BFA06A] text-[0.65rem] tracking-[0.25em] uppercase border border-[#BFA06A]/30 px-4 py-2 hover:bg-[#BFA06A] hover:text-black transition-colors cursor-pointer"
+                                    >
+                                        Clear All
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                     {/* Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-16">
