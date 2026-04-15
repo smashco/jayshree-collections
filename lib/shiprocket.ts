@@ -1,6 +1,6 @@
 const BASE_URL = 'https://apiv2.shiprocket.in/v1/external';
 const TEST_MODE = process.env.SHIPROCKET_TEST_MODE === 'true';
-const PICKUP_LOCATION = process.env.SHIPROCKET_PICKUP_LOCATION || 'Primary';
+const PICKUP_LOCATION = (process.env.SHIPROCKET_PICKUP_LOCATION || 'Primary').trim();
 
 let cachedToken: string | null = null;
 let tokenExpiry: number = 0;
@@ -64,6 +64,8 @@ export async function createShiprocketOrder(payload: ShiprocketOrderPayload): Pr
   }
 
   const token = await getShiprocketToken();
+
+  console.log('[shiprocket] Using pickup_location:', JSON.stringify(PICKUP_LOCATION), 'length:', PICKUP_LOCATION.length);
 
   const body = {
     order_id: payload.orderNumber,
