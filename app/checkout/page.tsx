@@ -9,34 +9,24 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+interface CashfreeCheckoutResult {
+    error?: { message?: string };
+    redirect?: boolean;
+    paymentDetails?: { paymentMessage?: string };
+}
+
+interface CashfreeInstance {
+    checkout: (options: {
+        paymentSessionId: string;
+        redirectTarget?: '_self' | '_blank' | '_modal' | '_top' | '_parent';
+        returnUrl?: string;
+    }) => Promise<CashfreeCheckoutResult>;
+}
+
 declare global {
     interface Window {
-        Razorpay: new (options: RazorpayOptions) => RazorpayInstance;
+        Cashfree?: (options: { mode: 'sandbox' | 'production' }) => CashfreeInstance;
     }
-}
-
-interface RazorpayOptions {
-    key: string;
-    amount: number;
-    currency: string;
-    name: string;
-    description: string;
-    image?: string;
-    order_id: string;
-    handler: (response: RazorpayResponse) => void;
-    prefill: { name: string; email: string; contact: string };
-    theme: { color: string };
-    modal: { ondismiss: () => void };
-}
-
-interface RazorpayResponse {
-    razorpay_order_id: string;
-    razorpay_payment_id: string;
-    razorpay_signature: string;
-}
-
-interface RazorpayInstance {
-    open: () => void;
 }
 
 const SHIPPING_OPTIONS = [
@@ -63,11 +53,11 @@ export default function CheckoutPage() {
     const tax = Math.round(subtotal * 0.03);
     const total = subtotal + tax + shippingCost;
 
-    const loadRazorpayScript = () =>
+    const loadCashfreeScript = () =>
         new Promise<boolean>((resolve) => {
-            if (window.Razorpay) return resolve(true);
+            if (typeof window !== 'undefined' && window.Cashfree) return resolve(true);
             const script = document.createElement('script');
-            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
             script.onload = () => resolve(true);
             script.onerror = () => resolve(false);
             document.body.appendChild(script);
@@ -85,76 +75,67 @@ export default function CheckoutPage() {
         }
 
         try {
-            // Load Razorpay script
-            const loaded = await loadRazorpayScript();
-            if (!loaded) throw new Error('Payment gateway failed to load. Check your connection.');
+            // Load Cashfree SDK
+            const loaded = await loadCashfreeScript();
+            if (!loaded || !window.Cashfree) throw new Error('Payment gateway failed to load. Check your connection.');
 
-            // Create Razorpay order
-            const orderRes = await fetch('/api/razorpay/create-order', {
+            // Create Cashfree order (server validates stock + computes amount)
+            const orderRes = await fetch('/api/cashfree/create-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount: total, receipt: `checkout_${Date.now()}` }),
+                body: JSON.stringify({
+                    email: form.email,
+                    phone: form.phone,
+                    firstName: form.firstName,
+                    lastName: form.lastName,
+                    shippingMethod,
+                    items: items.map(item => ({ variantId: item.variantId, quantity: item.quantity })),
+                }),
             });
 
-            if (!orderRes.ok) throw new Error('Failed to initiate payment');
-            const { orderId: razorpayOrderId } = await orderRes.json();
+            if (!orderRes.ok) {
+                const err = await orderRes.json().catch(() => ({}));
+                throw new Error(err.error || 'Failed to initiate payment');
+            }
+            const { paymentSessionId, orderNumber } = await orderRes.json();
 
-            // Open Razorpay modal
-            await new Promise<void>((resolve, reject) => {
-                const rzp = new window.Razorpay({
-                    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-                    amount: total,
-                    currency: 'INR',
-                    name: 'Jayashri Collections',
-                    description: `${totalItems} piece${totalItems > 1 ? 's' : ''} · Luxury Jewellery`,
-                    image: '/images/logo.png',
-                    order_id: razorpayOrderId,
-                    prefill: {
-                        name: `${form.firstName} ${form.lastName}`,
-                        email: form.email,
-                        contact: form.phone,
-                    },
-                    theme: { color: '#BFA06A' },
-                    modal: { ondismiss: () => reject(new Error('Payment cancelled')) },
-                    handler: async (response) => {
-                        try {
-                            // Verify payment & create order
-                            const checkoutRes = await fetch('/api/checkout', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    ...form,
-                                    shippingMethod,
-                                    razorpayOrderId: response.razorpay_order_id,
-                                    razorpayPaymentId: response.razorpay_payment_id,
-                                    razorpaySignature: response.razorpay_signature,
-                                    items: items.map(item => ({ variantId: item.variantId, quantity: item.quantity })),
-                                }),
-                            });
+            // Open Cashfree checkout (redirects away; we come back via return_url)
+            const mode: 'sandbox' | 'production' = (process.env.NEXT_PUBLIC_CASHFREE_MODE as 'sandbox' | 'production') || 'sandbox';
+            const cashfree = window.Cashfree({ mode });
 
-                            if (!checkoutRes.ok) {
-                                const err = await checkoutRes.json();
-                                console.error('[checkout] API error:', err);
-                                const msg = typeof err.error === 'string' ? err.error : (err.error?.formErrors?.[0] || JSON.stringify(err.details || err.error) || 'Order creation failed');
-                                reject(new Error(msg));
-                                return;
-                            }
-
-                            const data = await checkoutRes.json();
-                            if (!data.orderNumber) {
-                                reject(new Error('Order created but missing order number'));
-                                return;
-                            }
-                            clearCart();
-                            router.push(`/order-confirmation?order=${data.orderNumber}&payment=${response.razorpay_payment_id}&email=${encodeURIComponent(form.email)}`);
-                            resolve();
-                        } catch (err) {
-                            reject(err);
-                        }
-                    },
-                });
-                rzp.open();
+            const result = await cashfree.checkout({
+                paymentSessionId,
+                redirectTarget: '_modal',
             });
+
+            if (result.error) {
+                throw new Error(result.error.message || 'Payment cancelled');
+            }
+
+            // Payment succeeded in the modal — confirm with our server
+            const checkoutRes = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...form,
+                    shippingMethod,
+                    cashfreeOrderId: orderNumber,
+                    items: items.map(item => ({ variantId: item.variantId, quantity: item.quantity })),
+                }),
+            });
+
+            if (!checkoutRes.ok) {
+                const err = await checkoutRes.json().catch(() => ({}));
+                console.error('[checkout] API error:', err);
+                const msg = typeof err.error === 'string' ? err.error : (err.error?.formErrors?.[0] || 'Order creation failed');
+                throw new Error(msg);
+            }
+
+            const data = await checkoutRes.json();
+            if (!data.orderNumber) throw new Error('Order created but missing order number');
+
+            clearCart();
+            router.push(`/order-confirmation?order=${data.orderNumber}&email=${encodeURIComponent(form.email)}`);
 
         } catch (err: unknown) {
             const msg = err instanceof Error ? err.message : 'Something went wrong';

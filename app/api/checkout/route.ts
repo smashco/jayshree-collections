@@ -1,14 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
-import crypto from 'crypto';
-import Razorpay from 'razorpay';
+import { fetchCashfreeOrder, fetchCashfreePayments } from '@/lib/cashfree';
 import { sendOrderConfirmation } from '@/lib/email';
-
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
 
 const checkoutSchema = z.object({
   email: z.string().email(),
@@ -21,27 +15,17 @@ const checkoutSchema = z.object({
   state: z.string().min(1),
   pinCode: z.string().min(1),
   shippingMethod: z.enum(['standard', 'express']).default('standard'),
-  razorpayOrderId: z.string().min(1),
-  razorpayPaymentId: z.string().min(1),
-  razorpaySignature: z.string().min(1),
+  cashfreeOrderId: z.string().min(1),
   items: z.array(z.object({
     variantId: z.string().min(1),
     quantity: z.number().int().positive(),
   })).min(1),
 });
 
-function generateOrderNumber() {
-  const date = new Date();
-  const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
-  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `JC-${dateStr}-${rand}`;
-}
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     console.log('[checkout] Received body keys:', Object.keys(body));
-    console.log('[checkout] Items:', JSON.stringify(body.items));
 
     // Clean empty variantIds before validation
     if (Array.isArray(body.items)) {
@@ -58,33 +42,14 @@ export async function POST(request: NextRequest) {
     }
 
     const data = parsed.data;
-    console.log('[checkout] Validation passed, verifying Razorpay signature...');
+    console.log('[checkout] Validation passed. Verifying Cashfree order:', data.cashfreeOrderId);
 
-    // Verify Razorpay signature
-    const secret = process.env.RAZORPAY_KEY_SECRET;
-    if (!secret) {
-      console.error('[checkout] RAZORPAY_KEY_SECRET is not set!');
-      return NextResponse.json({ error: 'Payment configuration error' }, { status: 500 });
-    }
-
-    const expectedSignature = crypto
-      .createHmac('sha256', secret)
-      .update(`${data.razorpayOrderId}|${data.razorpayPaymentId}`)
-      .digest('hex');
-
-    if (expectedSignature !== data.razorpaySignature) {
-      console.error('[checkout] Signature mismatch. Expected:', expectedSignature, 'Got:', data.razorpaySignature);
-      return NextResponse.json({ error: 'Payment verification failed' }, { status: 400 });
-    }
-
-    console.log('[checkout] Signature verified. Checking for duplicate payment...');
-
-    // Idempotency: prevent duplicate orders from same payment
+    // Idempotency: prevent duplicate orders from same Cashfree order
     const existingOrder = await prisma.order.findFirst({
-      where: { razorpayPaymentId: data.razorpayPaymentId },
+      where: { cashfreeOrderId: data.cashfreeOrderId },
     });
     if (existingOrder) {
-      console.log('[checkout] Duplicate payment detected, returning existing order:', existingOrder.orderNumber);
+      console.log('[checkout] Duplicate order detected, returning existing:', existingOrder.orderNumber);
       return NextResponse.json({
         orderId: existingOrder.id,
         orderNumber: existingOrder.orderNumber,
@@ -133,21 +98,25 @@ export async function POST(request: NextRequest) {
     const taxAmount = Math.round(subtotal * 0.03);
     const totalAmount = subtotal + taxAmount + shippingAmount;
 
-    // Verify amount matches what Razorpay actually charged
+    // Verify payment with Cashfree (source of truth)
+    let cfPaymentId: string | null = null;
     try {
-      const razorpayOrder = await razorpay.orders.fetch(data.razorpayOrderId);
-      const chargedAmount = Number(razorpayOrder.amount);
-      if (chargedAmount !== totalAmount) {
-        console.error('[checkout] Amount mismatch. Razorpay charged:', chargedAmount, 'Server computed:', totalAmount);
+      const cfOrder = await fetchCashfreeOrder(data.cashfreeOrderId);
+      const chargedAmountPaise = Math.round(Number(cfOrder.order_amount) * 100);
+      if (chargedAmountPaise !== totalAmount) {
+        console.error('[checkout] Amount mismatch. Cashfree:', chargedAmountPaise, 'Computed:', totalAmount);
         return NextResponse.json({ error: 'Payment amount mismatch. Please contact support.' }, { status: 400 });
       }
-      if (razorpayOrder.status !== 'paid') {
-        console.error('[checkout] Razorpay order not paid. Status:', razorpayOrder.status);
+      if (cfOrder.order_status !== 'PAID') {
+        console.error('[checkout] Cashfree order not paid. Status:', cfOrder.order_status);
         return NextResponse.json({ error: 'Payment not completed' }, { status: 400 });
       }
+      const payments = await fetchCashfreePayments(data.cashfreeOrderId);
+      const successful = payments.find(p => p.payment_status === 'SUCCESS');
+      if (successful) cfPaymentId = String(successful.cf_payment_id);
     } catch (err) {
-      console.error('[checkout] Razorpay verification failed:', err);
-      return NextResponse.json({ error: 'Unable to verify payment with Razorpay' }, { status: 500 });
+      console.error('[checkout] Cashfree verification failed:', err);
+      return NextResponse.json({ error: 'Unable to verify payment with Cashfree' }, { status: 500 });
     }
 
     console.log('[checkout] Amount verified. Creating order in DB...');
@@ -171,16 +140,16 @@ export async function POST(request: NextRequest) {
 
       const order = await tx.order.create({
         data: {
-          orderNumber: generateOrderNumber(),
+          orderNumber: data.cashfreeOrderId,
           customerId: customer.id,
           shippingAddressId: address.id,
           subtotal, taxAmount, shippingAmount, totalAmount,
           shippingMethod: data.shippingMethod,
           status: 'CONFIRMED',
           paymentStatus: 'PAID',
-          razorpayOrderId: data.razorpayOrderId,
-          razorpayPaymentId: data.razorpayPaymentId,
-          razorpaySignature: data.razorpaySignature,
+          paymentProvider: 'cashfree',
+          cashfreeOrderId: data.cashfreeOrderId,
+          cashfreePaymentId: cfPaymentId,
           items: { create: orderItems },
         },
       });
@@ -220,7 +189,7 @@ export async function POST(request: NextRequest) {
         email: fullOrder.customer.email,
         phone: fullOrder.customer.phone || undefined,
         orderNumber: fullOrder.orderNumber,
-        paymentId: data.razorpayPaymentId,
+        paymentId: cfPaymentId || data.cashfreeOrderId,
         items: fullOrder.items.map(i => ({
           name: i.name,
           sku: i.sku,
