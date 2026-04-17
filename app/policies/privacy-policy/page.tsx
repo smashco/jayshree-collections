@@ -39,7 +39,7 @@ export default function PrivacyPolicyPage() {
               <strong className="text-[#F0E6C2]">Information you give us:</strong> When you place an order, create an
               account or contact us, we collect personal details such as your name, email address, phone number,
               billing and shipping addresses, and order history. When you make a purchase, our payment processor
-              (Razorpay) collects the payment details needed to complete the transaction.
+              (Cashfree) collects the payment details needed to complete the transaction.
             </p>
             <p>
               <strong className="text-[#F0E6C2]">Information collected automatically:</strong> When you browse our
@@ -78,7 +78,7 @@ export default function PrivacyPolicyPage() {
             <p className="mb-3">We do not sell your personal information. We share it only with trusted partners who help us operate our store:</p>
             <ul className="list-disc pl-6 space-y-2">
               <li>
-                <strong className="text-[#F0E6C2]">Razorpay</strong> — for securely processing payments. Razorpay is
+                <strong className="text-[#F0E6C2]">Cashfree</strong> — for securely processing payments. Cashfree is
                 PCI-DSS compliant and handles all card, UPI and net-banking information directly.
               </li>
               <li>

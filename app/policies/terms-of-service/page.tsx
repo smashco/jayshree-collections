@@ -81,7 +81,7 @@ export default function TermsOfServicePage() {
             <p>
               When you place an order, you are making an offer to purchase. We reserve the right to accept, refuse,
               or limit any order at our discretion. Orders are confirmed only once payment is successfully captured
-              through our payment processor. We currently accept payments via Razorpay, including UPI, cards,
+              through our payment processor. We currently accept payments via Cashfree, including UPI, cards,
               net-banking and wallets. You agree to provide current, complete and accurate billing and shipping
               information for all purchases.
             </p>
@@ -130,7 +130,7 @@ export default function TermsOfServicePage() {
           <section>
             <h2 className="font-cormorant text-2xl md:text-3xl text-[#BFA06A] mb-4">10. Third-Party Services & Links</h2>
             <p>
-              Our site may contain links to or integrate with third-party services (such as Razorpay for payments
+              Our site may contain links to or integrate with third-party services (such as Cashfree for payments
               and Shiprocket for logistics). We are not responsible for examining or evaluating the content or
               accuracy of these third parties, and we do not warrant or assume liability for any third-party
               materials, websites or services.
