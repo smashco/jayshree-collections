@@ -60,11 +60,14 @@ export async function POST(request: NextRequest) {
     // Generate orderNumber, use as Cashfree order_id
     const orderNumber = generateOrderNumber();
 
+    // Cashfree requires customer_id to be alphanumeric + underscore/hyphen only
+    const customerId = data.email.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 50);
+
     const cfOrder = await createCashfreeOrder({
       orderId: orderNumber,
       amount: totalAmount,
       customer: {
-        id: data.email,
+        id: customerId,
         email: data.email,
         phone: data.phone,
         name: `${data.firstName} ${data.lastName}`,
