@@ -27,8 +27,11 @@ export default function TermsOfServicePage() {
           <section>
             <p>
               Welcome to Jayashri Collections. These Terms of Service (&quot;Terms&quot;) govern your access to and use of
-              our website, products and services. By visiting our site or placing an order with us, you agree to be
-              bound by these Terms. If you do not agree, please do not use our Service.
+              our website, products and services. Jayashri Collections is a brand operated by{' '}
+              <strong className="text-[#F0E6C2]">Mansi Pravin Ramane</strong>, a sole proprietorship based in Thane,
+              Maharashtra, India. Throughout these Terms, &quot;we&quot;, &quot;us&quot; and &quot;our&quot; refer
+              to this legal entity. By visiting our site or placing an order with us, you agree to be bound by these
+              Terms. If you do not agree, please do not use our Service.
             </p>
             <p className="mt-4">
               We reserve the right to update or modify these Terms at any time. Continued use of the site after any
@@ -207,6 +210,18 @@ export default function TermsOfServicePage() {
               You can also reach us through our{' '}
               <Link href="/" className="text-[#BFA06A] hover:underline">homepage</Link> or via our social channels listed in the footer.
             </p>
+            <div className="mt-8 p-6 border border-[#BFA06A]/20 bg-[#BFA06A]/5 rounded">
+              <p className="font-montserrat text-[#BFA06A] text-xs tracking-[0.3em] uppercase mb-3">Operator / Legal Entity</p>
+              <p className="text-[#F0E6C2] font-medium">Mansi Pravin Ramane (Sole Proprietor)</p>
+              <p className="text-[#F0E6C2]/70 text-sm mt-2">
+                Registered Address: Jayashri Collection, Shop No. 4 &amp; 5, Indraratna Palace,<br />
+                Near Ganpati Mandir, Jambhali Naka, Thane West,<br />
+                Thane, Maharashtra 400602, India
+              </p>
+              <p className="text-[#F0E6C2]/70 text-sm mt-2">
+                Phone: +91 95189 00906 · Email: order@jc-admin.services
+              </p>
+            </div>
           </section>
         </div>
       </main>

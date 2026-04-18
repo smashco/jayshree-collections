@@ -27,7 +27,10 @@ export default function PrivacyPolicyPage() {
           <section>
             <p>
               At Jayashri Collections, your trust means everything to us. This Privacy Policy explains what information
-              we collect when you visit jc-admin.services and related sites, how we use it, and the choices you have.
+              we collect when you visit jayashricollection.com and related sites, how we use it, and the choices you have.
+              Jayashri Collections is a brand operated by{' '}
+              <strong className="text-[#F0E6C2]">Mansi Pravin Ramane</strong>, a sole proprietorship based in Thane,
+              Maharashtra, India — the data controller responsible for your personal information on this site.
               By using our site and placing an order, you agree to the practices described below.
             </p>
           </section>
@@ -178,6 +181,19 @@ export default function PrivacyPolicyPage() {
               See our{' '}
               <Link href="/policies/terms-of-service" className="text-[#BFA06A] hover:underline">Terms of Service</Link> for the full terms that govern your use of this site.
             </p>
+            <div className="mt-8 p-6 border border-[#BFA06A]/20 bg-[#BFA06A]/5 rounded">
+              <p className="font-montserrat text-[#BFA06A] text-xs tracking-[0.3em] uppercase mb-3">Data Controller / Legal Entity</p>
+              <p className="text-[#F0E6C2] font-medium">Mansi Pravin Ramane (Sole Proprietor)</p>
+              <p className="text-[#F0E6C2]/70 text-sm mt-2">
+                Trading as Jayashri Collections<br />
+                Registered Address: Shop No. 4 &amp; 5, Indraratna Palace,<br />
+                Near Ganpati Mandir, Jambhali Naka, Thane West,<br />
+                Thane, Maharashtra 400602, India
+              </p>
+              <p className="text-[#F0E6C2]/70 text-sm mt-2">
+                Phone: +91 95189 00906 · Email: order@jc-admin.services
+              </p>
+            </div>
           </section>
         </div>
       </main>

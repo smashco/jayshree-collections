@@ -110,12 +110,17 @@ const Footer = () => (
             </div>
 
             {/* Bottom */}
-            <div className="mt-12 pt-6 border-t border-yellow-100/10 flex flex-col md:flex-row items-center justify-between gap-4">
-                <p className="font-inter text-yellow-100/60 text-xs md:text-sm font-medium">
-                    © 2026 Jayashri Collections. All rights reserved.
-                </p>
-                <p className="font-inter text-yellow-100/60 text-xs md:text-sm font-medium flex items-center gap-1.5">
-                    Made with <Heart className="w-4 h-4 text-primary fill-primary" /> in Maharashtra, India
+            <div className="mt-12 pt-6 border-t border-yellow-100/10 flex flex-col gap-4">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <p className="font-inter text-yellow-100/60 text-xs md:text-sm font-medium">
+                        © 2026 Jayashri Collections. All rights reserved.
+                    </p>
+                    <p className="font-inter text-yellow-100/60 text-xs md:text-sm font-medium flex items-center gap-1.5">
+                        Made with <Heart className="w-4 h-4 text-primary fill-primary" /> in Maharashtra, India
+                    </p>
+                </div>
+                <p className="font-inter text-yellow-100/40 text-[11px] md:text-xs font-medium text-center">
+                    Jayashri Collections is a brand operated by <span className="text-yellow-100/70">Mansi Pravin Ramane</span>, a sole proprietorship based in Thane, Maharashtra, India.
                 </p>
             </div>
         </div>
