@@ -33,14 +33,20 @@ const Footer = () => (
                 {/* Quick Links */}
                 <div>
                     <h3 className="font-playfair text-lg font-bold text-yellow-50 mb-5">Quick Links</h3>
-                    {['Collections', 'New Arrivals', 'Bestsellers', 'Bridal Sets', 'About Us'].map((link) => (
-                        <a
-                            key={link}
-                            href="#"
+                    {[
+                        { label: 'Collections', href: '/shop' },
+                        { label: 'New Arrivals', href: '/shop?sort=newest' },
+                        { label: 'Bestsellers', href: '/shop?sort=discount' },
+                        { label: 'Bridal Sets', href: '/shop?category=Harams%20%26%20Sets' },
+                        { label: 'About Us', href: '/about' },
+                    ].map((link) => (
+                        <Link
+                            key={link.label}
+                            href={link.href}
                             className="block font-inter text-sm md:text-base text-yellow-100/80 hover:text-gold transition-all duration-200 mb-3 cursor-pointer hover:translate-x-1 font-medium"
                         >
-                            {link}
-                        </a>
+                            {link.label}
+                        </Link>
                     ))}
                 </div>
 
@@ -49,10 +55,11 @@ const Footer = () => (
                     <h3 className="font-playfair text-lg font-bold text-yellow-50 mb-5">Customer Care</h3>
                     {[
                         { label: 'Track Order', href: '/track' },
+                        { label: 'Shipping Info', href: '/policies/shipping' },
+                        { label: 'Refund Policy', href: '/policies/refund' },
                         { label: 'Terms of Service', href: '/policies/terms-of-service' },
                         { label: 'Privacy Policy', href: '/policies/privacy-policy' },
-                        { label: 'Shipping Info', href: '#' },
-                        { label: 'FAQs', href: '#' },
+                        { label: 'FAQs', href: '/faqs' },
                     ].map((link) => (
                         <Link
                             key={link.label}
