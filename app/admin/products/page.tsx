@@ -41,8 +41,22 @@ export default function ProductsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this product? This cannot be undone.')) return;
     const res = await fetch(`/api/admin/products/${id}`, { method: 'DELETE' });
-    if (!res.ok) { alert('Failed to delete product'); return; }
-    fetchProducts();
+    if (res.ok) { fetchProducts(); return; }
+
+    const body = await res.json().catch(() => ({}));
+    if (body.canArchive) {
+      const archive = confirm(`${body.error}\n\nClick OK to archive it (hide from customers but keep order history).`);
+      if (!archive) return;
+      const archiveRes = await fetch(`/api/admin/products/${id}?archive=true`, { method: 'DELETE' });
+      if (archiveRes.ok) {
+        alert('Product archived (hidden from shop).');
+        fetchProducts();
+      } else {
+        alert('Failed to archive product');
+      }
+      return;
+    }
+    alert(body.error || 'Failed to delete product');
   };
 
   const totalStock = (variants: { stock: number }[]) =>
